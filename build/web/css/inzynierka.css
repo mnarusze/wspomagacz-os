@@ -1,0 +1,48 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+#all {  
+    background: #eee;
+    width: 850px;
+    margin: auto;   
+}
+
+#topElements {
+    height: 40px;
+    width: 900px;
+    background: silver; 
+    margin: auto;
+    padding-top: 20px;
+}
+
+#logoDiv {
+    width: 100px;
+    float: left;
+}
+
+#searchDiv {
+    width: 600px;
+    float: left;
+}
+
+#loginDiv {
+    width: 200px;
+    float: left;
+}
+
+#menu {
+    height: 30px;
+    background: #aaa;
+}
+
+#main {
+    height: 600px;
+    background: #bbb;
+}
+
+#footer {
+    height: 60px;
+    background: #aaa;
+}
