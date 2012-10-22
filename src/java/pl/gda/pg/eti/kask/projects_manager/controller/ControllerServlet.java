@@ -11,13 +11,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.shiro.subject.Subject;
 import pl.gda.pg.eti.kask.projects_manager.authentication.AuthenticationManager;
+import pl.gda.pg.eti.kask.projects_manager.session.SessionHandler;
 
 @WebServlet(name = "ControllerServlet", 
              loadOnStartup = 1,
              urlPatterns = {"/autentykacja",
                             "/logowanie", 
-                            "/projekt", 
+                            "/projekt",
+                            "/wyloguj",
                             "/lista_projektow", 
                             "/konfiguracja_projektu",
                             "/konfiguruj_projekt",
@@ -28,6 +31,8 @@ public class ControllerServlet extends HttpServlet {
 
     
     private AuthenticationManager authenticationManager = new AuthenticationManager();
+    private SessionHandler sessionHandler = new SessionHandler();
+    private Subject user;
     
     /**
      * Processes requests for both HTTP
@@ -83,6 +88,10 @@ public class ControllerServlet extends HttpServlet {
             
         } else if (userPath.equals("/logowanie")) {
             
+        } else if (userPath.equals("/wyloguj")) {
+            if (user.isAuthenticated()) {
+                user.logout();
+            }
         }
         
         String url = "/WEB-INF/view" + userPath + ".jsp";
@@ -110,8 +119,8 @@ public class ControllerServlet extends HttpServlet {
         String url;
         
         if(userPath.equals("/autentykacja")) {
-            
-            if (authenticationManager.userExists("identyfikator", "password")) {
+            user = authenticationManager.loginUser("identyfikator", "password");
+            if (user != null) {
                 url = "/index.jsp";
             } else {
                 url = "/WEB-INF/view/nieudane_logowanie.jsp";
