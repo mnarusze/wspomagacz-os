@@ -18,26 +18,31 @@ body {
 }
 
 #logoDiv {
-    width: 100px;
+    width: 33%;
     float: left;
+    text-align: center;
 }
 
 #searchDiv {
-    width: 600px;
+    width: 34%;
     float: left;
+    text-align: center;
 }
 
 #loginDiv {
-    width: 200px;
+    width: 33%;
     float: left;
+    text-align: center;
 }
 
 #menu {
+    padding-top: 15px;
     height: 30px;
     background: #aaa;
 }
 
 #adminMenu {
+    padding-top: 15px;
     height: 30px;
     background: #abb;
 }
@@ -53,3 +58,4 @@ body {
     height: 60px;
     background: #aaa;
 }
+

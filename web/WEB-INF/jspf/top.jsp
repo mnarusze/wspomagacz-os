@@ -21,13 +21,12 @@
                 <% } else { %>
                 <a href="/Inzynierka/ustawienia">Ustawienia</a> <a href="/Inzynierka/wyloguj">Wyloguj sie</a>
                 <%}
-             %>
-                
+             %>                
             </div>
         </div>
         <div id="all">
             <div id="menu">
-                menu
+                <a href="/Inzynierka/lista_projektow">Lista projektow</a>
             </div>
             <% if (request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals("Administrator")) { %>
             <div id="adminMenu">
