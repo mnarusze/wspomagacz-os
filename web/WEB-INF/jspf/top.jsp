@@ -29,3 +29,8 @@
             <div id="menu">
                 menu
             </div>
+            <% if (request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals("Administrator")) { %>
+            <div id="adminMenu">
+                admin Menu
+            </div>
+            <% } %>

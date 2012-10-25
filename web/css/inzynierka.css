@@ -37,6 +37,11 @@ body {
     background: #aaa;
 }
 
+#adminMenu {
+    height: 30px;
+    background: #abb;
+}
+
 #main {
     height: 600px;
     background: #bbb;
