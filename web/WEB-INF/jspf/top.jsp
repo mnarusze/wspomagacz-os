@@ -15,7 +15,14 @@
                 [search]
             </div>
             <div id="loginDiv">
+            <% if (request.getUserPrincipal()==null) {  
+                %>
                 <a href="/Inzynierka/logowanie">Zaloguj sie</a>
+                <% } else { %>
+                <a href="/Inzynierka/ustawienia">Ustawienia</a> <a href="/Inzynierka/wyloguj">Wyloguj sie</a>
+                <%}
+             %>
+                
             </div>
         </div>
         <div id="all">

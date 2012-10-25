@@ -11,7 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import pl.gda.pg.eti.kask.projects_manager.managers.AuthenticationManager;
+import pl.gda.pg.eti.kask.projects_manager.managers.SessionManager;
 
 @WebServlet(name = "ControllerServlet", 
              loadOnStartup = 1,
@@ -22,12 +22,14 @@ import pl.gda.pg.eti.kask.projects_manager.managers.AuthenticationManager;
                             "/konfiguracja_projektu",
                             "/konfiguruj_projekt",
                             "/zmien_ustawienia",
-                            "/ustawienia"})
+                            "/ustawienia",
+                            "/wyloguj",
+             })
 
 public class ControllerServlet extends HttpServlet {
 
     
-    private AuthenticationManager authenticationManager = new AuthenticationManager();
+    private SessionManager authenticationManager = new SessionManager();
     
     /**
      * Processes requests for both HTTP
@@ -80,17 +82,20 @@ public class ControllerServlet extends HttpServlet {
         } else if (userPath.equals("/ustawienia")) {
             
         } else if (userPath.equals("/konfiguracja_projektu")) {
-            
+        
+        } else if (userPath.equals("/wyloguj")) {
+            request.logout();
+            request.getSession().invalidate();
+            request.getRequestDispatcher("/index.jsp").forward(request, response);
         } else if (userPath.equals("/logowanie")) {
-            
+            // check if user already logged in
+            if (request.getUserPrincipal() != null) {
+                userPath = "/ustawienia";
+            }
         }
         
         String url = "/WEB-INF/view" + userPath + ".jsp";
-        try {
-            request.getRequestDispatcher(url).forward(request, response);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        request.getRequestDispatcher(url).forward(request, response);
     }
 
     /**
