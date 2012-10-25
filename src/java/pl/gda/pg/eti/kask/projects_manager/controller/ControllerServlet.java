@@ -11,7 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import pl.gda.pg.eti.kask.projects_manager.authentication.AuthenticationManager;
+import pl.gda.pg.eti.kask.projects_manager.managers.AuthenticationManager;
 
 @WebServlet(name = "ControllerServlet", 
              loadOnStartup = 1,

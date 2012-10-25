@@ -1,4 +1,4 @@
-package pl.gda.pg.eti.kask.projects_manager.authentication;
+package pl.gda.pg.eti.kask.projects_manager.managers;
 
 import org.apache.shiro.realm.ldap.JndiLdapRealm;
 
