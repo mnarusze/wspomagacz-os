@@ -86,7 +86,8 @@ public class ControllerServlet extends HttpServlet {
         } else if (userPath.equals("/wyloguj")) {
             request.logout();
             request.getSession().invalidate();
-            request.getRequestDispatcher("/index.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            return;
         } else if (userPath.equals("/logowanie")) {
             // check if user already logged in
             if (request.getUserPrincipal() != null) {
