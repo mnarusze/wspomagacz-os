@@ -86,7 +86,6 @@ public class ControllerServlet extends HttpServlet {
         }
         
         String url = "/WEB-INF/view" + userPath + ".jsp";
-        
         try {
             request.getRequestDispatcher(url).forward(request, response);
         } catch (Exception ex) {
@@ -107,26 +106,16 @@ public class ControllerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String userPath = request.getServletPath();
-        String url;
+        String url = null;
         
-        if(userPath.equals("/autentykacja")) {
-            
-            if (authenticationManager.userExists("identyfikator", "password")) {
-                url = "/index.jsp";
-            } else {
-                url = "/WEB-INF/view/nieudane_logowanie.jsp";
-            }
-        } 
-        else
-        {
-            if (userPath.equals("/konfiguruj_projekt")) {
-                userPath = "/konfiguracja_projektu";
-            } else if (userPath.equals("zmien_ustawienia")) {
-                userPath = "/ustawienia";
-            }
+        if (userPath.equals("/konfiguruj_projekt")) {
+            userPath = "/konfiguracja_projektu";
+            url = "/WEB-INF/view" + userPath + ".jsp";
+        } else if (userPath.equals("zmien_ustawienia")) {
+            userPath = "/ustawienia";
             url = "/WEB-INF/view" + userPath + ".jsp";
         }
- 
+
         try {
             request.getRequestDispatcher(url).forward(request, response);
         } catch (Exception ex) {

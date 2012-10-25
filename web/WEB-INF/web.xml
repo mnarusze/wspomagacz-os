@@ -14,4 +14,36 @@
             <include-coda>/WEB-INF/jspf/bottom.jsp</include-coda>
         </jsp-property-group>
     </jsp-config>
+    <security-constraint>
+        <display-name>Administration</display-name>
+        <web-resource-collection>
+            <web-resource-name>Administracja</web-resource-name>
+            <description/>
+            <url-pattern>/admin/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>Admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>ldap-realm</realm-name>
+        <form-login-config>
+            <form-login-page>/WEB-INF/view/logowanie.jsp</form-login-page>
+            <form-error-page>/WEB-INF/view/nieudane_logowanie.jsp</form-error-page>
+        </form-login-config>
+    </login-config>
+    <security-role>
+        <description/>
+        <role-name>Admin</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>ProjectOwner</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>User</role-name>
+    </security-role>
 </web-app>

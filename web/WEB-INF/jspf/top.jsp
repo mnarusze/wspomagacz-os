@@ -19,7 +19,6 @@
             </div>
         </div>
         <div id="all">
-             
             <div id="menu">
                 menu
             </div>
