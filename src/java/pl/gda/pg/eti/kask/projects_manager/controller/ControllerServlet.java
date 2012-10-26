@@ -24,6 +24,7 @@ import pl.gda.pg.eti.kask.projects_manager.managers.SessionManager;
                             "/zmien_ustawienia",
                             "/ustawienia",
                             "/wyloguj",
+                            "/utworz_projekt"
              })
 
 public class ControllerServlet extends HttpServlet {
@@ -81,6 +82,8 @@ public class ControllerServlet extends HttpServlet {
            
         } else if (userPath.equals("/ustawienia")) {
             
+        } else if (userPath.equals("/utworz_projekt")) {
+        
         } else if (userPath.equals("/konfiguracja_projektu")) {
         
         } else if (userPath.equals("/wyloguj")) {
