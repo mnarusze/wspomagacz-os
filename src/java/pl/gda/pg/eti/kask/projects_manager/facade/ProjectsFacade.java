@@ -2,19 +2,19 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package pl.gda.pg.kask.projects_manager.facade;
+package pl.gda.pg.eti.kask.projects_manager.facade;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import pl.gda.pg.eti.kask.projects_manager.entity.Users;
+import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 
 /**
  *
  * @author Mateusz
  */
 @Stateless
-public class UsersFacade extends AbstractFacade<Users> {
+public class ProjectsFacade extends AbstractFacade<Projects> {
     @PersistenceContext(unitName = "InzynierkaPU")
     private EntityManager em;
 
@@ -23,8 +23,8 @@ public class UsersFacade extends AbstractFacade<Users> {
         return em;
     }
 
-    public UsersFacade() {
-        super(Users.class);
+    public ProjectsFacade() {
+        super(Projects.class);
     }
     
 }

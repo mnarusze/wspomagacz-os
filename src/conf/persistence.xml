@@ -3,6 +3,7 @@
   <persistence-unit name="InzynierkaPU" transaction-type="JTA">
     <jta-data-source>jdbc/inzynierka</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <shared-cache-mode>ALL</shared-cache-mode>
     <properties/>
   </persistence-unit>
 </persistence>
