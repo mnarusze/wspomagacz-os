@@ -5,16 +5,23 @@
 package pl.gda.pg.eti.kask.projects_manager.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -25,8 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u"),
+    @NamedQuery(name = "Users.findById", query = "SELECT u FROM Users u WHERE u.id = :id"),
     @NamedQuery(name = "Users.findByNickname", query = "SELECT u FROM Users u WHERE u.nickname = :nickname"),
-    @NamedQuery(name = "Users.findByUid", query = "SELECT u FROM Users u WHERE u.uid = :uid"),
     @NamedQuery(name = "Users.findByFirstname", query = "SELECT u FROM Users u WHERE u.firstname = :firstname"),
     @NamedQuery(name = "Users.findByLastname", query = "SELECT u FROM Users u WHERE u.lastname = :lastname"),
     @NamedQuery(name = "Users.findByIndeks", query = "SELECT u FROM Users u WHERE u.indeks = :indeks"),
@@ -34,15 +41,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Users implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Short id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 30)
     @Column(name = "nickname")
     private String nickname;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "uid")
-    private int uid;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 30)
@@ -55,29 +62,42 @@ public class Users implements Serializable {
     private String lastname;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 30)
     @Column(name = "indeks")
-    private int indeks;
+    private String indeks;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 30)
     @Column(name = "email")
     private String email;
+    @ManyToMany(mappedBy = "usersCollection")
+    private Collection<Projects> projectsCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
+    private Collection<Projects> projectsCollection1;
 
     public Users() {
     }
 
-    public Users(String nickname) {
-        this.nickname = nickname;
+    public Users(Short id) {
+        this.id = id;
     }
 
-    public Users(String nickname, int uid, String firstname, String lastname, int indeks, String email) {
+    public Users(Short id, String nickname, String firstname, String lastname, String indeks, String email) {
+        this.id = id;
         this.nickname = nickname;
-        this.uid = uid;
         this.firstname = firstname;
         this.lastname = lastname;
         this.indeks = indeks;
         this.email = email;
+    }
+
+    public Short getId() {
+        return id;
+    }
+
+    public void setId(Short id) {
+        this.id = id;
     }
 
     public String getNickname() {
@@ -86,14 +106,6 @@ public class Users implements Serializable {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public int getUid() {
-        return uid;
-    }
-
-    public void setUid(int uid) {
-        this.uid = uid;
     }
 
     public String getFirstname() {
@@ -112,11 +124,11 @@ public class Users implements Serializable {
         this.lastname = lastname;
     }
 
-    public int getIndeks() {
+    public String getIndeks() {
         return indeks;
     }
 
-    public void setIndeks(int indeks) {
+    public void setIndeks(String indeks) {
         this.indeks = indeks;
     }
 
@@ -128,10 +140,28 @@ public class Users implements Serializable {
         this.email = email;
     }
 
+    @XmlTransient
+    public Collection<Projects> getProjectsCollection() {
+        return projectsCollection;
+    }
+
+    public void setProjectsCollection(Collection<Projects> projectsCollection) {
+        this.projectsCollection = projectsCollection;
+    }
+
+    @XmlTransient
+    public Collection<Projects> getProjectsCollection1() {
+        return projectsCollection1;
+    }
+
+    public void setProjectsCollection1(Collection<Projects> projectsCollection1) {
+        this.projectsCollection1 = projectsCollection1;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (nickname != null ? nickname.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -142,7 +172,7 @@ public class Users implements Serializable {
             return false;
         }
         Users other = (Users) object;
-        if ((this.nickname == null && other.nickname != null) || (this.nickname != null && !this.nickname.equals(other.nickname))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -150,7 +180,7 @@ public class Users implements Serializable {
 
     @Override
     public String toString() {
-        return "pl.gda.pg.eti.kask.projects_manager.entity.Users[ nickname=" + nickname + " ]";
+        return "pl.gda.pg.eti.kask.projects_manager.entity.Users[ id=" + id + " ]";
     }
     
 }

@@ -5,16 +5,24 @@
 package pl.gda.pg.eti.kask.projects_manager.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -25,9 +33,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Projects.findAll", query = "SELECT p FROM Projects p"),
+    @NamedQuery(name = "Projects.findById", query = "SELECT p FROM Projects p WHERE p.id = :id"),
     @NamedQuery(name = "Projects.findByProjName", query = "SELECT p FROM Projects p WHERE p.projName = :projName"),
-    @NamedQuery(name = "Projects.findByGid", query = "SELECT p FROM Projects p WHERE p.gid = :gid"),
-    @NamedQuery(name = "Projects.findByOwnerUid", query = "SELECT p FROM Projects p WHERE p.ownerUid = :ownerUid"),
     @NamedQuery(name = "Projects.findBySvnEnabled", query = "SELECT p FROM Projects p WHERE p.svnEnabled = :svnEnabled"),
     @NamedQuery(name = "Projects.findByGitEnabled", query = "SELECT p FROM Projects p WHERE p.gitEnabled = :gitEnabled"),
     @NamedQuery(name = "Projects.findByTracEnabled", query = "SELECT p FROM Projects p WHERE p.tracEnabled = :tracEnabled"),
@@ -35,19 +42,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Projects implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Short id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 30)
     @Column(name = "proj_name")
     private String projName;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "gid")
-    private int gid;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "owner_uid")
-    private int ownerUid;
     @Basic(optional = false)
     @NotNull
     @Column(name = "svn_enabled")
@@ -64,22 +67,37 @@ public class Projects implements Serializable {
     @NotNull
     @Column(name = "is_public")
     private boolean isPublic;
+    @JoinTable(name = "proj_has_users", joinColumns = {
+        @JoinColumn(name = "projid", referencedColumnName = "id")}, inverseJoinColumns = {
+        @JoinColumn(name = "userid", referencedColumnName = "id")})
+    @ManyToMany
+    private Collection<Users> usersCollection;
+    @JoinColumn(name = "owner", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Users owner;
 
     public Projects() {
     }
 
-    public Projects(String projName) {
-        this.projName = projName;
+    public Projects(Short id) {
+        this.id = id;
     }
 
-    public Projects(String projName, int gid, int ownerUid, boolean svnEnabled, boolean gitEnabled, boolean tracEnabled, boolean isPublic) {
+    public Projects(Short id, String projName, boolean svnEnabled, boolean gitEnabled, boolean tracEnabled, boolean isPublic) {
+        this.id = id;
         this.projName = projName;
-        this.gid = gid;
-        this.ownerUid = ownerUid;
         this.svnEnabled = svnEnabled;
         this.gitEnabled = gitEnabled;
         this.tracEnabled = tracEnabled;
         this.isPublic = isPublic;
+    }
+
+    public Short getId() {
+        return id;
+    }
+
+    public void setId(Short id) {
+        this.id = id;
     }
 
     public String getProjName() {
@@ -88,22 +106,6 @@ public class Projects implements Serializable {
 
     public void setProjName(String projName) {
         this.projName = projName;
-    }
-
-    public int getGid() {
-        return gid;
-    }
-
-    public void setGid(int gid) {
-        this.gid = gid;
-    }
-
-    public int getOwnerUid() {
-        return ownerUid;
-    }
-
-    public void setOwnerUid(int ownerUid) {
-        this.ownerUid = ownerUid;
     }
 
     public boolean getSvnEnabled() {
@@ -138,10 +140,27 @@ public class Projects implements Serializable {
         this.isPublic = isPublic;
     }
 
+    @XmlTransient
+    public Collection<Users> getUsersCollection() {
+        return usersCollection;
+    }
+
+    public void setUsersCollection(Collection<Users> usersCollection) {
+        this.usersCollection = usersCollection;
+    }
+
+    public Users getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Users owner) {
+        this.owner = owner;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (projName != null ? projName.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -152,7 +171,7 @@ public class Projects implements Serializable {
             return false;
         }
         Projects other = (Projects) object;
-        if ((this.projName == null && other.projName != null) || (this.projName != null && !this.projName.equals(other.projName))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -160,7 +179,7 @@ public class Projects implements Serializable {
 
     @Override
     public String toString() {
-        return "pl.gda.pg.eti.kask.projects_manager.entity.Projects[ projName=" + projName + " ]";
+        return "pl.gda.pg.eti.kask.projects_manager.entity.Projects[ id=" + id + " ]";
     }
     
 }

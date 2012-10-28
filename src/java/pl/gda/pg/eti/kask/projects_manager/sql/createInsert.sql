@@ -1,46 +1,53 @@
+DROP TABLE IF EXISTS proj_has_users;
 DROP TABLE IF EXISTS projects;
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS proj_has_users;
+
+
+
+CREATE TABLE users (
+    id smallint not null auto_increment, 
+    nickname varchar(30) unique not null,
+    firstname varchar(30) not null, 
+    lastname varchar(30) not null,
+    indeks varchar(30) not null,
+    email varchar(30) not null,
+    PRIMARY KEY (id)
+);
 
 CREATE TABLE projects (
-    proj_name varchar(30) unique not null, 
-    gid int(10) unique not null, 
-    owner_uid int(10) not null,
+    id smallint not null auto_increment,
+    proj_name varchar(30) not null,
+    owner smallint not null,
     svn_enabled boolean not null,
     git_enabled boolean not null,
     trac_enabled boolean not null,
     is_public boolean not null,
-    PRIMARY KEY (proj_name)
+    PRIMARY KEY (id),
+    FOREIGN KEY (owner) REFERENCES users(id)
 );
 
-CREATE TABLE users (
-    nickname varchar(30) unique not null,
-    uid int(10) unique not null, 
-    firstname varchar(30) not null, 
-    lastname varchar(30) not null,
-    indeks int(10) not null,
-    email varchar(30) not null,
-    PRIMARY KEY (nickname)
-);
+
 
 CREATE TABLE proj_has_users (
-    proj_name varchar(30) not null,
-    user_name varchar(30) not null,
-    PRIMARY KEY (proj_name,user_name)
+    projid smallint not null,
+    userid smallint not null,
+    PRIMARY KEY (projid, userid),
+    FOREIGN KEY (projid) REFERENCES projects(id),
+    FOREIGN KEY (userid) REFERENCES users(id)
 );
 
-INSERT INTO users (nickname,uid,firstname,lastname,indeks,email) VALUES
-    ("maryl",1000,"Maciej","Naruszewicz",121514,"maciek.naruszewicz@gmail.com"),
-    ("dziagu",1001,"Dominik","Dziag",121111,"deezet@gmail.com"),
-    ("zlewak",1002,"Mateusz","Zalewski",121514,"zalewski.mateusz@gmail.com");
+INSERT INTO users (nickname,firstname,lastname,indeks,email) VALUES
+    ("maryl","Maciej","Naruszewicz","121514","maciek.naruszewicz@gmail.com"),
+    ("dziagu","Dominik","Dziag","121111","deezet@gmail.com"),
+    ("zlewak","Mateusz","Zalewski","121514","zalewski.mateusz@gmail.com");
 
-INSERT INTO projects (proj_name,gid,owner_uid,svn_enabled,git_enabled,trac_enabled,is_public) VALUES
-    ("inzynierka",10000,1000,TRUE,TRUE,TRUE,TRUE),
-    ("projekt_prywatny",10001,1000,TRUE,TRUE,TRUE,FALSE);
+INSERT INTO projects (proj_name,owner,svn_enabled,git_enabled,trac_enabled,is_public) VALUES
+    ("inzynierka",1,TRUE,TRUE,TRUE,TRUE),
+    ("projekt_prywatny",3,TRUE,TRUE,TRUE,FALSE);
 
-INSERT INTO proj_has_users (proj_name,user_name) VALUES
-    ("inzynierka","maryl"),
-    ("inzynierka","dziagu"),
-    ("inzynierka","zlewak"),
-    ("projekt_prywatny","maryl"),
-    ("projekt_prywatny","dziagu");
+INSERT INTO proj_has_users (projid,userid) VALUES
+    (1,1),
+    (1,2),
+    (1,3),
+    (2,1),
+    (2,2);
