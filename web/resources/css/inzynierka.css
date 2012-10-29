@@ -3,13 +3,14 @@ body {
     text-align: center;
 }
 
-#all {  
+#main {  
     background: #eee;
     width: 850px;
-    margin: auto;   
+    margin: auto;
+    text-align: center;
 }
 
-#topElements {
+#top {
     height: 40px;
     width: 900px;
     background: silver; 
@@ -17,19 +18,19 @@ body {
     padding-top: 20px;
 }
 
-#logoDiv {
+#logo {
     width: 33%;
     float: left;
     text-align: center;
 }
 
-#searchDiv {
+#search {
     width: 34%;
     float: left;
     text-align: center;
 }
 
-#loginDiv {
+#login {
     width: 33%;
     float: left;
     text-align: center;
@@ -47,7 +48,7 @@ body {
     background: #abb;
 }
 
-#main {
+#content {
     height: 600px;
     background: #bbb;
     text-align: left;
@@ -55,7 +56,8 @@ body {
 }
 
 #footer {
-    height: 60px;
+    padding-top: 15px;
+    height: 30px;
     background: #aaa;
 }
 

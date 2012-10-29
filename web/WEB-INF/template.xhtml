@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet library="css" name="inzynierka.css" />
+        
+        <title>Inzynierka Template</title>
+    </h:head>
+
+    <h:body>       
+        <div id="top">
+            <div id="logo">
+                [logo]
+            </div>
+            <div id="search">
+                [search]
+            </div>
+            <div id="login">
+                [login]
+            </div>
+        </div>
+        <div id="main">
+            <div id="menu">
+                <h:link value="List projects" outcome="projects_list" />
+            </div>
+            <div id="adminMenu">
+                [admin menu]
+            </div>
+            <div id="content" class="left_content">
+                <ui:insert name="content">[content]</ui:insert>
+            </div>
+            <div id="footer">
+                [footer]
+            </div>
+        </div>
+    </h:body>
+</html>
+
