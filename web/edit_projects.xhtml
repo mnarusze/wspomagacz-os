@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:body>
+        <ui:composition template="./WEB-INF/template.xhtml">
+            <ui:define name="content">
+                <h:form>
+                    <h:panelGrid columns="3">
+                        <h:outputText value="Name of your new project" />
+                        <h:inputText id="projName" value="#{EditHelperBean.projects.projName}" />
+                        <h:message for="projName" />
+
+                        <h:outputText value="Project open to public" />
+                        <h:selectBooleanCheckbox id="isPublic" value="#{EditHelperBean.projects.isPublic}" />
+                        <h:message for="isPublic" />
+
+
+                        <h:outputText value="GIT" />
+                        <h:selectBooleanCheckbox id="gitEnabled" value="#{EditHelperBean.projects.gitEnabled}" />
+                        <h:message for="gitEnabled" />
+
+                        <h:outputText value="SVN" />
+                        <h:selectBooleanCheckbox id="svnEnabled" value="#{EditHelperBean.projects.svnEnabled}" />
+                        <h:message for="svnEnabled" />
+
+                        <h:outputText value="Trac" />
+                        <h:selectBooleanCheckbox id="tracEnabled" value="#{EditHelperBean.projects.tracEnabled}" />
+                        <h:message for="tracEnabled" />
+
+
+
+                    </h:panelGrid>
+                    <h:commandButton value="Save Project" action="#{EditHelperBean.saveProject()}"/>
+                    <h:commandButton action="index" value="Anuluj" immediate="true" />
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+
