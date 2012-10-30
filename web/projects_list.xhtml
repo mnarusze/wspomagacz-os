@@ -11,7 +11,7 @@
                     <h:dataTable border="1" var="Projects" value="#{ProjectsManagerBean.projects}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Name" /></f:facet>
-                            <h:commandButton value="Usuń" />
+                            <h:commandButton value="Delete" />
                             <h:commandLink>
                                 <h:outputText value="#{Projects.projName}" />
                             </h:commandLink>
@@ -33,10 +33,10 @@
                             <h:outputText value="#{Projects.owner.firstname}" />
                         </h:column>
                         <h:column>
-                            <f:facet name="header"><h:outputText value="Uzytkownicy" /></f:facet>
+                            <f:facet name="header"><h:outputText value="Users" /></f:facet>
                             <h:dataTable var="User" value="#{Projects.usersCollection}">
                                 <h:column>
-                                    <h:commandButton value="Usuń" />
+                                    <h:commandButton value="Delete" />
                                     <h:commandLink>
                                         <h:outputText value="#{User.nickname}" />
                                     </h:commandLink>
@@ -45,7 +45,7 @@
                             </h:dataTable>
                         </h:column>
                     </h:dataTable>
-                    <h:commandButton value="Dodaj Projekt" />
+                    <h:commandButton value="New Project" action="#{EditHelperBean.newProject()}" />
                 </h:form>
             </ui:define>
         </ui:composition>
