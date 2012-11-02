@@ -10,6 +10,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 import pl.gda.pg.eti.kask.projects_manager.facade.ProjectsFacade;
+import pl.gda.pg.eti.kask.projects_manager.managers.RepositoriesManager;
 
 /**
  *
@@ -52,7 +53,14 @@ public class EditHelperBean {
         if (editingProjects) {
             projectFacadeLocal.edit(localProjects);
         } else {
+            if (localProjects.getGitEnabled()) {
+                RepositoriesManager.createRepository(localProjects.getProjName(), "git");
+            }
+            if (localProjects.getSvnEnabled()) {
+                RepositoriesManager.createRepository(localProjects.getProjName(), "svn");
+            }
             projectFacadeLocal.create(localProjects);
+            
         }
 
         return "projects_list";
