@@ -1,3 +1,9 @@
 /dist/
 /build/
-/nbproject/private/
+nbproject/private/
+
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
