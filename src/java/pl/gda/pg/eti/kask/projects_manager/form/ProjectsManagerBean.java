@@ -5,11 +5,15 @@
 package pl.gda.pg.eti.kask.projects_manager.form;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.model.SelectItem;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
+import pl.gda.pg.eti.kask.projects_manager.entity.Users;
 import pl.gda.pg.eti.kask.projects_manager.facade.ProjectsFacade;
+import pl.gda.pg.eti.kask.projects_manager.facade.UsersFacade;
 
 /**
  *
@@ -20,6 +24,9 @@ public class ProjectsManagerBean implements Serializable {
     
     @EJB
     private ProjectsFacade projectsFacade;
+    
+    @EJB
+    private UsersFacade usersFacade;
 
     public ProjectsManagerBean() {
     }
@@ -28,5 +35,17 @@ public class ProjectsManagerBean implements Serializable {
         return projectsFacade.findAll();
     }
     
+    public List<Users> getUsers() {
+        return usersFacade.findAll();
+    }
+    
+    public List<SelectItem> getUsersAsSelectItems() {
+        ArrayList<SelectItem> list = new ArrayList<SelectItem>();
+        for(Object o : getUsers()) {
+            Users u = (Users) o;
+            list.add(new SelectItem(u, u.getFirstname() + " " + u.getLastname()));
+        }
+        return list;
+    }
     
 }
