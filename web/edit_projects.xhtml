@@ -17,7 +17,6 @@
                         <h:selectBooleanCheckbox id="isPublic" value="#{EditHelperBean.projects.isPublic}" />
                         <h:message for="isPublic" />
 
-
                         <h:outputText value="GIT" />
                         <h:selectBooleanCheckbox id="gitEnabled" value="#{EditHelperBean.projects.gitEnabled}" />
                         <h:message for="gitEnabled" />
@@ -30,7 +29,11 @@
                         <h:selectBooleanCheckbox id="tracEnabled" value="#{EditHelperBean.projects.tracEnabled}" />
                         <h:message for="tracEnabled" />
 
-
+                        <h:outputText id="owner" value="Owner"/>
+                        <h:selectOneMenu value="#{EditHelperBean.projects.owner}">
+                            <f:selectItems value="#{ProjectsManagerBean.usersAsSelectItems}"/>                  
+                        </h:selectOneMenu>
+                        <h:message for="owner" />
 
                     </h:panelGrid>
                     <h:commandButton value="Save Project" action="#{EditHelperBean.saveProject()}"/>

@@ -8,10 +8,11 @@
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <h:dataTable border="1" var="Projects" value="#{ProjectsManagerBean.projects}">
+                    <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projects}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Name" /></f:facet>
                             <h:commandButton value="Delete" action="#{EditHelperBean.usunProject()}"/>
+                            <h:commandButton value="Edit Users" action="#{EditHelperBean.addUsersToProject()}"/>
                             <h:commandLink action="#{EditHelperBean.editProject()}">
                                 <h:outputText value="#{Projects.projName}" />
                             </h:commandLink>
@@ -36,8 +37,8 @@
                             <f:facet name="header"><h:outputText value="Users" /></f:facet>
                             <h:dataTable var="User" value="#{Projects.usersCollection}">
                                 <h:column>
-                                    <h:commandButton value="Delete" />
-                                    <h:commandLink>
+                                    <h:commandButton value="Delete" action="#{EditHelperBean.deleteUsers()}"/>
+                                    <h:commandLink action="#{EditHelperBean.editUsers()}">
                                         <h:outputText value="#{User.nickname}" />
                                     </h:commandLink>
                                     <h:outputText value=" #{User.firstname} #{User.lastname}" />
@@ -46,6 +47,7 @@
                         </h:column>
                     </h:dataTable>
                     <h:commandButton value="New Project" action="#{EditHelperBean.newProject()}" />
+                    <h:commandButton value="New User" action="#{EditHelperBean.newUser()}" />
                 </h:form>
             </ui:define>
         </ui:composition>
