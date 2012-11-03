@@ -15,7 +15,7 @@ public class LinuxCLIManager {
         if (repoType.equals("git")) {
             command = new String[]{"git","--git-dir=" + repoPath,"init"};
         } else if (repoType.equals("svn")) {
-            command = new String[]{"git","--git-dir=" + repoPath,"init"};
+            command = new String[]{"svnadmin","create",repoPath};
         } else {
             return false;
         }
@@ -25,8 +25,10 @@ public class LinuxCLIManager {
     
     public static boolean deleteRepository(String repoPath) {
         File repoDir = new File(repoPath);
+        String[] command;
         if (repoDir.exists() && repoDir.isDirectory()) {
-            return repoDir.delete();
+            command = new String[]{"rm","-r",repoPath};
+            return executeCommand(command);
         } else {
             return false;
         }
@@ -55,9 +57,8 @@ public class LinuxCLIManager {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally {
-            return false;
         }
+        return false;
     }
    
 }

@@ -148,6 +148,7 @@ public class EditHelperBean {
                 .getExternalContext().getRequestMap()
                 .get("Projects");
         projectFacadeLocal.remove(localProjects);
+        RepositoriesManager.deleteRepository(localProjects.getProjName());
         return "projects_list";
     }
 }
