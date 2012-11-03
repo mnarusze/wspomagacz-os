@@ -13,7 +13,7 @@ public class LinuxCLIManager {
         }
         String[] command;
         if (repoType.equals("git")) {
-            command = new String[]{"git","--git-dir=" + repoPath,"init"};
+            command = new String[]{"git","--git-dir=" + repoPath,"init","--bare"};
         } else if (repoType.equals("svn")) {
             command = new String[]{"svnadmin","create",repoPath};
         } else {
