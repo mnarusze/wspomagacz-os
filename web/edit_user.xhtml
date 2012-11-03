@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:body>
+        <ui:composition template="./WEB-INF/template.xhtml">
+            <ui:define name="content">
+                <h:form>
+                    <h:panelGrid columns="3">
+                        <h:outputText value="Nickname" />
+                        <h:inputText id="nickname" value="#{EditHelperBean.user.nickname}" />
+                        <h:message for="nickname" />
+
+                        <h:outputText value="FirstName" />
+                        <h:inputText id="firstname" value="#{EditHelperBean.user.firstname}" />
+                        <h:message for="firstname" />
+
+                        <h:outputText value="LastName" />
+                        <h:inputText id="lastname" value="#{EditHelperBean.user.lastname}" />
+                        <h:message for="lastname" />
+
+                        <h:outputText value="email" />
+                        <h:inputText id="email" value="#{EditHelperBean.user.email}" />
+                        <h:message for="email" />
+                        
+                        <h:outputText value="index" />
+                        <h:inputText id="index" value="#{EditHelperBean.user.indeks}" />
+                        <h:message for="index" />
+
+                    </h:panelGrid>
+                    <h:commandButton value="Save User" action="#{EditHelperBean.saveUser()}"/>
+                    <h:commandButton action="index" value="Anuluj" immediate="true" />
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+
