@@ -1,0 +1,8 @@
+cscript ADDUsers.vbs c:\Lab527\bin\dodac.xls 
+
+
+Skrypt przegląda wskazany plik xls i dodaje wierszami aż do napotkania błędu lub napotkania pustej linii
+
+Wszystko co poniżej pustej linii jest ignorowane
+
+Konto jest tworzone w AD, można się do niego zalogować, hasło jest ustawione na takie, które musi zostać zmienione przy pierwszym zalogowaniu (obecnie studenci robią to przez serwis LabAdmin).
