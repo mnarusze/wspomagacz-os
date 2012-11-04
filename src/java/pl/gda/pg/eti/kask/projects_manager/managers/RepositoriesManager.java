@@ -12,8 +12,14 @@ public class RepositoriesManager {
         repositoresProperties = loadProperties();
     }
     
-    private static String getRepositoryPath(String repoName) {
-        return repositoresProperties.getProperty("repositories_dir") + repoName;
+    private static String getRepositoryPath(String repoName, String repoType) {
+        return new StringBuilder().
+                append(repositoresProperties.getProperty("repositories_dir")).
+                append("/").
+                append(repoType).
+                append("/").
+                append(repoName).
+                toString();
     }
     
     private static Properties loadProperties() {
@@ -28,12 +34,12 @@ public class RepositoriesManager {
         return properties;
     }
     
-    public static boolean deleteRepository(String repoName) {
-        return LinuxCLIManager.deleteRepository(getRepositoryPath(repoName));
+    public static boolean deleteRepository(String repoName, String repoType) {
+        return LinuxCLIManager.deleteRepository(getRepositoryPath(repoName, repoType));
     }
     
     public static boolean createRepository(String repoName, String repoType) {
-        return LinuxCLIManager.createRepository(getRepositoryPath(repoName), repoType);
+        return LinuxCLIManager.createRepository(getRepositoryPath(repoName, repoType), repoType);
     }
     public boolean addUser(String username) {
         return true;

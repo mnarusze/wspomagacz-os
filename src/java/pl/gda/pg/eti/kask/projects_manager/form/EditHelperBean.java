@@ -148,7 +148,12 @@ public class EditHelperBean {
                 .getExternalContext().getRequestMap()
                 .get("Projects");
         projectFacadeLocal.remove(localProjects);
-        RepositoriesManager.deleteRepository(localProjects.getProjName());
+        if (localProjects.getGitEnabled()) {
+            RepositoriesManager.deleteRepository(localProjects.getProjName(), "git");
+        }
+        if (localProjects.getSvnEnabled()) {
+            RepositoriesManager.deleteRepository(localProjects.getProjName(), "svn");
+        }       
         return "projects_list";
     }
 }
