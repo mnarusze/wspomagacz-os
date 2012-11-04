@@ -5,43 +5,88 @@ import java.io.InputStream;
 
 public class LinuxCLIManager {
     
-    
-    public static boolean createRepository(String repoPath, String repoType) {
-        File repoDir = new File(repoPath);
-        if (repoDir.exists()) {
-            return false;
-        }
-        String[] command;
-        if (repoType.equals("git")) {
-            command = new String[]{"git","--git-dir=" + repoPath,"init","--bare"};
-        } else if (repoType.equals("svn")) {
-            command = new String[]{"svnadmin","create",repoPath};
+    public static boolean createRepository(
+            String reposPath, 
+            String repoName, 
+            String repoType, 
+            String scriptsPath, 
+            String templatesPath,
+            String tracDir,
+            boolean trac) {
+        
+        File script = new File(scriptsPath + "/create_repo.sh");
+        String[] command = null;
+        
+        if (trac) {
+            command = new String[]{
+                script.getAbsolutePath(),
+                repoType.equals("git") ? "-g" : "-s",
+                "-n",repoName,
+                "-r",reposPath,
+                "-t",
+                "-a",tracDir,
+                "-d","Description for " + repoName,
+                "-w",templatesPath,
+                };
         } else {
-            return false;
+            command = new String[]{
+                script.getAbsolutePath(),
+                repoType.equals("git") ? "-g" : "-s",
+                "-n",repoName,
+                "-r",reposPath,
+                };
         }
         
+        if (command == null) {
+            return false;
+        }
         return executeCommand(command);
     }
     
-    public static boolean deleteRepository(String repoPath) {
-        File repoDir = new File(repoPath);
-        String[] command;
-        if (repoDir.exists() && repoDir.isDirectory()) {
-            command = new String[]{"rm","-r",repoPath};
-            return executeCommand(command);
+    public static boolean deleteRepository(
+            String reposPath, 
+            String repoName, 
+            String repoType, 
+            String scriptsPath,
+            String tracDir,
+            boolean trac) {
+        
+        File script = new File(scriptsPath + "/delete_repo.sh");
+        String[] command = null;
+        
+        if (trac) {
+            command = new String[]{
+                script.getAbsolutePath(),
+                repoType.equals("git") ? "-g" : "-s",
+                "-n",repoName,
+                "-r",reposPath,
+                "-t",
+                "-a",tracDir,
+                };
         } else {
+            command = new String[]{
+                script.getAbsolutePath(),
+                repoType.equals("git") ? "-g" : "-s",
+                "-n",repoName,
+                "-r",reposPath,
+                };
+        }
+        
+        if (command == null) {
             return false;
         }
+        return executeCommand(command);
     }
     
     private static boolean executeCommand(String[] command) {
         InputStream in = null;
         Process p = null;
+        ProcessBuilder pb = new ProcessBuilder(command);
         StringBuilder commandResult = new StringBuilder();
         int retval;
         int readint;
         try {
-            p = Runtime.getRuntime().exec(command);
+            p = pb.start();
             retval = p.waitFor();
             if (retval == 0) {
                 return true;
@@ -51,8 +96,9 @@ public class LinuxCLIManager {
                 while ((readint = in.read()) != -1) {
                     commandResult.append((char)readint);
                 }
-                System.err.print("Command " + command + " was not succesfull: " + 
+                System.err.print("Command was not succesfull (retval : " + retval + "): " + 
                         commandResult.toString());
+                
                 return false;
             }
         } catch (Exception ex) {

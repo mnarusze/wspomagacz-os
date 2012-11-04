@@ -131,13 +131,15 @@ public class EditHelperBean {
             projectFacadeLocal.edit(localProjects);
         } else {
             if (localProjects.getGitEnabled()) {
-                RepositoriesManager.createRepository(localProjects.getProjName(), "git");
+                if (RepositoriesManager.createRepository(localProjects.getProjName(), "git", localProjects.getTracEnabled())) {
+                    projectFacadeLocal.create(localProjects);
+                }
             }
             if (localProjects.getSvnEnabled()) {
-                RepositoriesManager.createRepository(localProjects.getProjName(), "svn");
+                if (RepositoriesManager.createRepository(localProjects.getProjName(), "svn", localProjects.getTracEnabled())) {
+                    projectFacadeLocal.create(localProjects);
+                }
             }
-            projectFacadeLocal.create(localProjects);
-
         }
 
         return "projects_list";
@@ -147,12 +149,15 @@ public class EditHelperBean {
         localProjects = (Projects) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("Projects");
-        projectFacadeLocal.remove(localProjects);
         if (localProjects.getGitEnabled()) {
-            RepositoriesManager.deleteRepository(localProjects.getProjName(), "git");
+            if (RepositoriesManager.deleteRepository(localProjects.getProjName(), "git", localProjects.getTracEnabled())) {
+                projectFacadeLocal.remove(localProjects);
+            }
         }
         if (localProjects.getSvnEnabled()) {
-            RepositoriesManager.deleteRepository(localProjects.getProjName(), "svn");
+            if (RepositoriesManager.deleteRepository(localProjects.getProjName(), "svn", localProjects.getTracEnabled())) {
+                projectFacadeLocal.remove(localProjects);
+            }
         }       
         return "projects_list";
     }
