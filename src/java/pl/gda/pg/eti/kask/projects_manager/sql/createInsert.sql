@@ -16,7 +16,7 @@ CREATE TABLE users (
 
 CREATE TABLE projects (
     id smallint not null auto_increment,
-    proj_name varchar(30) not null,
+    proj_name varchar(30) unique not null,
     owner smallint not null,
     svn_enabled boolean not null,
     git_enabled boolean not null,
@@ -43,7 +43,27 @@ INSERT INTO users (nickname,firstname,lastname,indeks,email) VALUES
 
 INSERT INTO projects (proj_name,owner,svn_enabled,git_enabled,trac_enabled,is_public) VALUES
     ("inzynierka",1,TRUE,TRUE,TRUE,TRUE),
-    ("projekt_prywatny",3,TRUE,TRUE,TRUE,FALSE);
+    ("projekt_prywatny1",3,TRUE,TRUE,TRUE,FALSE),
+    ("inzynierka1",1,TRUE,TRUE,TRUE,TRUE),
+    ("projekt_prywatny2",3,TRUE,TRUE,TRUE,FALSE),
+    ("inzynierka2",1,TRUE,TRUE,TRUE,TRUE),
+    ("projekt_prywatny3",3,TRUE,TRUE,TRUE,FALSE),
+    ("inzynierka3",1,TRUE,TRUE,TRUE,TRUE),
+    ("projekt_prywatny4",3,TRUE,TRUE,TRUE,FALSE),
+    ("inzynierka4",1,TRUE,TRUE,TRUE,TRUE),
+    ("projekt_prywatny5",3,TRUE,TRUE,TRUE,FALSE),
+    ("inzynierka5",1,TRUE,TRUE,TRUE,TRUE),
+    ("projekt_prywatny6",3,TRUE,TRUE,TRUE,FALSE),
+    ("inzynierka6",1,TRUE,TRUE,TRUE,TRUE),
+    ("projekt_prywatny7",3,TRUE,TRUE,TRUE,FALSE),
+    ("inzynierka7",1,TRUE,TRUE,TRUE,TRUE),
+    ("projekt_prywatny8",3,TRUE,TRUE,TRUE,FALSE),
+    ("inzynierka8",1,TRUE,TRUE,TRUE,TRUE),
+    ("projekt_prywatny9",3,TRUE,TRUE,TRUE,FALSE),
+    ("inzynierka9",1,TRUE,TRUE,TRUE,TRUE),
+    ("projekt_prywatny10",3,TRUE,TRUE,TRUE,FALSE),
+    ("inzynierka10",1,TRUE,TRUE,TRUE,TRUE),
+    ("projekt_prywatny11",3,TRUE,TRUE,TRUE,FALSE);
 
 INSERT INTO proj_has_users (projid,userid) VALUES
     (1,1),

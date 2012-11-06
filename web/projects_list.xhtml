@@ -3,51 +3,62 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:p="http://primefaces.org/ui">
     <h:body>
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projects}">
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Name" /></f:facet>
-                            <h:commandButton value="Delete" action="#{EditHelperBean.usunProject()}"/>
-                            <h:commandButton value="Edit Users" action="#{EditHelperBean.addUsersToProject()}"/>
-                            <h:commandLink action="#{EditHelperBean.editProject()}">
-                                <h:outputText value="#{Projects.projName}" />
-                            </h:commandLink>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="SVN" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{Projects.svnEnabled}" disabled="true" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="GIT" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{Projects.gitEnabled}" disabled="true" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Trac" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{Projects.tracEnabled}" disabled="true" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Owner" /></f:facet>
+
+
+                    <p:dataTable var="Projects" value="#{ProjectsManagerBean.projects}"
+                                 paginator="true" rows="5"  
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                 rowsPerPageTemplate="5,10,15">  
+                        <f:facet name="header">
+                            Lista projektow
+                        </f:facet>
+                        <p:column id="modelHeader" sortBy="#{Projects.projName}">
+                            <f:facet name="header" >
+                                <h:outputText value="Name" />
+                            </f:facet>
+
+                            <p:commandButton value="Delete" action="#{EditHelperBean.usunProject()}" rendered="false"/>
+                            <p:commandButton value="Add/Remove Users" action="#{EditHelperBean.addUsersToProject()}" rendered="false"/>
+                            <p:commandButton value="Edit Project" action="#{EditHelperBean.editProject()}" rendered="false"/>
+                            <h:outputText value="#{Projects.projName}" />
+                        </p:column>
+                        <p:column headerText="SVN">
+                            <p:selectBooleanCheckbox value="#{Projects.svnEnabled}" disabled="true" />
+                        </p:column>
+                        <p:column headerText="GIT">
+                            <p:selectBooleanCheckbox value="#{Projects.gitEnabled}" disabled="true" />
+                        </p:column>
+                        <p:column headerText="Trac">
+                            <p:selectBooleanCheckbox value="#{Projects.tracEnabled}" disabled="true" />
+                        </p:column>
+                        <p:column headerText="Owner">
                             <h:outputText value="#{Projects.owner.firstname}" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Users" /></f:facet>
-                            <h:dataTable var="User" value="#{Projects.usersCollection}">
-                                <h:column>
-                                    <h:commandButton value="Delete" action="#{EditHelperBean.deleteUsers()}"/>
-                                    <h:commandLink action="#{EditHelperBean.editUsers()}">
-                                        <h:outputText value="#{User.nickname}" />
-                                    </h:commandLink>
+                        </p:column>
+                        <p:column headerText="Users">
+                            <p:dataTable var="User" value="#{Projects.usersCollection}">
+                                <p:column>
+                                    <p:commandButton value="Delete User" action="#{EditHelperBean.deleteUsers()}" rendered="false"/>
+                                    <p:commandButton value="Edit User" action="#{EditHelperBean.editUsers()}" rendered="false" />
+                                    <h:outputText value="#{User.nickname}" rendered="false"/>
                                     <h:outputText value=" #{User.firstname} #{User.lastname}" />
-                                </h:column>
-                            </h:dataTable>
-                        </h:column>
-                    </h:dataTable>
-                    <h:commandButton value="New Project" action="#{EditHelperBean.newProject()}" />
-                    <h:commandButton value="New User" action="#{EditHelperBean.newUser()}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+
+                        <f:facet name="footer">
+                            W sumie jest #{fn:length(ProjectsManagerBean.projects)} projektow.
+                        </f:facet>
+                    </p:dataTable>
+
+                    <p:commandButton value="New Project" action="#{EditHelperBean.newProject()}" />
+                    <p:commandButton value="New User" action="#{EditHelperBean.newUser()}" />
                 </h:form>
             </ui:define>
         </ui:composition>
