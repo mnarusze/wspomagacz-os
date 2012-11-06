@@ -4,10 +4,8 @@ SVN=
 GIT=
 NAME=
 TRAC=
-TRAC_DIR=
-REPOSITORIES_DIR=
 
-while getopts ":sgta:d:r:n:w:" optname ; do
+while getopts ":sgtn:" optname ; do
     case "$optname" in
         "s")
             SVN=1;
@@ -18,14 +16,8 @@ while getopts ":sgta:d:r:n:w:" optname ; do
         "t")
             TRAC=1
             ;;
-        "r")
-            REPOSITORIES_DIR="$OPTARG"
-            ;;
         "n")
             NAME="$OPTARG"
-            ;;
-        "a")
-            TRAC_DIR="$OPTARG"
             ;;
         *)
             echo "Błąd: Nieznana opcja $OPTARG" > /dev/stderr
@@ -39,18 +31,8 @@ if [[ -z $NAME ]] ; then
     exit 1
 fi
 
-if [[ -z $REPOSITORIES_DIR ]] ; then
-    echo "Błąd: brak ścieżki do repozytoriów" > /dev/stderr
-    exit 1
-fi
-
 if [[ -z $GIT && -z $SVN ]] ; then
     echo "Błąd: nie podano typu repozytorium" > /dev/stderr
-    exit 1
-fi
-
-if [[ -n $TRAC && $TRAC -eq 1 && -z $TRAC_DIR ]] ; then
-    echo "Błąd: brak ścieżki do trac" > /dev/stderr
     exit 1
 fi
 
@@ -58,7 +40,7 @@ fi
 #  GIT  #
 #########
 if [[ -n $GIT && $GIT -eq 1 ]] ; then
-    REPO_DIR=$REPOSITORIES_DIR/git/$NAME
+    REPO_DIR="/var/www/git/$NAME"
 
     if [[ ! -d $REPO_DIR ]] ; then
         echo "Błąd: Repozytorium git $REPO_DIR nie istnieje!" > /dev/stderr
@@ -71,7 +53,7 @@ fi
 #  SVN  #
 #########
 if [[ -n $SVN && $SVN -eq 1 ]] ; then
-    REPO_DIR=$REPOSITORIES_DIR/svn/$NAME
+    REPO_DIR="/var/www/svn/$NAME"
 
     if [[ ! -d $REPO_DIR ]] ; then
         echo "Błąd: Repozytorium svn $REPO_DIR nie istnieje!" > /dev/stderr
@@ -85,7 +67,7 @@ fi
 #  TRAC  #
 ##########
 if [[ -n $TRAC && $TRAC -eq 1 ]] ; then
-    TRAC_DIR=$TRAC_DIR/$NAME
+    TRAC_DIR=/var/www/trac/$NAME
 
     if [[ ! -d $TRAC_DIR ]] ; then
         echo "Błąd: Repozytorium trac $TRAC_DIR nie istnieje!" > /dev/stderr

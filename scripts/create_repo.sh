@@ -5,11 +5,9 @@ GIT=
 NAME=
 TRAC=
 DESCRIPTION=
-REPOSITORIES_DIR=
-TRAC_DIR=
 TEMPLATES_DIR=
 
-while getopts ":sgta:d:r:n:w:" optname ; do
+while getopts ":sgtd:n:w:" optname ; do
     case "$optname" in
         "s")
             SVN=1;
@@ -19,12 +17,6 @@ while getopts ":sgta:d:r:n:w:" optname ; do
             ;;
         "t")
             TRAC=1
-            ;;
-        "r")
-            REPOSITORIES_DIR="$OPTARG"
-            ;;
-        "a")
-            TRAC_DIR="$OPTARG"
             ;;
         "n")
             NAME="$OPTARG"
@@ -47,11 +39,6 @@ if [[ -z "$NAME" ]] ; then
     exit 1
 fi
 
-if [[ -z "$REPOSITORIES_DIR" ]] ; then
-    echo "Błąd: brak ścieżki do repozytoriów" > /dev/stderr
-    exit 1
-fi
-
 if [[ -z "$GIT" && -z "$SVN" ]] ; then
     echo "Błąd: nie podano typu repozytorium" > /dev/stderr
     exit 1
@@ -67,16 +54,11 @@ if [[ -n "$TRAC" && "$TRAC" -eq 1 && -z "$TEMPLATES_DIR" ]] ; then
     exit 1
 fi
 
-if [[ -n "$TRAC" && "$TRAC" -eq 1 && -z "$TRAC_DIR" ]] ; then
-    echo "Błąd: brak ścieżki do trac!" > /dev/stderr
-    exit 1
-fi
-
 #########
 #  GIT  #
 #########
 if [[ -n "$GIT" && "$GIT" -eq 1 ]] ; then
-    REPO_DIR="$REPOSITORIES_DIR"/git/"$NAME"
+    REPO_DIR="/var/www/git/$NAME"
 
     if [[ -d "$REPO_DIR" ]] ; then
         echo "Błąd: Repozytorium $REPO_DIR już istnieje!" > /dev/stderr
@@ -92,11 +74,11 @@ fi
 #  SVN  #
 #########
 if [[ -n "$SVN" && "$SVN" -eq 1 ]] ; then
-    REPO_DIR="$REPOSITORIES_DIR/svn/$NAME"
+    REPO_DIR="/var/www/svn/$NAME"
     REPO_DIR_FOR_INI=$(echo $REPO_DIR | sed 's/\//\\\//g')
 
     if [[ -d "$REPO_DIR" ]] ; then
-        echo "Błąd: Repozytorium "$REPO_DIR" już istnieje!" > /dev/stderr
+        echo "Błąd: Repozytorium $REPO_DIR już istnieje!" > /dev/stderr
         exit 2
     fi
     svnadmin create "$REPO_DIR"
@@ -104,11 +86,13 @@ if [[ -n "$SVN" && "$SVN" -eq 1 ]] ; then
     chown apache:apache "$REPO_DIR" -R
     chmod o-rwx "$REPO_DIR" -R
 
+    
+
     ############
     #   TRAC   #
     ############
     if [[ -n "$TRAC" && "$TRAC" -eq 1 ]] ; then
-        TRAC_DIR="$TRAC_DIR"/"$NAME"
+        TRAC_DIR="/var/www/trac/$NAME"
         TRAC_INI="$TRAC_DIR"/conf/trac.ini
 
         # Copy and prepare HOOKS

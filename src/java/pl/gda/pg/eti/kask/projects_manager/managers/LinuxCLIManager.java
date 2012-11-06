@@ -6,12 +6,10 @@ import java.io.InputStream;
 public class LinuxCLIManager {
     
     public static boolean createRepository(
-            String reposPath, 
             String repoName, 
             String repoType, 
             String scriptsPath, 
             String templatesPath,
-            String tracDir,
             boolean trac) {
         
         File script = new File(scriptsPath + "/create_repo.sh");
@@ -22,9 +20,7 @@ public class LinuxCLIManager {
                 script.getAbsolutePath(),
                 repoType.equals("git") ? "-g" : "-s",
                 "-n",repoName,
-                "-r",reposPath,
                 "-t",
-                "-a",tracDir,
                 "-d","Description for " + repoName,
                 "-w",templatesPath,
                 };
@@ -33,7 +29,6 @@ public class LinuxCLIManager {
                 script.getAbsolutePath(),
                 repoType.equals("git") ? "-g" : "-s",
                 "-n",repoName,
-                "-r",reposPath,
                 };
         }
         
@@ -44,11 +39,9 @@ public class LinuxCLIManager {
     }
     
     public static boolean deleteRepository(
-            String reposPath, 
             String repoName, 
             String repoType, 
             String scriptsPath,
-            String tracDir,
             boolean trac) {
         
         File script = new File(scriptsPath + "/delete_repo.sh");
@@ -59,16 +52,13 @@ public class LinuxCLIManager {
                 script.getAbsolutePath(),
                 repoType.equals("git") ? "-g" : "-s",
                 "-n",repoName,
-                "-r",reposPath,
                 "-t",
-                "-a",tracDir,
                 };
         } else {
             command = new String[]{
                 script.getAbsolutePath(),
                 repoType.equals("git") ? "-g" : "-s",
                 "-n",repoName,
-                "-r",reposPath,
                 };
         }
         
