@@ -12,7 +12,7 @@ import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 import pl.gda.pg.eti.kask.projects_manager.entity.Users;
 import pl.gda.pg.eti.kask.projects_manager.facade.ProjectsFacade;
 import pl.gda.pg.eti.kask.projects_manager.facade.UsersFacade;
-import pl.gda.pg.eti.kask.projects_manager.managers.RepositoriesManager;
+import pl.gda.pg.eti.kask.projects_manager.managers.ProjectsManager;
 
 /**
  *
@@ -130,15 +130,8 @@ public class EditHelperBean {
         if (editingProjects) {
             projectFacadeLocal.edit(localProjects);
         } else {
-            if (localProjects.getGitEnabled()) {
-                if (RepositoriesManager.createRepository(localProjects.getProjName(), "git", localProjects.getTracEnabled())) {
-                    projectFacadeLocal.create(localProjects);
-                }
-            }
-            if (localProjects.getSvnEnabled()) {
-                if (RepositoriesManager.createRepository(localProjects.getProjName(), "svn", localProjects.getTracEnabled())) {
-                    projectFacadeLocal.create(localProjects);
-                }
+            if (ProjectsManager.createRepository(localProjects)) {
+                projectFacadeLocal.create(localProjects);
             }
         }
 
@@ -149,16 +142,9 @@ public class EditHelperBean {
         localProjects = (Projects) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("Projects");
-        if (localProjects.getGitEnabled()) {
-            if (RepositoriesManager.deleteRepository(localProjects.getProjName(), "git", localProjects.getTracEnabled())) {
+        if (ProjectsManager.deleteRepository(localProjects)) {
                 projectFacadeLocal.remove(localProjects);
-            }
-        }
-        if (localProjects.getSvnEnabled()) {
-            if (RepositoriesManager.deleteRepository(localProjects.getProjName(), "svn", localProjects.getTracEnabled())) {
-                projectFacadeLocal.remove(localProjects);
-            }
-        }       
+        }    
         return "projects_list";
     }
 }
