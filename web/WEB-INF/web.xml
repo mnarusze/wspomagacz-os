@@ -21,6 +21,10 @@
     <welcome-file-list>
         <welcome-file>faces/index.xhtml</welcome-file>
     </welcome-file-list>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/accessdenied.xhtml</location>
+    </error-page>
     <jsp-config>
         <jsp-property-group>
             <description>top and botoom</description>
@@ -34,8 +38,8 @@
         <auth-method>FORM</auth-method>
         <realm-name>ldap-realm</realm-name>
         <form-login-config>
-            <form-login-page>/login.xhtml</form-login-page>
-            <form-error-page>/login.xhtml</form-error-page>
+            <form-login-page>/faces/login.xhtml</form-login-page>
+            <form-error-page>/faces/login.xhtml</form-error-page>
         </form-login-config>
     </login-config>
     <security-role>

@@ -6,21 +6,22 @@
     <h:body>
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
-                <form action="j_security_check" method="POST">
-                    <table>
-                        <tr>
-                            <td>Identyfikator:</td>
-                            <td><input type="text" name="j_username"/></td>
-                        </tr>
-                        <tr>
-                            <td>Haslo:</td>
-                            <td> <input type="password" name="j_password"/></td>
-                        </tr>
-                        <tr>
-                            <td><input type="submit" value="Login"/></td>
-                        </tr>
-                    </table>
-                </form>
+                <center>
+                    <h:form>
+                            <h:panelGrid columns="2">
+                                <h:outputText value="Username : "></h:outputText>
+                                <h:inputText id="username" value="#{loginBean.username}"></h:inputText>
+
+                                <h:outputText value="Password : "></h:outputText>
+                                <h:inputSecret id="password" value="#{loginBean.password}"></h:inputSecret>
+                                
+                                <h:commandButton value="Log in" action="#{loginBean.login()}"
+                                                 type="submit"></h:commandButton>
+                            </h:panelGrid>
+                            <h:messages errorClass="errorMessage" infoClass="infoMessage"
+                                        warnClass="warnMessage" layout="table" style="color: red"></h:messages>
+                    </h:form>
+                </center>
             </ui:define>
         </ui:composition>
     </h:body>

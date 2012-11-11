@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <h:outputStylesheet library="css" name="inzynierka.css" />
@@ -19,12 +20,29 @@
                 [search]
             </div>
             <div id="login">
-                <h:link value="Login" outcome="login" />
+                <h:form>
+                    <c:if test="#{loginBean.isLogged()}">
+                        <h:commandLink value="Log out" action="#{loginBean.logout()}"/>
+                    </c:if>
+                    <c:if test="#{!loginBean.isLogged()}">
+                        <h:commandLink value="Log in" action="login"/>
+                    </c:if>
+                </h:form>
             </div>
         </div>
         <div id="main">
             <div id="menu">
-                <h:link value="List projects" outcome="projects_list" />
+                <h:form>
+                    <center>
+                        <h:panelGrid columns="5">
+                            <c:if test="#{loginBean.isLogged()}">
+                                <h:commandLink value="Your projects" action="projects_list"/>
+                                <h:commandLink value="Account options" action="edit_user"/>
+                            </c:if>
+                        <h:commandLink value="All projects" action="projects_list"/>
+                        </h:panelGrid>
+                    </center>
+                </h:form>
             </div>
             <div id="adminMenu">
                 [admin menu]
