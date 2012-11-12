@@ -1,69 +1,14 @@
 #!/bin/bash
 
-# Project-specific params
-SVN= #s
-GIT= #g
-TRAC= #t
-PUBLIC= #p
-NAME= #n
-PROJECT_OWNER= #o
-DESCRIPTION= #d
+#SCRIPTS_MASTER_DIR should be exported!
+if [[ -z $SCRIPTS_MASTER_DIR || ! -d $SCRIPTS_MASTER_DIR ]] ; then
+    echo "Błąd: nie podano ścieżki do skryptów!" > /dev/stderr
+    exit -1
+fi
 
-# Global params
-TEMPLATES_DIR= #T
-TRAC_DIR= #R
-GIT_REPO_DIR= #G
-SVN_REPO_DIR= #S
-SVN_ACCESS_CONTROL_FILE= #C
-PROJECTS_ARCHIVE_DIR= #A
+. $SCRIPTS_MASTER_DIR/common_functions.sh
+get_input $*
 
-while getopts ":sgtpn:d:o:T:R:G:S:C:A:" optname ; do
-    case "$optname" in
-        "s")
-            SVN=1;
-            ;;
-        "g")
-            GIT=1;
-            ;;
-        "t")
-            TRAC=1
-            ;;
-        "p")
-            PUBLIC=1
-            ;;
-        "n")
-            NAME="$OPTARG"
-            ;;
-        "d")
-            DESCRIPTION="$OPTARG"
-            ;;
-        "o")
-            PROJECT_OWNER="$OPTARG"
-            ;;
-        "T")
-            TEMPLATES_DIR="$OPTARG"
-            ;;
-        "R")
-            TRAC_DIR="$OPTARG"
-            ;;
-        "G")
-            GIT_REPO_DIR="$OPTARG"
-            ;;
-        "S")
-            SVN_REPO_DIR="$OPTARG"
-            ;;
-        "C")
-            SVN_ACCESS_CONTROL_FILE="$OPTARG"
-            ;;
-        "A")
-            PROJECTS_ARCHIVE_DIR="$OPTARG"
-            ;;
-        *)
-            echo "Błąd: Nieznana opcja $OPTARG" > /dev/stderr
-            exit 1
-            ;;
-    esac
-done
 
 #################
 # Global checks #
@@ -152,10 +97,14 @@ if [[ -n "$TRAC" && "$TRAC" -eq 1 ]] ; then
     else
         TRAC_DIR=$TRAC_DIR/$NAME
     fi
-    if [[ -z "$DESCRIPTION" ]] ; then
-        echo "Błąd: dla TRAC trzeba podać opis!" > /dev/stderr
-        exit 1
-    fi
+    #
+    # Give up on description for now, it messes the arguments
+    # Use a constant 
+    #if [[ -z "$DESCRIPTION" ]] ; then
+    #    echo "Błąd: dla TRAC trzeba podać opis!" > /dev/stderr
+    #    exit 1
+    #fi
+    DESCRIPTION="Tymczasowe description dla $NAME"
     if [[ -z "$TEMPLATES_DIR" ]] ; then
         echo "Błąd: dla TRAC trzeba podać ścieżkę do katalogu z szablonami!" > /dev/stderr
         exit 1

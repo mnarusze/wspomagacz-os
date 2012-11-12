@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
+import pl.gda.pg.eti.kask.projects_manager.entity.Users;
 
 public class ProjectsManager {
 
@@ -103,8 +104,6 @@ public class ProjectsManager {
         command.add(project.getProjName());
         command.add("-o");
         command.add(project.getOwner().getNickname());
-        command.add("-d");
-        command.add("\"Tymczasowe description dla " + project.getProjName() + "\"");
         command.add("-T");
         command.add(getTemplatesDir());
         command.add("-R");
@@ -120,17 +119,50 @@ public class ProjectsManager {
  
         return executeCommand(command.toArray(new String[0]));
     }
-    public static boolean addUser(String username) {
-        return true;
+    
+    public static boolean addUser(Projects project, Users user) {
+        List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/add_user_to_project.sh");
+        if(project.getSvnEnabled()) {
+            command.add("-s");
+        }
+        if(project.getGitEnabled()) {
+            command.add("-g");
+        }
+        command.add("-n");
+        command.add(project.getProjName());
+        command.add("-u");
+        command.add(user.getNickname());
+        command.add("-C");
+        command.add(getSvnAccessControlFile());
+ 
+        return executeCommand(command.toArray(new String[0]));
     }
-    public static boolean removeUser(String username) {
-        return true;
+    
+    public static boolean removeUser(Projects project, Users user) {
+         List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/remove_user_from_project.sh");
+        if(project.getSvnEnabled()) {
+            command.add("-s");
+        }
+        if(project.getGitEnabled()) {
+            command.add("-g");
+        }
+        command.add("-n");
+        command.add(project.getProjName());
+        command.add("-u");
+        command.add(user.getNickname());
+        command.add("-C");
+        command.add(getSvnAccessControlFile());
+ 
+        return executeCommand(command.toArray(new String[0]));
     }
     
     private static boolean executeCommand(String[] command) {
         InputStream in = null;
         Process p = null;
         ProcessBuilder pb = new ProcessBuilder(command);
+        pb.environment().put("SCRIPTS_MASTER_DIR", getScriptsDir());
         StringBuilder commandResult = new StringBuilder();
         int retval;
         int readint;

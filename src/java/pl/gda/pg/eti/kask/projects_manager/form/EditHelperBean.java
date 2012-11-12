@@ -73,9 +73,12 @@ public class EditHelperBean {
         localUsers = (Users) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("Users");
-
-        localProjects.getUsersCollection().add(localUsers);
-
+        
+        if (ProjectsManager.addUser(localProjects,localUsers)) {
+                localProjects.getUsersCollection().add(localUsers);
+        }
+        
+        
         projectFacadeLocal.edit(localProjects);
         return "projects_list";
     }
@@ -84,9 +87,10 @@ public class EditHelperBean {
         localUsers = (Users) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("Users");
-
-        localProjects.getUsersCollection().remove(localUsers);
-
+        
+        if (ProjectsManager.removeUser(localProjects,localUsers)) {
+            localProjects.getUsersCollection().remove(localUsers);
+        }
         projectFacadeLocal.edit(localProjects);
         return "projects_list";
     }
