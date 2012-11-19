@@ -47,7 +47,7 @@ public class ProjectsManager {
     
     private static Properties loadProperties() {
         Properties properties = new Properties();
-        InputStream in = ProjectsManager.class.getResourceAsStream("/pl/gda/pg/eti/kask/projects_manager/managers/managers.properties");
+        InputStream in = ProjectsManager.class.getResourceAsStream("/pl/gda/pg/eti/kask/projects_manager/app.properties");
         try {
             properties.load(in);
             in.close();
