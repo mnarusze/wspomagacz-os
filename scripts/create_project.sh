@@ -79,8 +79,12 @@ if [[ -n "$GIT" && "$GIT" -eq 1 ]] ; then
         echo "Błąd: Repozytorium $GIT_REPO_DIR już istnieje!" > /dev/stderr
         exit 2
     fi
-
     git --git-dir="$GIT_REPO_DIR" init --bare
+
+    if [[ ! -d "$GIT_REPO_DIR" ]] ; then
+        echo "Błąd: Nie udało się utworzyć repozytorium $GIT_REPO_DIR!" > /dev/stderr
+        exit 3
+    fi
 
     #chown apache:apache "$GIT_REPO_DIR" -R
     chmod o-rwx "$GIT_REPO_DIR" -R
