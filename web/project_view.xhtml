@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:body>
+        <ui:composition template="./WEB-INF/template.xhtml">
+            <ui:define name="content">
+                <h:form>
+                    <h:panelGrid columns="3">
+                        <h:outputText value="Name of your new project" />
+                        <h:outputText id="projName" value="#{EditHelperBean.projects.projName}" />
+                        <h:message for="projName" />
+
+                        <h:outputText value="Project open to public" />
+                        <h:selectBooleanCheckbox disabled="true" id="isPublic" value="#{EditHelperBean.projects.isPublic}" />
+                        <h:message for="isPublic" />
+
+                        <h:outputText value="GIT" />
+                        <h:selectBooleanCheckbox disabled="true" id="gitEnabled" value="#{EditHelperBean.projects.gitEnabled}" />
+                        <h:message for="gitEnabled" />
+
+                        <h:outputText value="SVN" />
+                        <h:selectBooleanCheckbox disabled="true" id="svnEnabled" value="#{EditHelperBean.projects.svnEnabled}" />
+                        <h:message for="svnEnabled" />
+
+                        <h:outputText value="Trac" />
+                        <h:selectBooleanCheckbox disabled="true" id="tracEnabled" value="#{EditHelperBean.projects.tracEnabled}" />
+                        <h:message for="tracEnabled" />
+
+                        <h:outputText value="Trac" />
+                        <h:selectBooleanCheckbox disabled="true" id="redmineEnabled" value="#{EditHelperBean.projects.redmineEnabled}" />
+                        <h:message for="tracEnabled" />
+
+                        <h:outputText id="owner" value="Owner"/>
+                        <h:outputText value="#{EditHelperBean.projects.owner.nickname}" />
+                        <h:message for="owner" />
+
+                    </h:panelGrid> 
+                    <h:dataTable var="UserFromSelectedProject" value="#{EditHelperBean.projects.usersCollection}">
+                        <h:column>
+                            <h:outputText value=" #{UserFromSelectedProject.firstname} #{UserFromSelectedProject.lastname}" />
+                        </h:column>
+                    </h:dataTable>
+
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

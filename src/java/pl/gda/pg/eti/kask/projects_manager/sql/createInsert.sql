@@ -21,6 +21,7 @@ CREATE TABLE projects (
     svn_enabled boolean not null,
     git_enabled boolean not null,
     trac_enabled boolean not null,
+    redmine_enabled boolean not null,
     is_public boolean not null,
     PRIMARY KEY (id),
     FOREIGN KEY (owner) REFERENCES users(id)
@@ -41,9 +42,9 @@ INSERT INTO users (nickname,firstname,lastname,indeks,email) VALUES
     ("dziagu","Dominik","Dziag","121111","deezet@gmail.com"),
     ("zlewak","Mateusz","Zalewski","121514","zalewski.mateusz@gmail.com");
 
-INSERT INTO projects (proj_name,owner,svn_enabled,git_enabled,trac_enabled,is_public) VALUES
-    ("inzynierka",1,TRUE,TRUE,TRUE,TRUE),
-    ("projekt_prywatny",3,TRUE,TRUE,TRUE,FALSE);
+INSERT INTO projects (proj_name,owner,svn_enabled,git_enabled,trac_enabled,redmine_enabled,is_public) VALUES
+    ("inzynierka",1,TRUE,TRUE,TRUE,TRUE,TRUE),
+    ("projekt_prywatny",3,TRUE,TRUE,TRUE,TRUE,FALSE);
 
 INSERT INTO proj_has_users (projid,userid) VALUES
     (1,1),
