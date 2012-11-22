@@ -4,6 +4,7 @@
  */
 package pl.gda.pg.eti.kask.projects_manager.form;
 
+import java.io.Serializable;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -20,7 +21,7 @@ import pl.gda.pg.eti.kask.projects_manager.managers.ProjectsManager;
  */
 @ManagedBean(name = "EditHelperBean")
 @SessionScoped
-public class EditHelperBean {
+public class EditHelperBean implements Serializable {
 
     @EJB
     private ProjectsFacade projectFacadeLocal;
@@ -49,6 +50,13 @@ public class EditHelperBean {
         return "edit_projects";
     }
 
+    public String editProject(Projects p) {
+        localProjects = p;
+        
+        return "edit_projects"; 
+
+    }
+
     public String editProject() {
         localProjects = (Projects) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
@@ -57,6 +65,29 @@ public class EditHelperBean {
 
         return "edit_projects";
 
+    }
+
+    public String viewProject() {
+        localProjects = (Projects) FacesContext.getCurrentInstance()
+                .getExternalContext().getRequestMap()
+                .get("Projects");
+
+        //localProjects = p;
+        //editingProjects = true;
+
+        return "project_view";
+
+    }
+
+    public String viewProject(Projects p) {
+//        localProjects = (Projects) FacesContext.getCurrentInstance()
+//                .getExternalContext().getRequestMap()
+//                .get("Projects");
+
+        localProjects = p;
+        //editingProjects = true;
+
+        return "project_view";
     }
 
     public String addUsersToProject() {
@@ -68,17 +99,23 @@ public class EditHelperBean {
         return "users_list";
 
     }
+    
+    public String addUsersToProject(Projects p){
+        localProjects = p;
+        
+        return "users_list";
+    }
 
     public String saveUsersToProject() {
         localUsers = (Users) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("Users");
-        
-        if (ProjectsManager.addUser(localProjects,localUsers)) {
-                localProjects.getUsersCollection().add(localUsers);
+
+        if (ProjectsManager.addUser(localProjects, localUsers)) {
+            localProjects.getUsersCollection().add(localUsers);
         }
-        
-        
+
+
         projectFacadeLocal.edit(localProjects);
         return "projects_list";
     }
@@ -87,8 +124,8 @@ public class EditHelperBean {
         localUsers = (Users) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("Users");
-        
-        if (ProjectsManager.removeUser(localProjects,localUsers)) {
+
+        if (ProjectsManager.removeUser(localProjects, localUsers)) {
             localProjects.getUsersCollection().remove(localUsers);
         }
         projectFacadeLocal.edit(localProjects);
@@ -120,7 +157,7 @@ public class EditHelperBean {
 
         return "edit_user";
     }
-    
+
     public String saveUser() {
         if (editingUsers) {
             usersFacadeLocal.edit(localUsers);
@@ -147,8 +184,8 @@ public class EditHelperBean {
                 .getExternalContext().getRequestMap()
                 .get("Projects");
         if (ProjectsManager.deleteRepository(localProjects)) {
-                projectFacadeLocal.remove(localProjects);
-        }    
+            projectFacadeLocal.remove(localProjects);
+        }
         return "projects_list";
     }
 }

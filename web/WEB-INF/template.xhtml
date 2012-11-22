@@ -36,8 +36,8 @@
                     <center>
                         <h:panelGrid columns="5">
                             <c:if test="#{loginBean.isLogged()}">
-                                <h:commandLink value="Your projects" action="projects_list"/>
-                                <h:commandLink value="Account options" action="edit_user"/>
+                                <h:commandLink value="Your projects" action="my_projects"/>
+                                <h:commandLink value="Account options" action="my_account"/>
                             </c:if>
                         <h:commandLink value="All projects" action="projects_list"/>
                         </h:panelGrid>

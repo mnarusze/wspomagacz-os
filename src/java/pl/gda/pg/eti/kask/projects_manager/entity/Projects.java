@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Projects.findBySvnEnabled", query = "SELECT p FROM Projects p WHERE p.svnEnabled = :svnEnabled"),
     @NamedQuery(name = "Projects.findByGitEnabled", query = "SELECT p FROM Projects p WHERE p.gitEnabled = :gitEnabled"),
     @NamedQuery(name = "Projects.findByTracEnabled", query = "SELECT p FROM Projects p WHERE p.tracEnabled = :tracEnabled"),
+    @NamedQuery(name = "Projects.findByRedmineEnabled", query = "SELECT p FROM Projects p WHERE p.tracEnabled = :tracEnabled"),
     @NamedQuery(name = "Projects.findByIsPublic", query = "SELECT p FROM Projects p WHERE p.isPublic = :isPublic")})
 public class Projects implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -63,6 +64,10 @@ public class Projects implements Serializable {
     @NotNull
     @Column(name = "trac_enabled")
     private boolean tracEnabled;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "redmine_enabled")
+    private boolean redmineEnabled;
     @Basic(optional = false)
     @NotNull
     @Column(name = "is_public")
@@ -132,6 +137,15 @@ public class Projects implements Serializable {
         this.tracEnabled = tracEnabled;
     }
 
+    public boolean isRedmineEnabled() {
+        return redmineEnabled;
+    }
+
+    public void setRedmineEnabled(boolean redmineEnabled) {
+        this.redmineEnabled = redmineEnabled;
+    }
+
+    
     public boolean getIsPublic() {
         return isPublic;
     }

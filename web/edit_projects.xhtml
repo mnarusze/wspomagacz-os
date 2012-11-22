@@ -29,6 +29,10 @@
                         <h:selectBooleanCheckbox id="tracEnabled" value="#{EditHelperBean.projects.tracEnabled}" />
                         <h:message for="tracEnabled" />
 
+                        <h:outputText value="Redmine" />
+                        <h:selectBooleanCheckbox id="redmineEnabled" value="#{EditHelperBean.projects.redmineEnabled}" />
+                        <h:message for="tracEnabled" />
+
                         <h:outputText id="owner" value="Owner"/>
                         <h:selectOneMenu value="#{EditHelperBean.projects.owner}">
                             <f:selectItems value="#{ProjectsManagerBean.usersAsSelectItems}"/>                  
