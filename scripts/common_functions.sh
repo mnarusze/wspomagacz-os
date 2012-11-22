@@ -20,8 +20,9 @@ function get_input()
     SVN_REPO_DIR= #S
     SVN_ACCESS_CONTROL_FILE= #C
     PROJECTS_ARCHIVE_DIR= #A
+    GITOLITE_ADMIN_DIR= #L
 
-    while getopts ":sgtpn:d:u:o:T:R:G:S:C:A:" optname ; do
+    while getopts ":sgtpn:d:u:o:T:R:G:S:C:A:L:" optname ; do
         echo "Opcja : $optname arg: $OPTARG" > /dev/stderr
         case "$optname" in
             "s")
@@ -67,6 +68,9 @@ function get_input()
             "A")
                 PROJECTS_ARCHIVE_DIR="$OPTARG"
                 ;;
+            "L")
+                GITOLITE_ADMIN_DIR="$OPTARG"
+                ;;    
             *)
                 echo "Błąd: Nieznana opcja $OPTARG" > /dev/stderr
                 exit 1

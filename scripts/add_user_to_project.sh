@@ -19,7 +19,7 @@ if [[ -z "$GIT" && -z "$SVN" ]] ; then
     exit 1
 fi
 
-if [[ -z $USER ]] ; then
+if [[ -z "$USER" ]] ; then
     echo "Błąd: nie podano nazwy użytkownika" > /dev/stderr
     exit 1    
 fi
@@ -28,7 +28,15 @@ fi
 #  GIT  #
 #########
 if [[ -n "$GIT" && "$GIT" -eq 1 ]] ; then
-    echo "GIT!"
+    if [[ -z "$GITOLITE_ADMIN_DIR" ]] ; then
+        echo "Błąd: nie podano sciezki do katalogu administatora Gitolite" > /dev/stderr
+        exit 2
+    fi
+    if [[ ! -d "$GITOLITE_ADMIN_DIR" ]] ; then
+        echo "Błąd: nie istnieje katalog administatora Gitolite $GITOLITE_ADMIN_DIR" > /dev/stderr
+        exit 3
+    fi
+    
 fi
 
 #########
@@ -40,5 +48,5 @@ if [[ -n "$SVN" && "$SVN" -eq 1 ]] ; then
         exit 1
     fi
     CURRENT_LIST=$(cat $SVN_ACCESS_CONTROL_FILE | grep -m 1 "$NAME = ")
-    sed -i "s/$CURRENT_LIST/$CURRENT_LIST $USER,/" $SVN_ACCESS_CONTROL_FILE
+    sed -i "s/$CURRENT_LIST/$CURRENT_LIST $USER,/" "$SVN_ACCESS_CONTROL_FILE"
 fi
