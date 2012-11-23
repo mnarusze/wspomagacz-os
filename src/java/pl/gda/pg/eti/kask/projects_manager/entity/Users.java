@@ -73,7 +73,7 @@ public class Users implements Serializable {
     private String email;
     @Basic(optional = true)
     @NotNull
-    @Size(min = 1, max = 30)
+    @Size(max = 255)
     @Column(name = "sshkey")
     private String sshkey;
     @ManyToMany(mappedBy = "usersCollection")

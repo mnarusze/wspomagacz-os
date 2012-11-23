@@ -18,7 +18,7 @@ import pl.gda.pg.eti.kask.projects_manager.facade.UsersFacade;
 
 @ManagedBean
 @SessionScoped
-public class LoginBean implements Serializable{
+public class LoginBean implements Serializable {
 
     @EJB
     private UsersFacade usersFacade;
@@ -37,9 +37,9 @@ public class LoginBean implements Serializable{
 
     public String saveUser() {
         usersFacade.edit(logedUser);
-        return "index";
+        return "my_account";
     }
-    
+
     public String getUsername() {
         return username;
     }
@@ -55,14 +55,23 @@ public class LoginBean implements Serializable{
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     public boolean hasPublicKey() {
-        if(logedUser.getSshkey() != null) {
-            return true;
-        }
-        else {
+        if (logedUser.getSshkey() != null) {
+            if (logedUser.getSshkey().isEmpty()) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
             return false;
         }
+    }
+
+    public String deleteSshKey() {
+        logedUser.setSshkey("");
+        usersFacade.edit(logedUser);
+        return "my_account";
     }
 
     public String login() {
