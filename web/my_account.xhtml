@@ -29,12 +29,12 @@
                         <h:message for="index" />
                         
                         <h:outputText value="Publiczny klucz ssh" />
-                        <h:inputText id="sshkey" value="" />
+                        <h:selectBooleanCheckbox disabled="true" id="sshkey" />
                         <h:message for="sshkey" />
 
                     </h:panelGrid>
-                    <h:commandButton value="Save User" action="#{loginBean.saveUser()}"/>
-                    <h:commandButton action="index" value="Anuluj" immediate="true" />
+                    <h:commandButton value="Dodaj klucz ssh" action="ssh_key"/>
+                    
                 </h:form>
             </ui:define>
         </ui:composition>

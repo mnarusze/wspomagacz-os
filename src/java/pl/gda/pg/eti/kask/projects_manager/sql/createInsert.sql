@@ -11,6 +11,7 @@ CREATE TABLE users (
     lastname varchar(30) not null,
     indeks varchar(30) not null,
     email varchar(30) not null,
+    sshkey varchar(255),
     PRIMARY KEY (id)
 );
 
