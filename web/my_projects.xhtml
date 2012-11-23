@@ -8,9 +8,9 @@
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
-
+                    
                     <h:outputText value="Owner of projects"/>
-                    <h:dataTable border="0" var="ownedProjects" value="#{loginBean.logedUser.projectsCollection1}">
+                    <h:dataTable border="0" var="ownedProjects" value="#{loginBean.ownedProjects}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Name" /></f:facet>
                             
@@ -52,7 +52,7 @@
 
                     <p>
                         <h:outputText value="Active in this projects" />
-                        <h:dataTable border="0" var="activeProjects" value="#{loginBean.logedUser.projectsCollection}">
+                        <h:dataTable border="0" var="activeProjects" value="#{loginBean.activeProjects}">
                             <h:column>
                                 <f:facet name="header"><h:outputText value="Name" /></f:facet>
                                 <h:commandLink action="#{EditHelperBean.viewProject(activeProjects)}">

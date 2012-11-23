@@ -171,21 +171,20 @@ public class EditHelperBean implements Serializable {
         if (editingProjects) {
             projectFacadeLocal.edit(localProjects);
         } else {
-            if (ProjectsManager.createRepository(localProjects)) {
+            //if (ProjectsManager.createRepository(localProjects)) {
                 projectFacadeLocal.create(localProjects);
-            }
+            //}
         }
 
-        return "projects_list";
+        return "my_projects";
     }
 
     public String usunProject() {
-        localProjects = (Projects) FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestMap()
-                .get("Projects");
-        if (ProjectsManager.deleteRepository(localProjects)) {
+
+        //if (ProjectsManager.deleteRepository(localProjects)) {
             projectFacadeLocal.remove(localProjects);
-        }
-        return "projects_list";
+        //}
+        return "my_projects";
     }
+    
 }

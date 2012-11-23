@@ -5,15 +5,16 @@
 package pl.gda.pg.eti.kask.projects_manager.form;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 import pl.gda.pg.eti.kask.projects_manager.entity.Users;
 import pl.gda.pg.eti.kask.projects_manager.facade.UsersFacade;
 
@@ -28,8 +29,21 @@ public class LoginBean implements Serializable {
     private String username;
     private String password;
 
+    public void reloadLogedUser() {
+        logedUser = (Users) usersFacade.findAll().get(0);
+    }
+    
     public Users getLogedUser() {
         return logedUser;
+    }
+    
+    public Collection<Projects> getOwnedProjects() {
+        reloadLogedUser();
+        return logedUser.getProjectsCollection1();
+    }
+    
+    public Collection<Projects> getActiveProjects() {
+        return logedUser.getProjectsCollection();
     }
 
     public void setLogedUser(Users logedUser) {
@@ -76,7 +90,7 @@ public class LoginBean implements Serializable {
     }
 
     public String login() {
-        logedUser = (Users) usersFacade.findAll().get(0);
+        reloadLogedUser();
         zalogowany = true;
 
         String userRole = "";
