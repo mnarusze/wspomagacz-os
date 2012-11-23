@@ -29,7 +29,7 @@
                         <h:message for="index" />
                         
                         <h:outputText value="Publiczny klucz ssh" />
-                        <h:selectBooleanCheckbox disabled="true" id="sshkey" />
+                        <h:selectBooleanCheckbox disabled="true" id="sshkey" value="#{loginBean.hasPublicKey()}"/>
                         <h:message for="sshkey" />
 
                     </h:panelGrid>

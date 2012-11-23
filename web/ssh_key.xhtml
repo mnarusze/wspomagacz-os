@@ -10,11 +10,11 @@
                     <h:panelGrid columns="3" >
                         
                         <h:outputText value="Publiczny klucz ssh" />
-                        <h:inputTextarea id="sshkey" />
+                        <h:inputTextarea id="sshkey" value="#{loginBean.logedUser.sshkey}"/>
                         <h:message for="sshkey" />
 
                     </h:panelGrid>
-                    <h:commandButton value="Dodaj klucz ssh" />
+                    <h:commandButton value="Dodaj klucz ssh" action="#{loginBean.saveUser()}"/>
                     
                 </h:form>
             </ui:define>

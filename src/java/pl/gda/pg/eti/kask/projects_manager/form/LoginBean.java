@@ -55,6 +55,15 @@ public class LoginBean implements Serializable{
     public void setPassword(String password) {
         this.password = password;
     }
+    
+    public boolean hasPublicKey() {
+        if(logedUser.getSshkey() != null) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
     public String login() {
         logedUser = (Users) usersFacade.findAll().get(0);
