@@ -1,0 +1,41 @@
+SVN:
+
+1) Zainstalować SVNa z dystrybucji
+	-> sudo yum install subversion
+
+GIT:
+
+1) Zainstalować GITa z dystrybucji
+	sudo yum install git-all
+2) Konfiguracja:
+	git config --global user.name "Your Name"
+	git config --global user.email your@email.com
+	
+GITOLITE:
+
+-> http://sitaramc.github.com/gitolite/g2/ggshb.html
+
+-> zakładamy, że użytkownik obsługujący Apache nazywa się "apache" i należy do grupy "apache"
+-> użytkownik "apache" będzie adminem Gitolite
+-> użytkownik "git" będzie uwierzytelniał i autoryzował klientów Gitolite
+
+1) Stworzyć użytkownika i grupę git bez hasła, zalogować się jako git
+	sudo groupadd git
+	sudo useradd -b /home -g git git
+	su - git
+
+2) Przenieść klucz publiczny SSH użytkownika Apache (apache.pub) do katalogu domowego git (u mnie /home/git)
+		
+3) Ściągnąc gitolite i ustawić Apache jako admina Gitolite
+-> $HOME/.ssh musi zostać usunięte, jesli istnieje!
+	git clone git://github.com/sitaramc/gitolite
+    mkdir -p $HOME/bin
+    export PATH=$PATH:$HOME/bin
+    gitolite/install -to $HOME/bin
+    gitolite setup -pk apache.pub
+
+4) Wrócić do użytkownika Apache, ściągnąć repozytorium gitolite-admin
+	git clone git@localhost:gitolite-admin
+
+5) Zmiany dokonywane są poprzez edycję repozytorium gitolite-admin i pushowanie zmian. Wszystko to musi być dokonywane przez uzytkownika apache.
+-> szablon wstępnej konfiguracji : gitolite.conf.template

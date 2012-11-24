@@ -24,8 +24,8 @@ public class ProjectsManager {
         return repositoresProperties.getProperty("templates_dir");
     }
     
-    private static String getGitRepoDir() {
-        return repositoresProperties.getProperty("git_repo_dir");
+    private static String getGitoliteAdminDir() {
+        return repositoresProperties.getProperty("gitolite_admin_dir");
     }
     
     private static String getSvnRepoDir() {
@@ -74,7 +74,7 @@ public class ProjectsManager {
         command.add("-R");
         command.add(getTracDir());
         command.add("-G");
-        command.add(getGitRepoDir());
+        command.add(getGitoliteAdminDir());
         command.add("-S");
         command.add(getSvnRepoDir());
         command.add("-C");
@@ -109,7 +109,7 @@ public class ProjectsManager {
         command.add("-R");
         command.add(getTracDir());
         command.add("-G");
-        command.add(getGitRepoDir());
+        command.add(getGitoliteAdminDir());
         command.add("-S");
         command.add(getSvnRepoDir());
         command.add("-C");

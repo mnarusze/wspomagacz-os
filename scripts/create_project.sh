@@ -59,7 +59,11 @@ if [[ -n "$SVN" && "$SVN" -eq 1 ]] ; then
 
     svnadmin create "$SVN_REPO_DIR"
     
-    #chown apache:apache "$SVN_REPO_DIR" -R
+    svnlook info "$SVN_REPO_DIR"
+    if [[ $? -ne 0 || ! -d $SVN_REPO_DIR ]] ; then
+        echo "Błąd: nie udało się utworzyć repozytorium $SVN_REPO_DIR"
+        exit 3
+    fi
     chmod o-rwx "$SVN_REPO_DIR" -R
 fi
 
@@ -68,26 +72,50 @@ fi
 #########
 
 if [[ -n "$GIT" && "$GIT" -eq 1 ]] ; then
-    if [[ -z "$GIT_REPO_DIR" ]] ; then
-        echo "Błąd: nie podano sciezki do repozytorium GIT" > /dev/stderr
+    if [[ -z "$GITOLITE_ADMIN_DIR" || ! -d "$GITOLITE_ADMIN_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do repozytorium Gitolite: $GITOLITE_ADMIN_DIR" > /dev/stderr
         exit 1
     else
-        GIT_REPO_DIR=$GIT_REPO_DIR/$NAME
+        GITOLITE_CONFIG_FILE="$GITOLITE_ADMIN_DIR/conf/gitolite.conf"
+        USER_SSH_KEY="$GITOLITE_ADMIN_DIR/keydir/${USER}.pub"
     fi
 
-    if [[ -d "$GIT_REPO_DIR" ]] ; then
-        echo "Błąd: Repozytorium $GIT_REPO_DIR już istnieje!" > /dev/stderr
+    if [[ ! -f "$GITOLITE_CONFIG_FILE" ]] ; then
+        echo "Błąd: brak pliku konfiguracyjnego Gitolite: $GITOLITE_CONFIG_FILE" > /dev/stderr
         exit 2
     fi
-    git --git-dir="$GIT_REPO_DIR" init --bare
 
-    if [[ ! -d "$GIT_REPO_DIR" ]] ; then
-        echo "Błąd: Nie udało się utworzyć repozytorium $GIT_REPO_DIR!" > /dev/stderr
+    if [[ -n $(cat $GITOLITE_ADMIN_DIR/conf/gitolite.conf | grep "repo $NAME") ]]
+        echo "Błąd: repozytorium o podanej nazwie $NAME już istnieje!"
         exit 3
     fi
 
-    #chown apache:apache "$GIT_REPO_DIR" -R
-    chmod o-rwx "$GIT_REPO_DIR" -R
+    if [[ ! -f "$USER_SSH_KEY" ]]
+        echo "Błąd: brakuje klucza ssh $USER_SSH_KEY dla użytkownika $USER!!"
+        exit 4
+    fi
+
+    if [[ -z "$APACHE_USERNAME" ]] ; then
+        echo "Błąd: nie podano nazwy użytkownika apache!" > /dev/stderr
+        exit 5
+    fi
+
+    cd "$GITOLITE_ADMIN_DIR"
+    echo "repo $NAME" >> "$GITOLITE_CONFIG_FILE"
+    echo "    RW+     =  $USER" >> "$GITOLITE_CONFIG_FILE"
+    echo "    RW+     =  $APACHE_USERNAME" >> "$GITOLITE_CONFIG_FILE"
+    if [[ -n $PUBLIC && $PUBLIC -eq 1 ]] ; then
+        echo "    R     =  @all" >> "$GITOLITE_CONFIG_FILE"
+    fi
+    echo "" >> "$GITOLITE_CONFIG_FILE"
+    git add conf
+    git commit conf -m "Dodano projekt $NAME , właściciel: $USER"
+    git push origin master
+
+    if [[ -z "$(ssh git@localhost info | grep " $NAME ") " ]]
+        echo "Błąd: nie udało się utworzyć repo o nazwie $NAME!"
+        exit 5
+    fi
 fi
 
 ##########

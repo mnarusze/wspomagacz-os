@@ -1,0 +1,12 @@
+Skrypty:
+
+
+1) Stworzenie repo
+2) Usunięcie repo
+3) Dodanie usera
+	-> dodanie jako administratora (RW+)
+4) Usunięcie usera
+5) Dodanie SVN/GIT/Trac/Redmine
+6) Usunięcie SVN/GIT/Trac/Redmine
+	-> archiwizacja? data w folderze?
+7) Zmiana nazwy projektu
