@@ -71,6 +71,11 @@ public class Users implements Serializable {
     @Size(min = 1, max = 30)
     @Column(name = "email")
     private String email;
+    @Basic(optional = true)
+    @NotNull
+    @Size(max = 255)
+    @Column(name = "sshkey")
+    private String sshkey;
     @ManyToMany(mappedBy = "usersCollection")
     private Collection<Projects> projectsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
@@ -139,6 +144,16 @@ public class Users implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public String getSshkey() {
+        return sshkey;
+    }
+
+    public void setSshkey(String sshkey) {
+        this.sshkey = sshkey;
+    }
+    
+    
 
     @XmlTransient
     public Collection<Projects> getProjectsCollection() {

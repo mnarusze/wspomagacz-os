@@ -8,29 +8,33 @@
             <ui:define name="content">
                 <h:form>
                     <h:panelGrid columns="3" >
-                        <h:outputText value="Nickname" />
-                        <h:inputText id="nickname" value="#{loginBean.logedUser.nickname}" />
+                        <h:outputText value="Login" />
+                        <h:outputText id="nickname" value="#{loginBean.logedUser.nickname}" />
                         <h:message for="nickname" />
 
-                        <h:outputText value="FirstName" />
-                        <h:inputText id="firstname" value="#{loginBean.logedUser.firstname}" />
+                        <h:outputText value="Imię" />
+                        <h:outputText id="firstname" value="#{loginBean.logedUser.firstname}" />
                         <h:message for="firstname" />
 
-                        <h:outputText value="LastName" />
-                        <h:inputText id="lastname" value="#{loginBean.logedUser.lastname}" />
+                        <h:outputText value="Nazwisko" />
+                        <h:outputText id="lastname" value="#{loginBean.logedUser.lastname}" />
                         <h:message for="lastname" />
 
-                        <h:outputText value="email" />
-                        <h:inputText id="email" value="#{loginBean.logedUser.email}" />
+                        <h:outputText value="E-mail" />
+                        <h:outputText id="email" value="#{loginBean.logedUser.email}" />
                         <h:message for="email" />
                         
-                        <h:outputText value="index" />
-                        <h:inputText id="index" value="#{loginBean.logedUser.indeks}" />
+                        <h:outputText value="Index" />
+                        <h:outputText id="index" value="#{loginBean.logedUser.indeks}" />
                         <h:message for="index" />
+                        
+                        <h:outputText value="Publiczny klucz ssh" />
+                        <h:selectBooleanCheckbox disabled="true" id="sshkey" value="#{loginBean.hasPublicKey()}"/>
+                        <h:message for="sshkey" />
 
                     </h:panelGrid>
-                    <h:commandButton value="Save User" action="#{loginBean.saveUser()}"/>
-                    <h:commandButton action="index" value="Anuluj" immediate="true" />
+                    <h:commandButton value="Edytuj klucz ssh" action="ssh_key"/>
+                    
                 </h:form>
             </ui:define>
         </ui:composition>
