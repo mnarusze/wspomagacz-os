@@ -3,7 +3,7 @@
 
 function get_input()
 {
-    # Project-specific params
+    # Variables
     SVN= #s
     GIT= #g
     TRAC= #t
@@ -13,17 +13,16 @@ function get_input()
     DESCRIPTION= #d
     USER= #u
 
-    # Global params
+    # Constants
     TEMPLATES_DIR= #T
     TRAC_DIR= #R
-    GIT_REPO_DIR= #G
+    GITOLITE_ADMIN_DIR= #G
+    GIT_REPOS_DIR= #L
     SVN_REPO_DIR= #S
     SVN_ACCESS_CONTROL_FILE= #C
-    PROJECTS_ARCHIVE_DIR= #A
-    GITOLITE_ADMIN_DIR= #L
-    APACHE_USERNAME= #U
+    PROJECTS_ARCHIVE_DIR= #A  
 
-    while getopts ":sgtpn:d:u:o:T:R:G:S:C:A:L:" optname ; do
+    while getopts ":sgtpn:d:u:o:T:R:G:L:S:C:A:" optname ; do
         echo "Opcja : $optname arg: $OPTARG" > /dev/stderr
         case "$optname" in
             "s")
@@ -58,7 +57,12 @@ function get_input()
                 ;;
             "G")
                 GITOLITE_ADMIN_DIR="$OPTARG"
+                GITOLITE_CONFIG_FILE="$GITOLITE_ADMIN_DIR/conf/gitolite.conf"
+                GITOLITE_KEYS_DIR="$GITOLITE_ADMIN_DIR/keydir"
                 ;;
+            "L")
+                GIT_REPOS_DIR="$OPTARG"
+                ;;   
             "S")
                 SVN_REPO_DIR="$OPTARG"
                 ;;
@@ -67,10 +71,7 @@ function get_input()
                 ;;
             "A")
                 PROJECTS_ARCHIVE_DIR="$OPTARG"
-                ;;   
-            "U")
-                APACHE_USERNAME="$OPTARG"
-                ;;      
+                ;;
             *)
                 echo "Błąd: Nieznana opcja $OPTARG" > /dev/stderr
                 exit 1

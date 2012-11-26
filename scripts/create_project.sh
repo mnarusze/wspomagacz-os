@@ -46,8 +46,9 @@ if [[ -n "$SVN" && "$SVN" -eq 1 ]] ; then
         exit 2
     fi
 
+    # Szukamy pierwszej wolnej linii
     LINE_NUMBER_FOR_USERS=$(cat $SVN_ACCESS_CONTROL_FILE | grep  ^$ -m 1 -n | sed 's/[^0-9].*//g')
-    sed -i "$LINE_NUMBER_FOR_USERS i $NAME = $PROJECT_OWNER," $SVN_ACCESS_CONTROL_FILE
+    sed -i "$LINE_NUMBER_FOR_USERS i $NAME = $USER," $SVN_ACCESS_CONTROL_FILE
     echo "#${NAME}_SECTION_BEGIN" >> $SVN_ACCESS_CONTROL_FILE
     echo "[$NAME:/]" >> $SVN_ACCESS_CONTROL_FILE
     echo "@$NAME = rw" >> $SVN_ACCESS_CONTROL_FILE
@@ -76,8 +77,7 @@ if [[ -n "$GIT" && "$GIT" -eq 1 ]] ; then
         echo "Błąd: nie podano lub nieprawidłowa ścieżka do repozytorium Gitolite: $GITOLITE_ADMIN_DIR" > /dev/stderr
         exit 1
     else
-        GITOLITE_CONFIG_FILE="$GITOLITE_ADMIN_DIR/conf/gitolite.conf"
-        USER_SSH_KEY="$GITOLITE_ADMIN_DIR/keydir/${USER}.pub"
+        USER_SSH_KEY="$GITOLITE_KEYS_DIR/${USER}.pub"
     fi
 
     if [[ ! -f "$GITOLITE_CONFIG_FILE" ]] ; then
@@ -85,37 +85,45 @@ if [[ -n "$GIT" && "$GIT" -eq 1 ]] ; then
         exit 2
     fi
 
-    if [[ -n $(cat $GITOLITE_ADMIN_DIR/conf/gitolite.conf | grep "repo $NAME") ]]
-        echo "Błąd: repozytorium o podanej nazwie $NAME już istnieje!"
+    if [[ -n $(cat $GITOLITE_CONFIG_FILE | grep "repo ${NAME}$") ]] ; then
+        echo "Błąd: repozytorium o podanej nazwie $NAME już istnieje!" > /dev/stderr
         exit 3
     fi
 
-    if [[ ! -f "$USER_SSH_KEY" ]]
-        echo "Błąd: brakuje klucza ssh $USER_SSH_KEY dla użytkownika $USER!!"
+    if [[ ! -f "$USER_SSH_KEY" ]] ; then
+        echo "Błąd: brakuje klucza ssh $USER_SSH_KEY dla użytkownika $USER!!" > /dev/stderr
         exit 4
     fi
 
-    if [[ -z "$APACHE_USERNAME" ]] ; then
-        echo "Błąd: nie podano nazwy użytkownika apache!" > /dev/stderr
-        exit 5
-    fi
-
     cd "$GITOLITE_ADMIN_DIR"
+
+    # Kopiujemy aktualny config - jeśli coś pójdzie nie tak, wstawiamy go z powrotem
+    cp $GITOLITE_CONFIG_FILE ${GITOLITE_CONFIG_FILE}.swp
+    # Szukamy pierwszej wolnej linii
+    LINE_NUMBER_FOR_GROUP=$(cat $GITOLITE_CONFIG_FILE | grep  ^$ -m 1 -n | sed 's/[^0-9].*//g')
+    sed -i "$LINE_NUMBER_FOR_GROUP i @$NAME\t=\t$USER " $GITOLITE_CONFIG_FILE
+
     echo "repo $NAME" >> "$GITOLITE_CONFIG_FILE"
-    echo "    RW+     =  $USER" >> "$GITOLITE_CONFIG_FILE"
-    echo "    RW+     =  $APACHE_USERNAME" >> "$GITOLITE_CONFIG_FILE"
+    echo -e "\tRW\t\t=\t@$NAME" >> "$GITOLITE_CONFIG_FILE"
     if [[ -n $PUBLIC && $PUBLIC -eq 1 ]] ; then
-        echo "    R     =  @all" >> "$GITOLITE_CONFIG_FILE"
+        echo -e "\tR\t\t=\tdaemon" >> "$GITOLITE_CONFIG_FILE"
     fi
     echo "" >> "$GITOLITE_CONFIG_FILE"
-    git add conf
-    git commit conf -m "Dodano projekt $NAME , właściciel: $USER"
+    git add $GITOLITE_CONFIG_FILE
+    git commit $GITOLITE_CONFIG_FILE -m "Dodano projekt $NAME , właściciel: $USER"
     git push origin master
 
-    if [[ -z "$(ssh git@localhost info | grep " $NAME ") " ]]
+    if [[ -z "$(ssh git@localhost info | grep " $NAME ") " ]] ; then
         echo "Błąd: nie udało się utworzyć repo o nazwie $NAME!"
+        # Wstawiamy config z powrotem
+        mv ${GITOLITE_CONFIG_FILE}.swp $GITOLITE_CONFIG_FILE 
+        git add $GITOLITE_CONFIG_FILE
+        git commit $GITOLITE_CONFIG_FILE -m "Cofnięcie ostatnich zmian - brak repozytorium"
+        git push origin master
         exit 5
     fi
+    # Jeśli wszystko ok, usuwamy plik tymczasowy
+    rm ${GITOLITE_CONFIG_FILE}.swp
 fi
 
 ##########

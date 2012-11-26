@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Properties;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 import pl.gda.pg.eti.kask.projects_manager.entity.Users;
+import pl.gda.pg.eti.kask.projects_manager.form.LoginBean;
 
 public class ProjectsManager {
 
@@ -26,6 +27,10 @@ public class ProjectsManager {
     
     private static String getGitoliteAdminDir() {
         return repositoresProperties.getProperty("gitolite_admin_dir");
+    }
+    
+    private static String getGitReposDir() {
+        return repositoresProperties.getProperty("git_repos_dir");
     }
     
     private static String getSvnRepoDir() {
@@ -75,6 +80,8 @@ public class ProjectsManager {
         command.add(getTracDir());
         command.add("-G");
         command.add(getGitoliteAdminDir());
+        command.add("-L");
+        command.add(getGitReposDir());
         command.add("-S");
         command.add(getSvnRepoDir());
         command.add("-C");
@@ -102,7 +109,7 @@ public class ProjectsManager {
         }
         command.add("-n");
         command.add(project.getProjName());
-        command.add("-o");
+        command.add("-u");
         command.add(project.getOwner().getNickname());
         command.add("-T");
         command.add(getTemplatesDir());

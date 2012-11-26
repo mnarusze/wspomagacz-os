@@ -1,4 +1,4 @@
-Skrypty:
+TBD ogólnie
 
 
 1) Stworzenie repo
@@ -10,3 +10,4 @@ Skrypty:
 6) Usunięcie SVN/GIT/Trac/Redmine
 	-> archiwizacja? data w folderze?
 7) Zmiana nazwy projektu
+8) Tylko admin może zmieniać parametry projektu.

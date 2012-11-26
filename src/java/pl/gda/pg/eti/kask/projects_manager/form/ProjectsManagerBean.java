@@ -4,10 +4,8 @@
  */
 package pl.gda.pg.eti.kask.projects_manager.form;
 
-import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIConversion.User;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;

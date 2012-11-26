@@ -1,7 +1,21 @@
+ACCESS
+
+1) Stworzenie pliku /var/www/.htpasswd z danymi logowania lokalnych użytkowników 
+2) Instalacja Apache (httpd)
+
 SVN:
 
 1) Zainstalować SVNa z dystrybucji
 	-> sudo yum install subversion
+
+2) Ograniczenie dostępu do repozytoriów 
+-> /etc/httpd.d/subversion.conf -> subversion.conf w katalogu scripts
+
+3) Stworzenie pliku SVN access
+->  /var/www/svn/.access -> svn.access w katalogu scripts
+
+4) Repozytoria tworzymy w /var/www/svn zmieniając właściciela na apache:apache
+5) Restart httpd powinien umożliwić przeglądanie repozytoriów po WWW oraz pull/push - wszystko z uwierzytelnianiem i autoryzacją.
 
 GIT:
 
@@ -12,30 +26,57 @@ GIT:
 	git config --global user.email your@email.com
 	
 GITOLITE:
-
--> http://sitaramc.github.com/gitolite/g2/ggshb.html
-
 -> zakładamy, że użytkownik obsługujący Apache nazywa się "apache" i należy do grupy "apache"
 -> użytkownik "apache" będzie adminem Gitolite
 -> użytkownik "git" będzie uwierzytelniał i autoryzował klientów Gitolite
 
-1) Stworzyć użytkownika i grupę git bez hasła, zalogować się jako git
-	sudo groupadd git
-	sudo useradd -b /home -g git git
+1) Stworzyć użytkownika i grupę git bez hasła, dodać użytkownika apache do grupy "git", zmienić uprawnienia dostępu do jego katalogu domowego G+RWX, zalogować się jako git
+	sudo useradd -d /var/lib/git -g git git
+	sudo usermod apache -a -G git
+	sudo chmod 770 /var/lib/git
 	su - git
+
+-> dodanie Apache do grupy git umożliwi udostępnianie repozytorium bez ssh po git://[...]
 
 2) Przenieść klucz publiczny SSH użytkownika Apache (apache.pub) do katalogu domowego git (u mnie /home/git)
 		
 3) Ściągnąc gitolite i ustawić Apache jako admina Gitolite
--> $HOME/.ssh musi zostać usunięte, jesli istnieje!
+-> /var/lib/git/.ssh musi zostać usunięte, jesli istnieje!
+-> w katalogu /var/lib/git/repositories będą umieszczane tworzone przez Gitolite repozytoria
+	cd /var/lib/git
 	git clone git://github.com/sitaramc/gitolite
-    mkdir -p $HOME/bin
-    export PATH=$PATH:$HOME/bin
-    gitolite/install -to $HOME/bin
-    gitolite setup -pk apache.pub
+    mkdir bin
+    gitolite/install -to /var/lib/git/bin
+    bin/gitolite setup -pk apache.pub
 
-4) Wrócić do użytkownika Apache, ściągnąć repozytorium gitolite-admin
+4) Poprawić ustawienia tworzenia nowych repozytoriów w /var/lib/git/.gitolite.rc (poprawić UMASK => 0077 na 0027)
+
+5) Wrócić do użytkownika Apache, ściągnąć repozytorium gitolite-admin
 	git clone git@localhost:gitolite-admin
+-> jeśli zostaniesz poproszony o hasło, coś poszło nie tak...
 
-5) Zmiany dokonywane są poprzez edycję repozytorium gitolite-admin i pushowanie zmian. Wszystko to musi być dokonywane przez uzytkownika apache.
+6) Zmiany dokonywane są poprzez edycję repozytorium gitolite-admin i pushowanie zmian. Wszystko to musi być dokonywane przez uzytkownika apache.
 -> szablon wstępnej konfiguracji : gitolite.conf.template
+-> najlepiej przenieść szablon i nadpisać gitolite-admin/conf/gitolite.conf, potem w katalogu gitolite-admin
+	git add .
+	git commit -a -m "Początkowe ustawienia"
+	git push origin master
+-> ponownie, wszystko powinno dać się wykonać bez hasła
+
+7) Zainstalować git-daemon (lub git-daemon-run, tak się chyba nazywa na OpenSUSE) i ustawić demona tak, aby do wybranych repozytoriów można było dostać się read-only bez podawania kluczy
+-> http://www.kutukupret.com/2010/03/26/hosting-your-own-git-repository-on-fedora-12/
+	sudo yum install git-daemon xinetd
+-> /etc/xinetd.d/git -> przykładowy plik w katalogu scripts
+-> najlepiej zrestartować usługę udostepniającą daemona git i spradzić klonowanie testowego repozytorium po git:// , każdy powinien móc klonować repozytoria read-only , które mają w gitolite.conf "R = daemon"
+
+GITWEB
+
+1) Instalacja przez instalator
+	sudo yum install gitweb
+
+2) Ograniczamy uprawnienia
+-> /etc/httpd.d/git.conf -> przykładowy git.conf w folderze scripts
+-> /etc/gitweb.conf -> przykładowy gitweb.conf w folderze scripts
+-> od tej pory:
+	*) dostęp do Gitweb tylko po zalogowaniu (htpasswd/AD)
+	*) widać publiczne projekty (czyli te, które mają dopisane "R = daemon" w gitolite.conf) oraz projekty, do których ma się uprawnienia RW (zazwyczaj przynależność do ekipy projektowej)

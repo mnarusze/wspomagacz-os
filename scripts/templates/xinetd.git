@@ -1,0 +1,16 @@
+# default: off
+# description: The git dæmon allows git repositories to be exported using \
+#       the git:// protocol.
+
+service git
+{
+        disable         = no
+        type            = UNLISTED
+	socket_type     = stream
+        port		= 9418
+	wait            = no
+	user            = maryl
+        server          = /usr/libexec/git-core/git-daemon
+        server_args     = --base-path=/var/lib/git/repositories --syslog --verbose --inetd
+        log_on_failure  += USERID
+}

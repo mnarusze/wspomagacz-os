@@ -1,0 +1,27 @@
+[groups]
+admin = Administrator
+proj_1 = linux-user-1, local-linux-user-1
+proj_2 = linux-user-1, linux-user-2, local-linux-user-2,
+proj_3 = linux-user-2, linux-user-3, local-linux-user-3,
+tester = maryl, dziagu, zlewak,
+
+[/]
+* = 
+
+[repo_1:/]
+@proj_1 = rw
+dziagu = rw
+maryl = r
+
+[repo_2:/]
+@proj_2 = rw
+
+[repo_3:/]
+@proj_3 = rw
+
+#tester_SECTION_BEGIN
+[tester:/]
+@tester = rw
+* = r
+#tester_SECTION_END
+
