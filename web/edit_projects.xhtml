@@ -17,13 +17,13 @@
                         <h:selectBooleanCheckbox id="isPublic" value="#{EditHelperBean.projects.isPublic}" />
                         <h:message for="isPublic" />
 
-                        <h:outputText value="GIT" />
-                        <h:selectBooleanCheckbox id="gitEnabled" value="#{EditHelperBean.projects.gitEnabled}" />
-                        <h:message for="gitEnabled" />
-
                         <h:outputText value="SVN" />
                         <h:selectBooleanCheckbox id="svnEnabled" value="#{EditHelperBean.projects.svnEnabled}" />
                         <h:message for="svnEnabled" />
+
+                        <h:outputText value="GIT" />
+                        <h:selectBooleanCheckbox id="gitEnabled" value="#{EditHelperBean.projects.gitEnabled}" />
+                        <h:message for="gitEnabled" />
 
                         <h:outputText value="Trac" />
                         <h:selectBooleanCheckbox id="tracEnabled" value="#{EditHelperBean.projects.tracEnabled}" />
@@ -40,10 +40,40 @@
                         <h:message for="owner" />
 
                     </h:panelGrid>
-                    <h:commandButton value="Add/remove users" action="#{EditHelperBean.addUsersToProject()}" />
+
+
+                    <h:commandButton value="Add/remove users" action="#{EditHelperBean.addUsersToProject(EditHelperBean.projects)}" />
                     <h:commandButton value="Save Project" action="#{EditHelperBean.saveProject()}"/>
                     <h:commandButton value="Delete Project" action="#{EditHelperBean.usunProject()}" />
                     <h:commandButton value="Anuluj" action="#{EditHelperBean.anuluj()}" immediate="true" />
+
+                    <h:dataTable border="0" var="Users" value="#{ProjectsManagerBean.usersActiveInProject(EditHelperBean.projects)}">
+                        <h:column>
+                            <f:facet name="header"><h:outputText value="Login" /></f:facet>                      
+
+                            <h:commandLink >
+                                <h:outputText value="#{Users.nickname}" />
+                            </h:commandLink>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header"><h:outputText value="First Name" /></f:facet>
+                            <h:outputText value="#{Users.firstname}"  />
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header"><h:outputText value="Last Name" /></f:facet>
+                            <h:outputText value="#{Users.lastname}"  />
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header"><h:outputText value="e-mail" /></f:facet>
+                            <h:outputText value="#{Users.email}"  />
+                        </h:column>                        
+                        <h:column>
+                            <f:facet name="header"><h:outputText value="Index" /></f:facet>
+                            <h:outputText value="#{Users.indeks}"  />
+                        </h:column>
+
+                    </h:dataTable>
+
                 </h:form>
             </ui:define>
         </ui:composition>

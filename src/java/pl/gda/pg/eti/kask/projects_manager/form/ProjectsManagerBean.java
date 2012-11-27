@@ -67,6 +67,10 @@ public class ProjectsManagerBean implements Serializable {
     public List<Users> getUsers() {
         return usersFacade.findAll();
     }
+    
+    public List<Users> usersActiveInProject(Projects p){
+        return (List)p.getUsersCollection();
+    }
 
     public List<SelectItem> getUsersAsSelectItems() {
         ArrayList<SelectItem> list = new ArrayList<SelectItem>();

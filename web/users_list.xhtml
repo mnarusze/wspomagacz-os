@@ -9,10 +9,10 @@
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <h:dataTable border="0" var="Users" value="#{EditHelperBean.activeInProject()}">
+                    <h:dataTable border="0" var="Users" value="#{ProjectsManagerBean.usersActiveInProject(EditHelperBean.projects)}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>
-                            <h:commandButton value="Remove From Project" action="#{EditHelperBean.removeUsersFromProject()}" />                         
+                            <h:commandButton value="Remove From Project" action="#{EditHelperBean.removeUsersFromProject(Users)}" />                         
                             
                             <h:commandLink >
                                 <h:outputText value="#{Users.nickname}" />
@@ -41,7 +41,7 @@
                         <h:column>
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>
                                                   
-                            <h:commandButton value="Add To Project" action="#{EditHelperBean.saveUsersToProject()}"/>
+                            <h:commandButton value="Add To Project" action="#{EditHelperBean.saveUsersToProject(Users)}"/>
                             <h:commandLink >
                                 <h:outputText value="#{Users.nickname}" />
                             </h:commandLink>

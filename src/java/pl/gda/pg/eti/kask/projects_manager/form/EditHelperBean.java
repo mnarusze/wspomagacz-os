@@ -117,10 +117,6 @@ public class EditHelperBean implements Serializable {
         return "users_list";
     }
 
-    public List<Users> activeInProject() {
-        return (List) localProjects.getUsersCollection();
-    }
-
     public String addUsersToProject(Projects p) {
         localProjects = p;
 
@@ -138,7 +134,19 @@ public class EditHelperBean implements Serializable {
 
 
         projectFacadeLocal.edit(localProjects);
-        return "projects_list";
+        return "edit_projects";
+    }
+
+    public String saveUsersToProject(Users u) {
+        localUsers = u;
+
+        //if (ProjectsManager.addUser(localProjects, localUsers)) {
+        localProjects.getUsersCollection().add(localUsers);
+        //}
+
+
+        projectFacadeLocal.edit(localProjects);
+        return "edit_projects";
     }
 
     public String removeUsersFromProject() {
@@ -150,7 +158,17 @@ public class EditHelperBean implements Serializable {
             localProjects.getUsersCollection().remove(localUsers);
         }
         projectFacadeLocal.edit(localProjects);
-        return "projects_list";
+        return "edit_projects";
+    }
+
+    public String removeUsersFromProject(Users u) {
+        localUsers = u;
+
+        //if (ProjectsManager.removeUser(localProjects, localUsers)) {
+            localProjects.getUsersCollection().remove(localUsers);
+        //}
+        projectFacadeLocal.edit(localProjects);
+        return "edit_projects";
     }
 
     public String deleteUsers() {
@@ -197,7 +215,7 @@ public class EditHelperBean implements Serializable {
             //}
         }
 
-
+        conversation.end();
 
         return "my_projects";
     }
