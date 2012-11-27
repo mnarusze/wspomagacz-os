@@ -38,6 +38,14 @@ CREATE TABLE proj_has_users (
     FOREIGN KEY (userid) REFERENCES users(id)
 );
 
+CREATE TABLE proj_has_read_only_users (
+    projidro smallint not null,
+    useridro smallint not null,
+    PRIMARY KEY (projidro, useridro),
+    FOREIGN KEY (projidro) REFERENCES projects(id),
+    FOREIGN KEY (useridro) REFERENCES users(id)
+);
+
 INSERT INTO users (nickname,firstname,lastname,indeks,email) VALUES
     ("maryl","Maciej","Naruszewicz","121514","maciek.naruszewicz@gmail.com"),
     ("dziagu","Dominik","Dziag","121111","deezet@gmail.com"),

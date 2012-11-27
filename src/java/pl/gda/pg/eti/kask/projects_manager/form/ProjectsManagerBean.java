@@ -88,6 +88,10 @@ public class ProjectsManagerBean implements Serializable {
     public List<Users> usersActiveInProject(Projects p) {
         return (List) p.getUsersCollection();
     }
+    
+    public List<Users> usersReadOnlyInProject(Projects p) {
+        return (List) p.getUsersReadOnlyCollection();
+    }
 
     public List<SelectItem> getUsersAsSelectItems() {
         ArrayList<SelectItem> list = new ArrayList<SelectItem>();

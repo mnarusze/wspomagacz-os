@@ -123,6 +123,34 @@ public class EditHelperBean implements Serializable {
         return "users_list";
     }
 
+    public String addReadOnlyUsers(Projects p) {
+        localProjects = p;
+
+        return "read_only_users_list";
+    }
+
+    public String saveReadOnlyUsers(Users u) {
+        localUsers = u;
+
+        //if (ProjectsManager.addUser(localProjects, localUsers)) {
+        localProjects.getUsersReadOnlyCollection().add(localUsers);
+        //}
+
+
+        projectFacadeLocal.edit(localProjects);
+        return "edit_projects";
+    }
+
+    public String removeReadOnlyUsers(Users u) {
+        localUsers = u;
+
+        //if (ProjectsManager.removeUser(localProjects, localUsers)) {
+        localProjects.getUsersReadOnlyCollection().remove(localUsers);
+        //}
+        projectFacadeLocal.edit(localProjects);
+        return "edit_projects";
+    }
+
     public String saveUsersToProject() {
         localUsers = (Users) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()

@@ -41,6 +41,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Projects.findByRedmineEnabled", query = "SELECT p FROM Projects p WHERE p.tracEnabled = :tracEnabled"),
     @NamedQuery(name = "Projects.findByIsPublic", query = "SELECT p FROM Projects p WHERE p.isPublic = :isPublic")})
 public class Projects implements Serializable {
+    @JoinTable(name = "proj_has_read_only_users", joinColumns = {
+        @JoinColumn(name = "projidro", referencedColumnName = "id")}, inverseJoinColumns = {
+        @JoinColumn(name = "useridro", referencedColumnName = "id")})
+    @ManyToMany
+    private Collection<Users> usersReadOnlyCollection;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -194,6 +199,15 @@ public class Projects implements Serializable {
     @Override
     public String toString() {
         return "pl.gda.pg.eti.kask.projects_manager.entity.Projects[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    public Collection<Users> getUsersReadOnlyCollection() {
+        return usersReadOnlyCollection;
+    }
+
+    public void setUsersReadOnlyCollection(Collection<Users> usersCollection) {
+        this.usersReadOnlyCollection = usersCollection;
     }
     
 }

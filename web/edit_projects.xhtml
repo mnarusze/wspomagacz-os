@@ -43,11 +43,39 @@
 
 
                     <h:commandButton value="Add/remove users" action="#{EditHelperBean.addUsersToProject(EditHelperBean.projects)}" />
+                    <h:commandButton value="Add read only users" action="#{EditHelperBean.addReadOnlyUsers(EditHelperBean.projects)}" rendered="#{!EditHelperBean.projects.isPublic}" />
                     <h:commandButton value="Save Project" action="#{EditHelperBean.saveProject()}"/>
                     <h:commandButton value="Delete Project" action="#{EditHelperBean.usunProject()}" />
                     <h:commandButton value="Anuluj" action="#{EditHelperBean.anuluj()}" immediate="true" />
 
                     <h:dataTable border="0" var="Users" value="#{ProjectsManagerBean.usersActiveInProject(EditHelperBean.projects)}">
+                        <h:column>
+                            <f:facet name="header"><h:outputText value="Login" /></f:facet>                      
+
+                            <h:commandLink >
+                                <h:outputText value="#{Users.nickname}" />
+                            </h:commandLink>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header"><h:outputText value="First Name" /></f:facet>
+                            <h:outputText value="#{Users.firstname}"  />
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header"><h:outputText value="Last Name" /></f:facet>
+                            <h:outputText value="#{Users.lastname}"  />
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header"><h:outputText value="e-mail" /></f:facet>
+                            <h:outputText value="#{Users.email}"  />
+                        </h:column>                        
+                        <h:column>
+                            <f:facet name="header"><h:outputText value="Index" /></f:facet>
+                            <h:outputText value="#{Users.indeks}"  />
+                        </h:column>
+
+                    </h:dataTable>
+
+                    <h:dataTable border="0" var="Users" value="#{ProjectsManagerBean.usersReadOnlyInProject(EditHelperBean.projects)}" rendered="#{!EditHelperBean.projects.isPublic}" >
                         <h:column>
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>                      
 
