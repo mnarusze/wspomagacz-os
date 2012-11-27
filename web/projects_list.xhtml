@@ -11,7 +11,7 @@
                     <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.publicProjects}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Name" /></f:facet>
-                            <h:commandLink action="#{EditHelperBean.viewProject(Projects)}">
+                            <h:commandLink action="#{EditHelperBean.display(Projects, loginBean.logedUser   )}">
                                 <h:outputText value="#{Projects.projName}" />
                             </h:commandLink>
                         </h:column>

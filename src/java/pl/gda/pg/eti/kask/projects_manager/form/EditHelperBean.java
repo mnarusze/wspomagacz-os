@@ -137,6 +137,18 @@ public class EditHelperBean implements Serializable {
         return "edit_projects";
     }
 
+    public String display(Projects p, Users u) {
+        if (u != null) {
+            if (p.getOwner().getNickname().equals(u.getNickname())) {
+                return editProject(p);
+            } else {
+                return viewProject(p);
+            }
+        } else {
+            return viewProject(p);
+        }
+    }
+
     public String saveUsersToProject(Users u) {
         localUsers = u;
 
@@ -165,7 +177,7 @@ public class EditHelperBean implements Serializable {
         localUsers = u;
 
         //if (ProjectsManager.removeUser(localProjects, localUsers)) {
-            localProjects.getUsersCollection().remove(localUsers);
+        localProjects.getUsersCollection().remove(localUsers);
         //}
         projectFacadeLocal.edit(localProjects);
         return "edit_projects";
