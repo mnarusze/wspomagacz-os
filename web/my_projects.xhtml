@@ -7,8 +7,14 @@
     <h:body>
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
-                <h:form>                  
-                    <h:outputText value="Owner of projects"/>
+                <h:form>  
+                    <p>
+                        <h:commandButton value="New Project" action="#{EditHelperBean.newProject()}" />
+                        Adds new project
+                    </p>
+                    <p>
+                        <h:outputText value="Owner of projects"/>
+                    </p>
                     <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projectsForOwner(loginBean.logedUser)}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Name" /></f:facet>
@@ -46,7 +52,7 @@
                             </h:dataTable>
                         </h:column>
                     </h:dataTable>
-                    <h:commandButton value="New Project" action="#{EditHelperBean.newProject()}" />
+
 
 
                     <p>
@@ -54,7 +60,7 @@
                         <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projectsForActive(loginBean.logedUser)}">
                             <h:column>
                                 <f:facet name="header"><h:outputText value="Name" /></f:facet>
-                                <h:commandLink action="#{EditHelperBean.viewProject()}">
+                                <h:commandLink action="#{EditHelperBean.viewProject(Projects)}">
                                     <h:outputText value="#{Projects.projName}" />
                                 </h:commandLink>
                             </h:column>

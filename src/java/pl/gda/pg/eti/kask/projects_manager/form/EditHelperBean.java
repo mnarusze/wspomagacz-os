@@ -7,9 +7,13 @@ package pl.gda.pg.eti.kask.projects_manager.form;
 import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.enterprise.context.Conversation;
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 import pl.gda.pg.eti.kask.projects_manager.entity.Users;
 import pl.gda.pg.eti.kask.projects_manager.facade.ProjectsFacade;
@@ -20,8 +24,8 @@ import pl.gda.pg.eti.kask.projects_manager.managers.ProjectsManager;
  *
  * @author mateusz
  */
-@ManagedBean(name = "EditHelperBean")
-@SessionScoped
+@Named("EditHelperBean")
+@ConversationScoped
 public class EditHelperBean implements Serializable {
 
     @EJB
@@ -32,6 +36,8 @@ public class EditHelperBean implements Serializable {
     private UsersFacade usersFacadeLocal;
     private Users localUsers;
     private boolean editingUsers;
+    @Inject
+    Conversation conversation;
 
     public EditHelperBean() {
     }
@@ -45,24 +51,34 @@ public class EditHelperBean implements Serializable {
     }
 
     public String newProject() {
+        conversation.begin();
+
         localProjects = new Projects();
         editingProjects = false;
+
 
         return "edit_projects";
     }
 
     public String editProject(Projects p) {
+        conversation.begin();
+
         localProjects = p;
         editingProjects = true;
-        return "edit_projects"; 
+
+
+        return "edit_projects";
 
     }
 
     public String editProject() {
+        conversation.begin();
+
         localProjects = (Projects) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("Projects");
         editingProjects = true;
+
 
         return "edit_projects";
 
@@ -92,7 +108,7 @@ public class EditHelperBean implements Serializable {
     }
 
     public String addUsersToProject() {
-        
+
         localProjects = (Projects) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("Projects");
@@ -100,14 +116,14 @@ public class EditHelperBean implements Serializable {
 
         return "users_list";
     }
-    
-    public List<Users> getActiveInProject(){
-        return (List)localProjects.getUsersCollection();
-    } 
-    
-    public String addUsersToProject(Projects p){
+
+    public List<Users> activeInProject() {
+        return (List) localProjects.getUsersCollection();
+    }
+
+    public String addUsersToProject(Projects p) {
         localProjects = p;
-        
+
         return "users_list";
     }
 
@@ -177,9 +193,11 @@ public class EditHelperBean implements Serializable {
             projectFacadeLocal.edit(localProjects);
         } else {
             //if (ProjectsManager.createRepository(localProjects)) {
-                projectFacadeLocal.create(localProjects);
+            projectFacadeLocal.create(localProjects);
             //}
         }
+
+
 
         return "my_projects";
     }
@@ -187,13 +205,16 @@ public class EditHelperBean implements Serializable {
     public String usunProject() {
 
         //if (ProjectsManager.deleteRepository(localProjects)) {
-            projectFacadeLocal.remove(localProjects);
+        projectFacadeLocal.remove(localProjects);
         //}
+
+        conversation.end();
         return "my_projects";
     }
-    
+
     public String anuluj() {
+
+        conversation.end();
         return "my_projects";
     }
-    
 }
