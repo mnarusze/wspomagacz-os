@@ -7,40 +7,39 @@
     <h:body>
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
-                <h:form>
-                    
+                <h:form>                  
                     <h:outputText value="Owner of projects"/>
-                    <h:dataTable border="0" var="ownedProjects" value="#{loginBean.ownedProjects}">
+                    <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projectsForOwner(loginBean.logedUser)}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Name" /></f:facet>
-                            
-                            <h:commandLink action="#{EditHelperBean.editProject(ownedProjects)}">
-                                <h:outputText value="#{ownedProjects.projName}" />
+
+                            <h:commandLink action="#{EditHelperBean.editProject(Projects)}">
+                                <h:outputText value="#{Projects.projName}" />
                             </h:commandLink>
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="SVN" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{ownedProjects.svnEnabled}" disabled="true" />
+                            <h:selectBooleanCheckbox value="#{Projects.svnEnabled}" disabled="true" />
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="GIT" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{ownedProjects.gitEnabled}" disabled="true" />
+                            <h:selectBooleanCheckbox value="#{Projects.gitEnabled}" disabled="true" />
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="Trac" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{ownedProjects.tracEnabled}" disabled="true" />
+                            <h:selectBooleanCheckbox value="#{Projects.tracEnabled}" disabled="true" />
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="Redmine" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{ownedProjects.redmineEnabled}" disabled="true" />
+                            <h:selectBooleanCheckbox value="#{Projects.redmineEnabled}" disabled="true" />
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="Owner" /></f:facet>
-                            <h:outputText value="#{ownedProjects.owner.firstname}" />
+                            <h:outputText value="#{Projects.owner.firstname} #{Projects.owner.lastname}" />
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="Users" /></f:facet>
-                            <h:dataTable var="User" value="#{ownedProjects.usersCollection}">
+                            <h:dataTable var="User" value="#{Projects.usersCollection}">
                                 <h:column>
                                     <h:outputText value=" #{User.firstname} #{User.lastname}" />
                                 </h:column>
@@ -48,40 +47,40 @@
                         </h:column>
                     </h:dataTable>
                     <h:commandButton value="New Project" action="#{EditHelperBean.newProject()}" />
-                    
+
 
                     <p>
                         <h:outputText value="Active in this projects" />
-                        <h:dataTable border="0" var="activeProjects" value="#{loginBean.activeProjects}">
+                        <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projectsForActive(loginBean.logedUser)}">
                             <h:column>
                                 <f:facet name="header"><h:outputText value="Name" /></f:facet>
-                                <h:commandLink action="#{EditHelperBean.viewProject(activeProjects)}">
-                                    <h:outputText value="#{activeProjects.projName}" />
+                                <h:commandLink action="#{EditHelperBean.viewProject()}">
+                                    <h:outputText value="#{Projects.projName}" />
                                 </h:commandLink>
                             </h:column>
                             <h:column>
                                 <f:facet name="header"><h:outputText value="SVN" /></f:facet>
-                                <h:selectBooleanCheckbox value="#{activeProjects.svnEnabled}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{Projects.svnEnabled}" disabled="true" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header"><h:outputText value="GIT" /></f:facet>
-                                <h:selectBooleanCheckbox value="#{activeProjects.gitEnabled}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{Projects.gitEnabled}" disabled="true" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header"><h:outputText value="Trac" /></f:facet>
-                                <h:selectBooleanCheckbox value="#{activeProjects.tracEnabled}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{Projects.tracEnabled}" disabled="true" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header"><h:outputText value="Redmine" /></f:facet>
-                                <h:selectBooleanCheckbox value="#{activeProjects.redmineEnabled}" disabled="true" />
+                                <h:selectBooleanCheckbox value="#{Projects.redmineEnabled}" disabled="true" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header"><h:outputText value="Owner" /></f:facet>
-                                <h:outputText value="#{activeProjects.owner.firstname}" />
+                                <h:outputText value="#{Projects.owner.firstname}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header"><h:outputText value="Users" /></f:facet>
-                                <h:dataTable var="User" value="#{activeProjects.usersCollection}">
+                                <h:dataTable var="User" value="#{Projects.usersCollection}">
                                     <h:column>
                                         <h:outputText value=" #{User.firstname} #{User.lastname}" />
                                     </h:column>

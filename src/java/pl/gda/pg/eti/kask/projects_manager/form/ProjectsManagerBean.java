@@ -40,6 +40,30 @@ public class ProjectsManagerBean implements Serializable {
         return projectsFacade.findAll();
     }
 
+    public List<Projects> projectsForOwner(Users owner) {
+        List<Projects> temp = getProjects();
+        List<Projects> value = new ArrayList();
+        for (Projects p : temp) {
+            if (p.getOwner().getNickname().equals(owner.getNickname())) {
+                value.add(p);
+            }
+        }
+        return value;
+    }
+
+    public List<Projects> projectsForActive(Users active) {
+        List<Projects> temp = getProjects();
+        List<Projects> value = new ArrayList();
+        for (Projects p : temp) {
+            for (Users u : p.getUsersCollection()) {
+                if(u.getNickname().equals(active.getNickname())){
+                    value.add(p);
+                }
+            }
+        }
+        return value;
+    }
+
     public List<Users> getUsers() {
         return usersFacade.findAll();
     }

@@ -5,6 +5,7 @@
 package pl.gda.pg.eti.kask.projects_manager.form;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -52,7 +53,7 @@ public class EditHelperBean implements Serializable {
 
     public String editProject(Projects p) {
         localProjects = p;
-        
+        editingProjects = true;
         return "edit_projects"; 
 
     }
@@ -91,14 +92,18 @@ public class EditHelperBean implements Serializable {
     }
 
     public String addUsersToProject() {
+        
         localProjects = (Projects) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("Projects");
 
 
         return "users_list";
-
     }
+    
+    public List<Users> getActiveInProject(){
+        return (List)localProjects.getUsersCollection();
+    } 
     
     public String addUsersToProject(Projects p){
         localProjects = p;
@@ -184,6 +189,10 @@ public class EditHelperBean implements Serializable {
         //if (ProjectsManager.deleteRepository(localProjects)) {
             projectFacadeLocal.remove(localProjects);
         //}
+        return "my_projects";
+    }
+    
+    public String anuluj() {
         return "my_projects";
     }
     
