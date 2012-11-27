@@ -8,7 +8,7 @@
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.publicProjects}">
+                    <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.publicProjects(loginBean.logedUser)}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Name" /></f:facet>
                             <h:commandLink action="#{EditHelperBean.display(Projects, loginBean.logedUser   )}">

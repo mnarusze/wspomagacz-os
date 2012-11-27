@@ -36,8 +36,25 @@ public class ProjectsManagerBean implements Serializable {
         return projectsFacade.findAll();
     }
 
-    public List<Projects> getPublicProjects() {
-        return projectsFacade.findAll();
+    public List<Projects> publicProjects(Users user) {
+        List<Projects> temp = getProjects();
+        List<Projects> value = new ArrayList();
+        for (Projects projects : temp) {
+            if (projects.getIsPublic()) {
+                value.add(projects);
+            } else if (user != null) {
+                if (projects.getOwner().getNickname().equals(user.getNickname())) {
+                    value.add(projects);
+                } else {
+                    for (Users u : projects.getUsersCollection()) {
+                        if(u.getNickname().equals(user.getNickname())){
+                            value.add(projects);
+                        }
+                    }
+                }
+            }
+        }
+        return value;
     }
 
     public List<Projects> projectsForOwner(Users owner) {
@@ -56,7 +73,7 @@ public class ProjectsManagerBean implements Serializable {
         List<Projects> value = new ArrayList();
         for (Projects p : temp) {
             for (Users u : p.getUsersCollection()) {
-                if(u.getNickname().equals(active.getNickname())){
+                if (u.getNickname().equals(active.getNickname())) {
                     value.add(p);
                 }
             }
@@ -67,9 +84,9 @@ public class ProjectsManagerBean implements Serializable {
     public List<Users> getUsers() {
         return usersFacade.findAll();
     }
-    
-    public List<Users> usersActiveInProject(Projects p){
-        return (List)p.getUsersCollection();
+
+    public List<Users> usersActiveInProject(Projects p) {
+        return (List) p.getUsersCollection();
     }
 
     public List<SelectItem> getUsersAsSelectItems() {
