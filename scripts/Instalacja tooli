@@ -49,7 +49,7 @@ GITOLITE:
     gitolite/install -to /var/lib/git/bin
     bin/gitolite setup -pk apache.pub
 
-4) Poprawić ustawienia tworzenia nowych repozytoriów w /var/lib/git/.gitolite.rc (poprawić UMASK => 0077 na 0027)
+4) Poprawić ustawienia tworzenia nowych repozytoriów w /var/lib/git/.gitolite.rc (poprawić UMASK => 0077 na 0007)
 
 5) Wrócić do użytkownika Apache, ściągnąć repozytorium gitolite-admin
 	git clone git@localhost:gitolite-admin

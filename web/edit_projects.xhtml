@@ -42,10 +42,10 @@
                     </h:panelGrid>
 
 
-                    <h:commandButton value="Add/remove users" action="#{EditHelperBean.addUsersToProject(EditHelperBean.projects)}" />
-                    <h:commandButton value="Add read only users" action="#{EditHelperBean.addReadOnlyUsers(EditHelperBean.projects)}" rendered="#{!EditHelperBean.projects.isPublic}" />
+                    <h:commandButton value="Add/remove users" action="#{EditHelperBean.addUsersToProject(EditHelperBean.projects)}" rendered="#{EditHelperBean.editingProjects}" />
+                    <h:commandButton value="Add read only users" action="#{EditHelperBean.addReadOnlyUsers(EditHelperBean.projects)}" rendered="#{EditHelperBean.editingProjects and !EditHelperBean.projects.isPublic}" />
                     <h:commandButton value="Save Project" action="#{EditHelperBean.saveProject()}"/>
-                    <h:commandButton value="Delete Project" action="#{EditHelperBean.usunProject()}" />
+                    <h:commandButton value="Delete Project" action="#{EditHelperBean.usunProject()}" rendered="#{EditHelperBean.editingProjects}" />
                     <h:commandButton value="Anuluj" action="#{EditHelperBean.anuluj()}" immediate="true" />
 
                     <h:dataTable border="0" var="Users" value="#{ProjectsManagerBean.usersActiveInProject(EditHelperBean.projects)}">

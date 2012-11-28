@@ -4,6 +4,7 @@
  */
 package pl.gda.pg.eti.kask.projects_manager.form;
 
+import com.sun.jndi.url.ldap.ldapURLContext;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.ejb.EJB;
@@ -92,14 +93,13 @@ public class LoginBean implements Serializable {
     public String login() {
         reloadLogedUser();
         zalogowany = true;
-
-        String userRole = "";
+        
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 
         try {
-
+            
             request.login(username, password);
-
+            
             setUsername(username);
 
             return "success";

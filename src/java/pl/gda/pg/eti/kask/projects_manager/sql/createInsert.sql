@@ -1,7 +1,7 @@
+DROP TABLE IF EXISTS proj_has_read_only_users;
 DROP TABLE IF EXISTS proj_has_users;
 DROP TABLE IF EXISTS projects;
 DROP TABLE IF EXISTS users;
-
 
 
 CREATE TABLE users (
@@ -51,7 +51,7 @@ INSERT INTO users (nickname,firstname,lastname,indeks,email) VALUES
     ("dziagu","Dominik","Dziag","121111","deezet@gmail.com"),
     ("zlewak","Mateusz","Zalewski","121514","zalewski.mateusz@gmail.com");
 
-INSERT INTO projects (proj_name,owner,svn_enabled,git_enabled,trac_enabled,redmine_enabled,is_public) VALUES
+/*INSERT INTO projects (proj_name,owner,svn_enabled,git_enabled,trac_enabled,redmine_enabled,is_public) VALUES
     ("inzynierka",1,TRUE,TRUE,TRUE,TRUE,TRUE),
     ("projekt_prywatny",3,TRUE,TRUE,TRUE,TRUE,FALSE);
 
@@ -60,4 +60,4 @@ INSERT INTO proj_has_users (projid,userid) VALUES
     (1,2),
     (1,3),
     (2,1),
-    (2,2);
+    (2,2);*/

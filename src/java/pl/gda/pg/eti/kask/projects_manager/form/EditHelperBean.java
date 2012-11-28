@@ -1,16 +1,14 @@
-/*
+    /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package pl.gda.pg.eti.kask.projects_manager.form;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.ejb.EJB;
+import javax.ejb.Remove;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,12 +44,28 @@ public class EditHelperBean implements Serializable {
         return localProjects;
     }
 
+    private void beginConversation()
+    {
+        if (conversation.isTransient())
+        {
+            conversation.begin();
+        }
+    }
+ 
+    private void endConversation()
+    {
+        if (!conversation.isTransient())
+        {
+            conversation.end();
+        }
+    }
+    
     public Users getUser() {
         return localUsers;
     }
 
     public String newProject() {
-        conversation.begin();
+        beginConversation();
 
         localProjects = new Projects();
         editingProjects = false;
@@ -61,7 +75,7 @@ public class EditHelperBean implements Serializable {
     }
 
     public String editProject(Projects p) {
-        conversation.begin();
+        beginConversation();
 
         localProjects = p;
         editingProjects = true;
@@ -72,7 +86,8 @@ public class EditHelperBean implements Serializable {
     }
 
     public String editProject() {
-        conversation.begin();
+        
+        beginConversation();
 
         localProjects = (Projects) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
@@ -132,9 +147,9 @@ public class EditHelperBean implements Serializable {
     public String saveReadOnlyUsers(Users u) {
         localUsers = u;
 
-        //if (ProjectsManager.addUser(localProjects, localUsers)) {
+        if (ProjectsManager.addUser(localProjects, localUsers)) {
         localProjects.getUsersReadOnlyCollection().add(localUsers);
-        //}
+        }
 
 
         projectFacadeLocal.edit(localProjects);
@@ -144,9 +159,9 @@ public class EditHelperBean implements Serializable {
     public String removeReadOnlyUsers(Users u) {
         localUsers = u;
 
-        //if (ProjectsManager.removeUser(localProjects, localUsers)) {
+        if (ProjectsManager.removeUser(localProjects, localUsers)) {
         localProjects.getUsersReadOnlyCollection().remove(localUsers);
-        //}
+        }
         projectFacadeLocal.edit(localProjects);
         return "edit_projects";
     }
@@ -180,9 +195,9 @@ public class EditHelperBean implements Serializable {
     public String saveUsersToProject(Users u) {
         localUsers = u;
 
-        //if (ProjectsManager.addUser(localProjects, localUsers)) {
-        localProjects.getUsersCollection().add(localUsers);
-        //}
+        if (ProjectsManager.addUser(localProjects, localUsers)) {
+            localProjects.getUsersCollection().add(localUsers);
+        }
 
 
         projectFacadeLocal.edit(localProjects);
@@ -204,9 +219,9 @@ public class EditHelperBean implements Serializable {
     public String removeUsersFromProject(Users u) {
         localUsers = u;
 
-        //if (ProjectsManager.removeUser(localProjects, localUsers)) {
-        localProjects.getUsersCollection().remove(localUsers);
-        //}
+        if (ProjectsManager.removeUser(localProjects, localUsers)) {
+            localProjects.getUsersCollection().remove(localUsers);
+        }
         projectFacadeLocal.edit(localProjects);
         return "edit_projects";
     }
@@ -250,29 +265,43 @@ public class EditHelperBean implements Serializable {
         if (editingProjects) {
             projectFacadeLocal.edit(localProjects);
         } else {
-            //if (ProjectsManager.createRepository(localProjects)) {
-            projectFacadeLocal.create(localProjects);
-            //}
+            if (ProjectsManager.createRepository(localProjects)) {
+                projectFacadeLocal.create(localProjects);
+            }
         }
 
-        conversation.end();
+        endConversation();
 
         return "my_projects";
     }
 
     public String usunProject() {
 
-        //if (ProjectsManager.deleteRepository(localProjects)) {
-        projectFacadeLocal.remove(localProjects);
-        //}
+        if (ProjectsManager.deleteRepository(localProjects)) {
+            projectFacadeLocal.remove(localProjects);
+        }
 
-        conversation.end();
+        endConversation();
         return "my_projects";
     }
 
     public String anuluj() {
 
-        conversation.end();
+        endConversation();
         return "my_projects";
+    }
+
+    public boolean isEditingProjects() {
+        return editingProjects;
+    }
+
+    public void setEditingProjects(boolean editingProjects) {
+        this.editingProjects = editingProjects;
+    }
+    
+    @Remove
+    public void destroy()
+    {
+        endConversation();
     }
 }

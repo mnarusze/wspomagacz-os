@@ -12,6 +12,7 @@ function get_input()
     PROJECT_OWNER= #o
     DESCRIPTION= #d
     USER= #u
+    ACCESS_RIGHTS= #a
 
     # Constants
     TEMPLATES_DIR= #T
@@ -22,7 +23,7 @@ function get_input()
     SVN_ACCESS_CONTROL_FILE= #C
     PROJECTS_ARCHIVE_DIR= #A  
 
-    while getopts ":sgtpn:d:u:o:T:R:G:L:S:C:A:" optname ; do
+    while getopts ":sgtpn:o:d:u:a:T:R:G:L:S:C:A:" optname ; do
         echo "Opcja : $optname arg: $OPTARG" > /dev/stderr
         case "$optname" in
             "s")
@@ -48,6 +49,9 @@ function get_input()
                 ;;    
             "o")
                 PROJECT_OWNER="$OPTARG"
+                ;;
+            "a")
+                ACCESS_RIGHTS="$OPTARG"
                 ;;
             "T")
                 TEMPLATES_DIR="$OPTARG"

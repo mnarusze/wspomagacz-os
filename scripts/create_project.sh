@@ -46,26 +46,41 @@ if [[ -n "$SVN" && "$SVN" -eq 1 ]] ; then
         exit 2
     fi
 
-    # Szukamy pierwszej wolnej linii
+    # Kopia obecnego configu
+    cp $SVN_ACCESS_CONTROL_FILE ${SVN_ACCESS_CONTROL_FILE}.swp
+    # Szukamy pierwszej wolnej linii i dodajemy grupę RW
     LINE_NUMBER_FOR_USERS=$(cat $SVN_ACCESS_CONTROL_FILE | grep  ^$ -m 1 -n | sed 's/[^0-9].*//g')
     sed -i "$LINE_NUMBER_FOR_USERS i $NAME = $USER," $SVN_ACCESS_CONTROL_FILE
+    # Jeśli prywatny, to dodajemy grupę read-only
+    if [[ -z $PUBLIC ]] ; then
+        ((LINE_NUMBER_FOR_USERS++))
+        sed -i "$LINE_NUMBER_FOR_USERS i ${NAME}_read_only = " $SVN_ACCESS_CONTROL_FILE
+    fi
+    # Ustawiamy uprawnienia dla poszczególnych grup
     echo "#${NAME}_SECTION_BEGIN" >> $SVN_ACCESS_CONTROL_FILE
     echo "[$NAME:/]" >> $SVN_ACCESS_CONTROL_FILE
     echo "@$NAME = rw" >> $SVN_ACCESS_CONTROL_FILE
     if [[ -n $PUBLIC && $PUBLIC -eq 1 ]] ; then
         echo "* = r" >> $SVN_ACCESS_CONTROL_FILE
+    else
+        echo "@${NAME}_read_only = r" >> $SVN_ACCESS_CONTROL_FILE
     fi
     echo "#${NAME}_SECTION_END" >> $SVN_ACCESS_CONTROL_FILE
     echo "" >> $SVN_ACCESS_CONTROL_FILE
 
+    # Tworzymy nowe repo
     svnadmin create "$SVN_REPO_DIR"
     
+    # Sprawdzamy, czy repo istnieje
     svnlook info "$SVN_REPO_DIR"
     if [[ $? -ne 0 || ! -d $SVN_REPO_DIR ]] ; then
         echo "Błąd: nie udało się utworzyć repozytorium $SVN_REPO_DIR"
+        # Cofamy zmiany jeśli problem
+        mv ${SVN_ACCESS_CONTROL_FILE}.swp $SVN_ACCESS_CONTROL_FILE
         exit 3
     fi
-    chmod o-rwx "$SVN_REPO_DIR" -R
+    # Usuwamy plik tymczasowy jeśli ok
+    rm ${SVN_ACCESS_CONTROL_FILE}.swp
 fi
 
 #########
@@ -108,7 +123,6 @@ if [[ -n "$GIT" && "$GIT" -eq 1 ]] ; then
     if [[ -n $PUBLIC && $PUBLIC -eq 1 ]] ; then
         echo -e "\tR\t\t=\tdaemon" >> "$GITOLITE_CONFIG_FILE"
     fi
-    echo "" >> "$GITOLITE_CONFIG_FILE"
     git add $GITOLITE_CONFIG_FILE
     git commit $GITOLITE_CONFIG_FILE -m "Dodano projekt $NAME , właściciel: $USER"
     git push origin master

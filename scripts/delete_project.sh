@@ -78,15 +78,15 @@ if [[ -n "$GIT" && "$GIT" -eq 1 ]] ; then
     # Sprawdzamy, czy linia zawiera "repo [...]" lub czy jest pusta - jeśli tak, 
     # to przestajemy kasować
     while [[ -z $(sed -n "${LINE_NUMBER_TO_DELETE}p" $GITOLITE_CONFIG_FILE | grep "^repo ") \
-     && -n $(sed -n "${LINE_NUMBER_TO_DELETE}p" $GITOLITE_CONFIG_FILE | grep ".*") ]] ; do
+        && -n $(sed -n "${LINE_NUMBER_TO_DELETE}p" $GITOLITE_CONFIG_FILE | grep ".*") ]] ; do
         sed -i -e "${LINE_NUMBER_TO_DELETE}d" $GITOLITE_CONFIG_FILE
     done
     
     # Sprawdźmy, czy w configu nie ma żadnej linii z naszym repo  czy zawiera
     # standardowe info o wszystkich repozytoriach (repo @all)
-    if [[ -n $(cat $GITOLITE_CONFIG_FILE | grep "repo ${NAME}$") || \
-     -n $(cat $GITOLITE_CONFIG_FILE | grep "@${NAME}\t=\t") || \ 
-     -z $(cat $GITOLITE_CONFIG_FILE | grep "repo @all$") ]] ; then
+    if [[ -n $(cat $GITOLITE_CONFIG_FILE | grep "repo ${NAME}$") \
+        || -n $(cat $GITOLITE_CONFIG_FILE | grep "@${NAME}\t=\t") \
+        || -z $(cat $GITOLITE_CONFIG_FILE | grep "repo @all$") ]] ; then
         echo "Błąd: nie udało się usunąć informacji o repo lub usunięto zbyt dużo." > /dev/stderr
         # No to przywracamy...
         mv $PROJECTS_ARCHIVE_DIR/git/${NAME}.git $GIT_REPO_DIR

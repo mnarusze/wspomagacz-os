@@ -28,14 +28,29 @@ fi
 #  GIT  #
 #########
 if [[ -n "$GIT" && "$GIT" -eq 1 ]] ; then
-    if [[ -z "$GITOLITE_ADMIN_DIR" ]] ; then
-        echo "Błąd: nie podano sciezki do katalogu administatora Gitolite" > /dev/stderr
+    if [[ -z "$GITOLITE_ADMIN_DIR" || ! -d "$GITOLITE_ADMIN_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do repozytorium Gitolite: $GITOLITE_ADMIN_DIR" > /dev/stderr
+        exit 1
+    else
+        USER_SSH_KEY="$GITOLITE_KEYS_DIR/${USER}.pub"
+    fi
+
+    if [[ ! -f "$GITOLITE_CONFIG_FILE" ]] ; then
+        echo "Błąd: brak pliku konfiguracyjnego Gitolite: $GITOLITE_CONFIG_FILE" > /dev/stderr
         exit 2
     fi
-    if [[ ! -d "$GITOLITE_ADMIN_DIR" ]] ; then
-        echo "Błąd: nie istnieje katalog administatora Gitolite $GITOLITE_ADMIN_DIR" > /dev/stderr
+
+    if [[ -z $(cat $GITOLITE_CONFIG_FILE | grep "repo ${NAME}$") ]] ; then
+        echo "Błąd: repozytorium o podanej nazwie $NAME nie istnieje!" > /dev/stderr
         exit 3
     fi
+
+    if [[ ! -f "$USER_SSH_KEY" ]] ; then
+        echo "Błąd: brakuje klucza ssh $USER_SSH_KEY dla użytkownika $USER!!" > /dev/stderr
+        exit 4
+    fi
+
+    cd "$GITOLITE_ADMIN_DIR"
     
 fi
 
