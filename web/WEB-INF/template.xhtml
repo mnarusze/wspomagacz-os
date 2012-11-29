@@ -18,50 +18,46 @@
                         <div id="account">
                             <h:form>
                                 <c:if test="#{loginBean.isLogged()}">
-                                    <h:commandLink value="Log out" action="#{loginBean.logout()}"/>
+                                    Witaj, <b><h:outputText value="#{loginBean.loggedUser.nickname}"/></b>!
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <h:commandLink value="Wyloguj się" action="#{loginBean.logout()}"/>
                                 </c:if>
                                 <c:if test="#{!loginBean.isLogged()}">
-                                    <h:commandLink value="Sign in" action="login"/>
+                                    <h:commandLink value="Zaloguj się" action="login"/>
                                 </c:if>
                             </h:form>
                         </div>
                         <ul>
                             <li>
-                                <h:link value="Home" outcome="index" />
+                                <h:link value="Strona domowa" outcome="index" />
                             </li>
                             <li>
-                                <h:link value="Projects" outcome="projects_list" />
+                                <h:link value="Publiczne projekty" outcome="projects_list" />
                             </li>
                             <li>
-                                <h:link value="Help" outcome="help"/>
+                                <h:link value="Pomoc" outcome="help"/>
                             </li>
                         </ul>
                     </div>
                     <div id="header">
                         <div id="quick-search">
-                            <h:outputText value="Search" />
+                            <h:outputText value="Szukaj projektu" />
                             <h:inputText />
                         </div>
                         <h1>
-                            <h:outputText value="KASK Projects Manager" outcome="index" />
+                            <h:outputText value="Menadżer projektów KASK" outcome="index" />
                         </h1>
                         <div id="main-menu" >
                             <h:form>
                                 <ul>
                                     <c:if test="#{loginBean.isLogged()}">
                                         <li>
-                                            <h:commandLink value="Your projects" action="my_projects"/>
+                                            <h:commandLink value="Twoje projekty" action="my_projects"/>
                                         </li>
                                         <li>
-                                            <h:commandLink value="Account options" action="my_account"/>
+                                            <h:commandLink value="Ustawienia konta" action="my_account"/>
                                         </li>
                                     </c:if>
-                                    <li>
-                                        <h:commandLink value="All projects" action="projects_list"/>
-                                    </li>
-                                    <li>
-
-                                    </li>
                                 </ul>
                             </h:form>
                         </div>

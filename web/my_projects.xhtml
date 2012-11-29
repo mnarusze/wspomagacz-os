@@ -15,7 +15,7 @@
                     <p>
                         <h:outputText value="Owner of projects"/>
                     </p>
-                    <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projectsForOwner(loginBean.logedUser)}">
+                    <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projectsForOwner(loginBean.loggedUser)}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Name" /></f:facet>
 
@@ -57,7 +57,7 @@
 
                     <p>
                         <h:outputText value="Active in this projects" />
-                        <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projectsForActive(loginBean.logedUser)}">
+                        <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projectsForActive(loginBean.loggedUser)}">
                             <h:column>
                                 <f:facet name="header"><h:outputText value="Name" /></f:facet>
                                 <h:commandLink action="#{EditHelperBean.viewProject(Projects)}">

@@ -136,7 +136,11 @@ if [[ -n "$SVN" && "$SVN" -eq 1 ]] ; then
         exit 1
     fi
 
-    mv $SVN_REPO_DIR $PROJECTS_ARCHIVE_DIR/svn
+    sudo mv $SVN_REPO_DIR $PROJECTS_ARCHIVE_DIR/svn
+    if [[ -d $SVN_REPO_DIR ]] ; then
+        echo "Błąd: nie udało się usunąć repozytorium" > /dev/stderr
+        exit 2
+    fi
 fi
 
 ##########

@@ -79,6 +79,9 @@ if [[ -n "$SVN" && "$SVN" -eq 1 ]] ; then
         mv ${SVN_ACCESS_CONTROL_FILE}.swp $SVN_ACCESS_CONTROL_FILE
         exit 3
     fi
+
+    # Tymczasowo do prezentacji...
+    sudo chown -R apache.apache "$SVN_REPO_DIR"
     # Usuwamy plik tymczasowy jeśli ok
     rm ${SVN_ACCESS_CONTROL_FILE}.swp
 fi
