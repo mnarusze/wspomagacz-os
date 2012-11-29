@@ -32,22 +32,31 @@ public class ProjectsManager {
         return properties;
     }
     
-    public static boolean deleteRepository(Projects project) {
-        List<String> command = new ArrayList<String>();
-        command.add(getScriptsDir() + "/delete_project.sh");
+    public static boolean deleteProject(Projects project) {
+        List<String> command = null;
+        boolean ret = true;
+        if(project.getTracEnabled()) {
+            command = new ArrayList<String>();
+            command.add(getScriptsDir() + "/remove_trac.sh");
+            command.add("-N");
+            command.add(project.getProjName());
+            ret &= executeCommand(command.toArray(new String[0]));
+        }
         if(project.getSvnEnabled()) {
-            command.add("-s");
+            command = new ArrayList<String>();
+            command.add(getScriptsDir() + "/delete_svn_repo.sh");
+            command.add("-N");
+            command.add(project.getProjName());
+            ret &= executeCommand(command.toArray(new String[0]));
         }
         if(project.getGitEnabled()) {
-            command.add("-g");
+            command = new ArrayList<String>();
+            command.add(getScriptsDir() + "/delete_git_repo.sh");
+            command.add("-N");
+            command.add(project.getProjName());
+            ret &= executeCommand(command.toArray(new String[0]));
         }
-        if(project.getTracEnabled()) {
-            command.add("-t");
-        }
-        command.add("-n");
-        command.add(project.getProjName());
- 
-        return executeCommand(command.toArray(new String[0]));
+        return ret;
     }
     
     public static boolean createProject(Projects project) {

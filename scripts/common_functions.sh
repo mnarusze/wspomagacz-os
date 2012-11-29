@@ -178,3 +178,54 @@ function check_input_add_trac()
         exit 5
     fi    
 }
+
+function check_input_delete_git_repo()
+{
+    if [[ -z "$PROJECT_NAME" ]] ; then
+        echo "Błąd: pusta nazwa" > /dev/stderr
+        exit 1
+    fi
+
+    if [[ -z "$GIT_REPOS_DIR" || ! -d "$GIT_REPOS_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do repozytoriów GIT GIT_REPOS_DIR:\
+         $GIT_REPOS_DIR" > /dev/stderr
+        exit 2
+    else
+        GIT_REPO_DIR="$GIT_REPOS_DIR/${PROJECT_NAME}.git"
+    fi
+
+    if [[ ! -d "$GIT_REPO_DIR" ]] ; then
+        echo "Błąd: nieprawidłowa ścieżka do repozytorium GIT GIT_REPO_DIR:\
+         $GIT_REPO_DIR" > /dev/stderr
+        exit 3
+    fi
+
+    if [[ -z "$GITOLITE_ADMIN_DIR" || ! -d "$GITOLITE_ADMIN_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do repozytorium Gitolite: $GITOLITE_ADMIN_DIR" > /dev/stderr
+        exit 4
+    fi
+
+    if [[ ! -f "$GITOLITE_CONFIG_FILE" ]] ; then
+        echo "Błąd: brak pliku konfiguracyjnego Gitolite: $GITOLITE_CONFIG_FILE" > /dev/stderr
+        exit 5
+    fi
+
+    if [[ -z $(cat $GITOLITE_CONFIG_FILE | grep "repo ${PROJECT_NAME}$") ]] ; then
+        echo "Błąd: repozytorium o podanej nazwie $PROJECT_NAME nie istnieje!" > /dev/stderr
+        exit 6
+    fi
+
+    if [[ -z "$PROJECTS_ARCHIVE_DIR" || ! -d "$PROJECTS_ARCHIVE_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do archiwum PROJECTS_ARCHIVE_DIR: $PROJECTS_ARCHIVE_DIR" > /dev/stderr
+        exit 7
+    fi
+
+    TODAY=$(date +%F)
+
+    if [[ ! -d "$PROJECTS_ARCHIVE_DIR/$TODAY" ]] ; then
+        mkdir "$PROJECTS_ARCHIVE_DIR/$TODAY"
+    elif [[ -d "$PROJECTS_ARCHIVE_DIR/$TODAY/git/$PROJECT_NAME" ]] ; then
+        echo "Błąd: Repozytorium $PROJECT_NAME zostało już dzisiaj ($TODAY) umieszczone w archiwum!" > /dev/stderr
+        exit 8
+    fi
+}

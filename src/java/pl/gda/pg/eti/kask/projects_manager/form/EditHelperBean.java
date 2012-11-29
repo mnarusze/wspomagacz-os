@@ -281,8 +281,11 @@ public class EditHelperBean implements Serializable {
 
     public String usunProject() {
 
-        if (ProjectsManager.deleteRepository(localProjects)) {
+        if (ProjectsManager.deleteProject(localProjects) != true) {
+           FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja usunięcia projektu nie powiodła się; prosimy o kontakt z aministratorem", null)); 
+        } else {
             projectFacadeLocal.remove(localProjects);
+            FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie usunięto projekt " + localProjects.getProjName(), null));
         }
 
         endConversation();
