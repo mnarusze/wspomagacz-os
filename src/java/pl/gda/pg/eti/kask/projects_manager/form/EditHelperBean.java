@@ -9,6 +9,7 @@ import javax.ejb.EJB;
 import javax.ejb.Remove;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -265,8 +266,11 @@ public class EditHelperBean implements Serializable {
         if (editingProjects) {
             projectFacadeLocal.edit(localProjects);
         } else {
-            if (ProjectsManager.createRepository(localProjects)) {
+            if (ProjectsManager.createProject(localProjects) != true) {
+                FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja utworzenia projektu nie powiodła się; prosimy o kontakt z aministratorem", null));
+            } else {
                 projectFacadeLocal.create(localProjects);
+                FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie utworzono projekt " + localProjects.getProjName(), null));
             }
         }
 

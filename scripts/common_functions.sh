@@ -1,80 +1,66 @@
 #!/bin/bash
 
-
 function get_input()
 {
-    # Variables
-    SVN= #s
-    GIT= #g
-    TRAC= #t
-    PUBLIC= #p
-    NAME= #n
-    PROJECT_OWNER= #o
-    DESCRIPTION= #d
-    USER= #u
-    ACCESS_RIGHTS= #a
+    # Boolean variables
+    SVN_ENABLED= #s
+    GIT_ENABLED= #g
+    TRAC_ENABLED= #t
+    REDMINE_ENABLED= #r
+    
+    # Project variables
+    PROJECT_TYPE= #T
+    PROJECT_NAME= #N
+    PROJECT_OWNER= #O
+    PROJECT_DESCRIPTION= #D
+
+    # User variables
+    USER_NAME= #L
+    USER_ACCESS_RIGHTS= #A
 
     # Constants
-    TEMPLATES_DIR= #T
-    TRAC_DIR= #R
-    GITOLITE_ADMIN_DIR= #G
-    GIT_REPOS_DIR= #L
-    SVN_REPO_DIR= #S
-    SVN_ACCESS_CONTROL_FILE= #C
-    PROJECTS_ARCHIVE_DIR= #A  
+    TEMPLATES_DIR=/home/maryl/NetBeansProjects/wspomagacz-os/templates
+    TRAC_MASTER_DIR=/var/www/trac
+    GITOLITE_ADMIN_DIR=/home/maryl/repositories/gitolite-admin
+    GITOLITE_CONFIG_FILE=$GITOLITE_ADMIN_DIR/conf/gitolite.conf
+    GITOLITE_KEYS_DIR=$GITOLITE_ADMIN_DIR/keydir
+    GIT_REPOS_DIR=/var/lib/git/repositories
+    SVN_REPOS_DIR=/var/www/svn
+    SVN_ACCESS_CONTROL_FILE=$SVN_REPOS_DIR/.access
+    PROJECTS_ARCHIVE_DIR=/home/maryl/Archive
 
-    while getopts ":sgtpn:o:d:u:a:T:R:G:L:S:C:A:" optname ; do
+    while getopts ":sgtrT:N:O:D:L:A:" optname ; do
         echo "Opcja : $optname arg: $OPTARG" > /dev/stderr
         case "$optname" in
             "s")
-                SVN=1
+                SVN_ENABLED=1
                 ;;
             "g")
-                GIT=1
+                GIT_ENABLED=1
                 ;;
             "t")
-                TRAC=1
+                TRAC_ENABLED=1
                 ;;
-            "p")
-                PUBLIC=1
-                ;;
-            "n")
-                NAME="$OPTARG"
-                ;;
-            "d")
-                DESCRIPTION="$OPTARG"
-                ;;
-            "u")
-                USER="$OPTARG"
-                ;;    
-            "o")
-                PROJECT_OWNER="$OPTARG"
-                ;;
-            "a")
-                ACCESS_RIGHTS="$OPTARG"
+            "r")
+                REDMINE_ENABLED=1
                 ;;
             "T")
-                TEMPLATES_DIR="$OPTARG"
+                PROJECT_TYPE="$OPTARG"
                 ;;
-            "R")
-                TRAC_DIR="$OPTARG"
+            "N")
+                PROJECT_NAME="$OPTARG"
                 ;;
-            "G")
-                GITOLITE_ADMIN_DIR="$OPTARG"
-                GITOLITE_CONFIG_FILE="$GITOLITE_ADMIN_DIR/conf/gitolite.conf"
-                GITOLITE_KEYS_DIR="$GITOLITE_ADMIN_DIR/keydir"
+            "O")
+                PROJECT_OWNER="$OPTARG"
                 ;;
+            "D")
+                PROJECT_DESCRIPTION="$OPTARG"
+                ;;    
             "L")
-                GIT_REPOS_DIR="$OPTARG"
-                ;;   
-            "S")
-                SVN_REPO_DIR="$OPTARG"
-                ;;
-            "C")
-                SVN_ACCESS_CONTROL_FILE="$OPTARG"
+                USER_NAME="$OPTARG"
                 ;;
             "A")
-                PROJECTS_ARCHIVE_DIR="$OPTARG"
+                USER_ACCESS_RIGHTS="$OPTARG"
                 ;;
             *)
                 echo "Błąd: Nieznana opcja $OPTARG" > /dev/stderr
@@ -82,4 +68,113 @@ function get_input()
                 ;;
         esac
     done
+}
+
+function check_input_create_git_repo()
+{
+    if [[ -z "$PROJECT_NAME" ]] ; then
+        echo "Błąd: pusta nazwa" > /dev/stderr
+        exit 1
+    fi
+
+    if [[ -z "$PROJECT_OWNER" ]] ; then
+        echo "Błąd: brakuje właściciela projektu PROJECT_OWNER!!" > /dev/stderr
+        exit 2
+    fi
+
+    if [[ -z "$PROJECT_TYPE" ]] ; then
+        echo "Błąd: brakuje typu projektu PROJECT_TYPE!!" > /dev/stderr
+        exit 3
+    fi
+
+    if [[ -z "$GITOLITE_ADMIN_DIR" || ! -d "$GITOLITE_ADMIN_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do repozytorium Gitolite: $GITOLITE_ADMIN_DIR" > /dev/stderr
+        exit 4
+    else
+        OWNER_SSH_KEY="$GITOLITE_KEYS_DIR/${PROJECT_OWNER}.pub"
+    fi
+
+    if [[ ! -f "$GITOLITE_CONFIG_FILE" ]] ; then
+        echo "Błąd: brak pliku konfiguracyjnego Gitolite: $GITOLITE_CONFIG_FILE" > /dev/stderr
+        exit 5
+    fi
+
+    if [[ -n $(cat $GITOLITE_CONFIG_FILE | grep "repo ${PROJECT_NAME}$") ]] ; then
+        echo "Błąd: repozytorium o podanej nazwie $PROJECT_NAME już istnieje!" > /dev/stderr
+        exit 6
+    fi
+
+    if [[ ! -f "$OWNER_SSH_KEY" ]] ; then
+        echo "Błąd: brakuje klucza ssh $OWNER_SSH_KEY dla właściciela $PROJECT_OWNER!!" > /dev/stderr
+        exit 7
+    fi
+}
+
+function check_input_create_svn_repo()
+{
+    if [[ -z "$PROJECT_NAME" ]] ; then
+        echo "Błąd: pusta nazwa" > /dev/stderr
+        exit 1
+    fi
+
+    if [[ -z "$PROJECT_OWNER" ]] ; then
+        echo "Błąd: brakuje właściciela projektu PROJECT_OWNER!!" > /dev/stderr
+        exit 2
+    fi
+
+    if [[ -z "$PROJECT_TYPE" ]] ; then
+        echo "Błąd: brakuje typu projektu PROJECT_TYPE!!" > /dev/stderr
+        exit 3
+    fi
+
+    if [[ -z "$SVN_REPOS_DIR" || ! -d "$SVN_REPOS_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do repozytoriów SVN : $SVN_REPOS_DIR" > /dev/stderr
+        exit 4
+    else
+        SVN_REPO_DIR="$SVN_REPOS_DIR/$PROJECT_NAME"
+    fi
+
+    if [[ -z "$SVN_ACCESS_CONTROL_FILE" || ! -f "$SVN_ACCESS_CONTROL_FILE" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do pliku kontroli dostępu SVN_ACCESS_CONTROL_FILE \
+        : $SVN_ACCESS_CONTROL_FILE" > /dev/stderr
+        exit 5
+    fi
+
+    if [[ -d "$SVN_REPO_DIR" ]] ; then
+        echo "Błąd: Repozytorium $SVN_REPO_DIR już istnieje!" > /dev/stderr
+        exit 6
+    fi
+}
+
+function check_input_add_trac()
+{
+    if [[ -z "$PROJECT_NAME" ]] ; then
+        echo "Błąd: pusta nazwa" > /dev/stderr
+        exit 1
+    fi
+
+    if [[ -z "$TRAC_MASTER_DIR" || ! -d "$TRAC_MASTER_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do traca TRAC_MASTER_DIR : $TRAC_MASTER_DIR" > /dev/stderr
+        exit 2
+    else
+        TRAC_DIR="$TRAC_MASTER_DIR/$PROJECT_NAME"
+    fi
+
+    if [[ -z "$TEMPLATES_DIR" || ! -d "$TEMPLATES_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do szablonów TEMPLATES_DIR : $TEMPLATES_DIR" > /dev/stderr
+        exit 3
+    fi
+
+    # Na razie description sypie resztę - oszukujemy system...
+    #if [[ -z "$PROJECT_DESCRIPTION" ]] ; then
+    #    echo "Błąd: nie podano opisu projektu PROJECT_DESCRIPTION" > /dev/stderr
+    #    exit 4
+    #fi
+
+    SVN_REPO_DIR=$SVN_REPOS_DIR/$PROJECT_NAME
+
+    if [[ -z "$SVN_REPO_DIR" || ! -d "$SVN_REPO_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do repozytorium SVN_REPO_DIR : $SVN_REPO_DIR" > /dev/stderr
+        exit 5
+    fi    
 }

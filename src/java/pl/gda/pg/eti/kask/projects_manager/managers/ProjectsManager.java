@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Properties;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 import pl.gda.pg.eti.kask.projects_manager.entity.Users;
-import pl.gda.pg.eti.kask.projects_manager.form.LoginBean;
 
 public class ProjectsManager {
 
@@ -20,35 +19,6 @@ public class ProjectsManager {
     private static String getScriptsDir() {
         return repositoresProperties.getProperty("scripts_dir");
     }
-    
-    private static String getTemplatesDir() {
-        return repositoresProperties.getProperty("templates_dir");
-    }
-    
-    private static String getGitoliteAdminDir() {
-        return repositoresProperties.getProperty("gitolite_admin_dir");
-    }
-    
-    private static String getGitReposDir() {
-        return repositoresProperties.getProperty("git_repos_dir");
-    }
-    
-    private static String getSvnRepoDir() {
-        return repositoresProperties.getProperty("svn_repo_dir");
-    }
-    
-    private static String getSvnAccessControlFile() {
-        return repositoresProperties.getProperty("svn_access_control_file");
-    }
-    
-    private static String getTracDir() {
-        return repositoresProperties.getProperty("trac_dir");
-    }
-    
-    private static String getProjectsArchiveDir() {
-        return repositoresProperties.getProperty("projects_archive_dir");
-    }
-    
     
     private static Properties loadProperties() {
         Properties properties = new Properties();
@@ -76,55 +46,51 @@ public class ProjectsManager {
         }
         command.add("-n");
         command.add(project.getProjName());
-        command.add("-R");
-        command.add(getTracDir());
-        command.add("-G");
-        command.add(getGitoliteAdminDir());
-        command.add("-L");
-        command.add(getGitReposDir());
-        command.add("-S");
-        command.add(getSvnRepoDir());
-        command.add("-C");
-        command.add(getSvnAccessControlFile());
-        command.add("-A");
-        command.add(getProjectsArchiveDir());
  
         return executeCommand(command.toArray(new String[0]));
     }
     
-    public static boolean createRepository(Projects project) {
-        List<String> command = new ArrayList<String>();
-        command.add(getScriptsDir() + "/create_project.sh");
+    public static boolean createProject(Projects project) {
+        List<String> command = null;
+        boolean ret = true;
         if(project.getSvnEnabled()) {
-            command.add("-s");
+            command = new ArrayList<String>();
+            command.add(getScriptsDir() + "/create_svn_repo.sh");
+            command.add("-T");
+            if(project.getIsPublic()) {
+                command.add("PUBLIC");
+            } else {
+                command.add("PRIVATE");
+            }
+            command.add("-N");
+            command.add(project.getProjName());
+            command.add("-O");
+            command.add(project.getOwner().getNickname());
+            ret &= executeCommand(command.toArray(new String[0]));
         }
         if(project.getGitEnabled()) {
-            command.add("-g");
+            command = new ArrayList<String>();
+            command.add(getScriptsDir() + "/create_git_repo.sh");
+            command.add("-T");
+            if(project.getIsPublic()) {
+                command.add("PUBLIC");
+            } else {
+                command.add("PRIVATE");
+            }
+            command.add("-N");
+            command.add(project.getProjName());
+            command.add("-O");
+            command.add(project.getOwner().getNickname());
+            ret &= executeCommand(command.toArray(new String[0]));
         }
         if(project.getTracEnabled()) {
-            command.add("-t");
+            command = new ArrayList<String>();
+            command.add(getScriptsDir() + "/add_trac.sh");
+            command.add("-N");
+            command.add(project.getProjName());
+            ret &= executeCommand(command.toArray(new String[0]));
         }
-        if(project.getIsPublic()) {
-            command.add("-p");
-        }
-        command.add("-n");
-        command.add(project.getProjName());
-        command.add("-u");
-        command.add(project.getOwner().getNickname());
-        command.add("-T");
-        command.add(getTemplatesDir());
-        command.add("-R");
-        command.add(getTracDir());
-        command.add("-G");
-        command.add(getGitoliteAdminDir());
-        command.add("-S");
-        command.add(getSvnRepoDir());
-        command.add("-C");
-        command.add(getSvnAccessControlFile());
-        command.add("-A");
-        command.add(getProjectsArchiveDir());
- 
-        return executeCommand(command.toArray(new String[0]));
+        return ret;
     }
     
     public static boolean addUser(Projects project, Users user) {
@@ -140,8 +106,6 @@ public class ProjectsManager {
         command.add(project.getProjName());
         command.add("-u");
         command.add(user.getNickname());
-        command.add("-C");
-        command.add(getSvnAccessControlFile());
  
         return executeCommand(command.toArray(new String[0]));
     }
@@ -159,8 +123,6 @@ public class ProjectsManager {
         command.add(project.getProjName());
         command.add("-u");
         command.add(user.getNickname());
-        command.add("-C");
-        command.add(getSvnAccessControlFile());
  
         return executeCommand(command.toArray(new String[0]));
     }

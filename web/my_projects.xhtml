@@ -9,6 +9,9 @@
             <ui:define name="content">
                 <h:form>
                     <p>
+                        <h:messages layout="table" infoStyle="color: green" warnStyle="color: orange" errorStyle="color: red"></h:messages>
+                    </p>
+                    <p>
                         <h:outputText value="Projekty, których jesteś właścicielem"/>
                     </p>
                     <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projectsForOwner(loginBean.loggedUser)}">
