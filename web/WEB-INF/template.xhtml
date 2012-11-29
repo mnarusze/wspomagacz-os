@@ -52,6 +52,9 @@
                                 <ul>
                                     <c:if test="#{loginBean.isLogged()}">
                                         <li>
+                                            <h:commandLink value="Nowy projekt" action="#{EditHelperBean.newProject()}"/>
+                                        </li>
+                                        <li>
                                             <h:commandLink value="Twoje projekty" action="my_projects"/>
                                         </li>
                                         <li>

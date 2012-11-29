@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -33,10 +32,6 @@ import pl.gda.pg.eti.kask.projects_manager.facade.UsersFacade;
 @ManagedBean
 @SessionScoped
 public class LoginBean implements Serializable {
-
-    @Resource(name = "ldap/myLdap")
-    private LdapContext ldapContext;
-    
     @EJB
     private UsersFacade usersFacade;
     private Users loggedUser;
@@ -99,12 +94,14 @@ public class LoginBean implements Serializable {
     }
 
     public String login() {
-        if (loggedUser != null) {
-            logout();
-        }
+        
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        
         try {
-            
+            if (request.getUserPrincipal() != null) {
+                request.logout();
+            }
+
             if (username == null || username.length() == 0)
             {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Proszę uzupełnić login", null));
@@ -120,6 +117,7 @@ public class LoginBean implements Serializable {
             
             if (!userExistsInDatabase(username)) {
                 if (!addUserToDatabase(username)) {
+                    request.logout();
                     return "failure";
                 }
             }
@@ -156,26 +154,15 @@ public class LoginBean implements Serializable {
     private boolean addUserToDatabase(String username) {
         LdapContext ctx = null;
         Users newUser = new Users();
-        Hashtable env = null, env2 = new Hashtable();
+        Hashtable env = new Hashtable();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL,"ldap://192.168.56.2:389");
+        env.put(Context.SECURITY_AUTHENTICATION,"simple");
+        env.put(Context.SECURITY_PRINCIPAL,"CN=linux-user-1,CN=Users,DC=ad,DC=inzynierka,DC=com");
+        env.put(Context.SECURITY_CREDENTIALS,"haslo-123");
+        
         try {
-            env = ldapContext.getEnvironment();
-            
-            Iterator keysIter = env.keySet().iterator();
-            Iterator valuesIter = env.values().iterator();
-            while (keysIter.hasNext()) {
-                String key = (String)keysIter.next();
-                env2.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-                if (key.equals("java.naming.security.authentication")) {
-                    env2.put(Context.SECURITY_AUTHENTICATION,valuesIter.next());
-                } else if (key.equals("java.naming.security.principal")) {
-                    env2.put(Context.SECURITY_PRINCIPAL,valuesIter.next());
-                } else if (key.equals("java.naming.provider.url")) {
-                    env2.put(Context.PROVIDER_URL,valuesIter.next());
-                } else if (key.equals("java.naming.security.credentials")) {
-                    env2.put(Context.SECURITY_CREDENTIALS,valuesIter.next());
-                }
-            }
-            ctx = new InitialLdapContext(env2,null);
+            ctx = new InitialLdapContext(env,null);
             NamingEnumeration<?> userInfo = ctx.search("CN=Users,DC=ad,DC=inzynierka,DC=com", "(&(objectclass=user)(sAMAccountName=" + username + "))", getSimpleSearchControls());
             while (userInfo.hasMore()) {
                 SearchResult result = (SearchResult) userInfo.next();

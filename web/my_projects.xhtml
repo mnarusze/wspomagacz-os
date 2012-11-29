@@ -7,13 +7,9 @@
     <h:body>
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
-                <h:form>  
+                <h:form>
                     <p>
-                        <h:commandButton value="New Project" action="#{EditHelperBean.newProject()}" />
-                        Adds new project
-                    </p>
-                    <p>
-                        <h:outputText value="Owner of projects"/>
+                        <h:outputText value="Projekty, których jesteś właścicielem"/>
                     </p>
                     <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projectsForOwner(loginBean.loggedUser)}">
                         <h:column>
@@ -56,7 +52,7 @@
 
 
                     <p>
-                        <h:outputText value="Active in this projects" />
+                        <h:outputText value="Projekty, w których uczestniczysz" />
                         <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projectsForActive(loginBean.loggedUser)}">
                             <h:column>
                                 <f:facet name="header"><h:outputText value="Name" /></f:facet>
