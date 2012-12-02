@@ -64,36 +64,42 @@ public class ProjectsManagerBean implements Serializable {
     }
 
     public List<Projects> projectsForOwner(Users owner) {
-//        List<Projects> temp = getProjects();
+        List<Projects> temp = getProjects();
         List<Projects> value = new ArrayList();
 //        for (Projects p : temp) {
 //            if (p.getOwner().getNickname().equals(owner.getNickname())) {
 //                value.add(p);
 //            }
 //        }
-        for (ProjHasUsers projects : owner.getProjHasUsersCollection()) {
-            if (projects.getRola().getId().equals(1)) {
-                value.add(projects.getProjects());
+        for (Projects projects : temp) {
+            List<Users> uz = projects.getOwners();
+            for (Users users : uz) {
+                if (users.getLogin().equals(owner.getLogin())) {
+                    value.add(projects);
+                }
             }
         }
+
         return value;
     }
 
     public List<Projects> projectsForActive(Users active) {
-//        List<Projects> temp = getProjects();
+        List<Projects> temp = getProjects();
         List<Projects> value = new ArrayList();
 //        for (Projects p : temp) {
-//            for (Users u : p.getUsersCollection()) {
-//                if (u.getNickname().equals(active.getNickname())) {
-//                    value.add(p);
-//                }
+//            if (p.getOwner().getNickname().equals(owner.getNickname())) {
+//                value.add(p);
 //            }
 //        }
-        for (ProjHasUsers projects : active.getProjHasUsersCollection()) {
-            if (projects.getRola().getId().equals(2)) {
-                value.add(projects.getProjects());
+        for (Projects projects : temp) {
+            List<Users> uz = projects.getDevelopers();
+            for (Users users : uz) {
+                if (users.getLogin().equals(active.getLogin())) {
+                    value.add(projects);
+                }
             }
         }
+
         return value;
     }
 
@@ -132,8 +138,8 @@ public class ProjectsManagerBean implements Serializable {
         }
         return list;
     }
-    
-    public List<PublicationTypes> getPublicationTypes(){
+
+    public List<PublicationTypes> getPublicationTypes() {
         return publicationFacade.findAll();
     }
 

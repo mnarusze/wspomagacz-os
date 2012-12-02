@@ -9,7 +9,7 @@
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <h:dataTable border="0" var="Users" value="#{projectsManagerBean.usersActiveInProject(EditHelperBean.projects)}">
+                    <h:dataTable border="0" var="Users" value="#{projectsManagerBean.usersActiveInProject(editHelperBean.projects)}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>
                             <h:commandButton value="Remove From Project" action="#{editHelperBean.removeUsersFromProject(Users)}" />                         
@@ -29,7 +29,7 @@
                         <h:column>
                             <f:facet name="header"><h:outputText value="e-mail" /></f:facet>
                             <h:outputText value="#{Users.users.email}"  />
-                        </h:column>                        
+                        </h:column>                     
                         <h:column>
                             <f:facet name="header"><h:outputText value="Index" /></f:facet>
                             <h:outputText value="#{Users.users.indeks}"  />
@@ -41,18 +41,18 @@
                         <h:column>
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>
                                                   
-                            <h:commandButton value="Add To Project" action="#{EditHelperBean.saveUsersToProject(Users)}"/>
+                            <h:commandButton value="Add To Project" action="#{editHelperBean.saveUsersToProject(Users)}"/>
                             <h:commandLink >
-                                <h:outputText value="#{Users.nickname}" />
+                                <h:outputText value="#{Users.login}" />
                             </h:commandLink>
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="First Name" /></f:facet>
-                            <h:outputText value="#{Users.firstname}"  />
+                            <h:outputText value="#{Users.firstName}"  />
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="Last Name" /></f:facet>
-                            <h:outputText value="#{Users.lastname}"  />
+                            <h:outputText value="#{Users.lastName}"  />
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="e-mail" /></f:facet>
