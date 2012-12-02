@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ProjectDescription.findByLastChange", query = "SELECT p FROM ProjectDescription p WHERE p.lastChange = :lastChange"),
     @NamedQuery(name = "ProjectDescription.findByProjLogo", query = "SELECT p FROM ProjectDescription p WHERE p.projLogo = :projLogo")})
 public class ProjectDescription implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,6 +67,10 @@ public class ProjectDescription implements Serializable {
     private Collection<Projects> projectsCollection;
 
     public ProjectDescription() {
+    }
+
+    public ProjectDescription(String fullname) {
+        this.projFullName = fullname;
     }
 
     public ProjectDescription(Integer id) {
@@ -153,5 +158,4 @@ public class ProjectDescription implements Serializable {
     public String toString() {
         return "pl.gda.pg.eti.kask.projects_manager.entity.ProjectDescription[ id=" + id + " ]";
     }
-    
 }

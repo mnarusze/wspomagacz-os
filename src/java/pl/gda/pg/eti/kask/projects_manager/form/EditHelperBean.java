@@ -14,8 +14,11 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import pl.gda.pg.eti.kask.projects_manager.entity.ProjHasUsers;
+import pl.gda.pg.eti.kask.projects_manager.entity.ProjectDescription;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 import pl.gda.pg.eti.kask.projects_manager.entity.Users;
+import pl.gda.pg.eti.kask.projects_manager.facade.ProjHasUsersFacade;
+import pl.gda.pg.eti.kask.projects_manager.facade.ProjectDescriptionFacade;
 import pl.gda.pg.eti.kask.projects_manager.facade.ProjectsFacade;
 import pl.gda.pg.eti.kask.projects_manager.facade.UsersFacade;
 import pl.gda.pg.eti.kask.projects_manager.managers.ProjectsManager;
@@ -24,7 +27,7 @@ import pl.gda.pg.eti.kask.projects_manager.managers.ProjectsManager;
  *
  * @author mateusz
  */
-@Named("EditHelperBean")
+@Named
 @ConversationScoped
 public class EditHelperBean implements Serializable {
 
@@ -32,6 +35,13 @@ public class EditHelperBean implements Serializable {
     private ProjectsFacade projectFacadeLocal;
     private Projects localProjects;
     private boolean editingProjects;
+    
+    @EJB
+    private ProjHasUsersFacade projectUsersFacadeLocal;
+    
+    @EJB
+    private ProjectDescriptionFacade projectDescriptionFacadeLocal;
+    
     @EJB
     private UsersFacade usersFacadeLocal;
     private Users localUsers;
@@ -39,8 +49,6 @@ public class EditHelperBean implements Serializable {
     @Inject
     Conversation conversation;
 
-    public EditHelperBean() {
-    }
 
     public Projects getProjects() {
         return localProjects;
@@ -269,17 +277,35 @@ public class EditHelperBean implements Serializable {
         }
         return "projects_list";
     }
+    
+    private void saveNewProject(Users owner){
+        ProjectDescription desc = new ProjectDescription();
+        desc.setProjFullName(localProjects.getProjName());
+//        projectDescriptionFacadeLocal.create(desc);
+        localProjects.setProjDescription(desc);
+        
+//        localProjects.addUserPerRole(owner, 1);
+        projectFacadeLocal.create(localProjects);
+        localProjects.addUserPerRole(owner, 1);
+        projectFacadeLocal.edit(localProjects);
+    }
+    
+    private void saveEditingProject(){
+        projectFacadeLocal.edit(localProjects);
+    }
 
-    public String saveProject() {
+    public String saveProject(Users owner) {
         if (editingProjects) {
-            projectFacadeLocal.edit(localProjects);
+            saveEditingProject();
         } else {
-            if (ProjectsManager.createProject(localProjects) != true) {
-                FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja utworzenia projektu nie powiodła się; prosimy o kontakt z aministratorem", null));
-            } else {
-                projectFacadeLocal.create(localProjects);
+//            if (ProjectsManager.createProject(localProjects) != true) {
+//                FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja utworzenia projektu nie powiodła się; prosimy o kontakt z aministratorem", null));
+//            } else {
+//                localProjects.setProjDescription(new ProjectDescription(localProjects.getProjName()));
+//                projectFacadeLocal.create(localProjects);
+                saveNewProject(owner);
                 FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie utworzono projekt " + localProjects.getProjName(), null));
-            }
+//            }
         }
 
         endConversation();

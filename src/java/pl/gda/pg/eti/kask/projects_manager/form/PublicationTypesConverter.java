@@ -13,40 +13,39 @@ import javax.faces.convert.FacesConverter;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import pl.gda.pg.eti.kask.projects_manager.entity.Users;
-import pl.gda.pg.eti.kask.projects_manager.facade.UsersFacade;
+import pl.gda.pg.eti.kask.projects_manager.entity.PublicationTypes;
+import pl.gda.pg.eti.kask.projects_manager.facade.PublicationTypesFacade;
 
 /**
  *
  * @author Mateusz
  */
-@FacesConverter(forClass = Users.class)
-public class UserConverter implements Converter {
-    
-    UsersFacade usersFacade = lookupUsersFacadeBean();
+@FacesConverter(forClass = PublicationTypes.class)
+public class PublicationTypesConverter implements Converter{
 
+    PublicationTypesFacade pubFacade = lookupPubFacadeBean();
+    
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        //throw new UnsupportedOperationException("Not supported yet.");
-        Users u = usersFacade.find(Integer.valueOf(value));
-        return u;
+//        throw new UnsupportedOperationException("Not supported yet.");
+        PublicationTypes p = pubFacade.find(Integer.valueOf(value));
+        return p;
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        //throw new UnsupportedOperationException("Not supported yet.");
-        Users u = (Users) value;
-        
-        return u.getId().toString();
+//        throw new UnsupportedOperationException("Not supported yet.");
+        PublicationTypes p = (PublicationTypes) value;
+        return p.getId().toString();
     }
     
-    private UsersFacade lookupUsersFacadeBean() {
+    private PublicationTypesFacade lookupPubFacadeBean(){
         try {
             Context c = new InitialContext();
-            return (UsersFacade) c.lookup("java:global/Inzynierka/UsersFacade");
+            return (PublicationTypesFacade) c.lookup("java:global/Inzynierka/PublicationTypesFacade");
         } catch (NamingException ex) {
             Logger.getLogger(UserConverter.class.getName()).log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
     }
-}   
+}

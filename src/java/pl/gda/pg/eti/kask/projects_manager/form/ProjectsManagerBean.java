@@ -8,20 +8,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
+import javax.inject.Named;
 import pl.gda.pg.eti.kask.projects_manager.entity.ProjHasUsers;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
+import pl.gda.pg.eti.kask.projects_manager.entity.PublicationTypes;
 import pl.gda.pg.eti.kask.projects_manager.entity.Users;
 import pl.gda.pg.eti.kask.projects_manager.facade.ProjectsFacade;
+import pl.gda.pg.eti.kask.projects_manager.facade.PublicationTypesFacade;
 import pl.gda.pg.eti.kask.projects_manager.facade.UsersFacade;
 
 /**
  *
  * @author Mateusz
  */
-@ManagedBean(name = "ProjectsManagerBean")
+@Named
 @ViewScoped
 public class ProjectsManagerBean implements Serializable {
 
@@ -29,6 +31,8 @@ public class ProjectsManagerBean implements Serializable {
     private ProjectsFacade projectsFacade;
     @EJB
     private UsersFacade usersFacade;
+    @EJB
+    private PublicationTypesFacade publicationFacade;
 
     public ProjectsManagerBean() {
     }
@@ -97,21 +101,21 @@ public class ProjectsManagerBean implements Serializable {
     }
 
     public List<Users> usersActiveInProject(Projects p) {
-        List<Users> result = null;
-        for (ProjHasUsers object : p.getProjHasUsersCollection()) {
-            if(object.getRola().getId().equals(2))
-            {
-                result.add(object.getUsers());
-            }
-        }
-        return result;
+//        List<Users> result = new ArrayList<Users>();
+//        for (ProjHasUsers object : p.getProjHasUsersCollection()) {
+//            if(object.getRola().getId().equals(2))
+//            {
+//                result.add(object.getUsers());
+//            }
+//        }
+//        return result;
+        return p.getDevelopers();
     }
 
     public List<Users> usersReadOnlyInProject(Projects p) {
         List<Users> result = null;
         for (ProjHasUsers object : p.getProjHasUsersCollection()) {
-            if(object.getRola().getId().equals(3))
-            {
+            if (object.getRola().getId().equals(3)) {
                 result.add(object.getUsers());
             }
         }
@@ -123,6 +127,19 @@ public class ProjectsManagerBean implements Serializable {
         for (Object o : getUsers()) {
             Users u = (Users) o;
             list.add(new SelectItem(u, u.getFirstName() + " " + u.getLastName()));
+        }
+        return list;
+    }
+    
+    public List<PublicationTypes> getPublicationTypes(){
+        return publicationFacade.findAll();
+    }
+
+    public List<SelectItem> getPublicationTypesAsSelectItems() {
+        ArrayList<SelectItem> list = new ArrayList<SelectItem>();
+        for (Object o : getPublicationTypes()) {
+            PublicationTypes u = (PublicationTypes) o;
+            list.add(new SelectItem(u, u.getPublicationDescription()));
         }
         return list;
     }

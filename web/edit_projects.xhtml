@@ -5,32 +5,37 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core">
     <h:body>
+        
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
+                
                     <h:panelGrid columns="3">
+                                               
                         <h:outputText value="Nazwa projektu" />
-                        <h:inputText id="projName" value="#{EditHelperBean.projects.projName}" />
+                        <h:inputText id="projName" value="#{editHelperBean.projects.projName}" />
                         <h:message for="projName" />
 
-                        <h:outputText value="Publiczny" />
-                        <h:selectBooleanCheckbox id="isPublic" value="#{EditHelperBean.projects.isPublic}" />
+                        <h:outputText value="Typ projektu" />
+                        <h:selectOneListbox id="publicationType" value="#{editHelperBean.projects.pubType}">
+                            <f:selectItems value="#{projectsManagerBean.publicationTypesAsSelectItems}" />
+                        </h:selectOneListbox>
                         <h:message for="isPublic" />
 
                         <h:outputText value="SVN" />
-                        <h:selectBooleanCheckbox id="svnEnabled" value="#{EditHelperBean.projects.svnEnabled}" />
+                        <h:selectBooleanCheckbox id="svnEnabled" value="#{editHelperBean.projects.svnEnabled}" />
                         <h:message for="svnEnabled" />
 
                         <h:outputText value="GIT" />
-                        <h:selectBooleanCheckbox id="gitEnabled" value="#{EditHelperBean.projects.gitEnabled}" />
+                        <h:selectBooleanCheckbox id="gitEnabled" value="#{editHelperBean.projects.gitEnabled}" />
                         <h:message for="gitEnabled" />
 
                         <h:outputText value="Trac" />
-                        <h:selectBooleanCheckbox id="tracEnabled" value="#{EditHelperBean.projects.tracEnabled}" />
+                        <h:selectBooleanCheckbox id="tracEnabled" value="#{editHelperBean.projects.tracEnabled}" />
                         <h:message for="tracEnabled" />
 
                         <h:outputText value="Redmine" />
-                        <h:selectBooleanCheckbox id="redmineEnabled" value="#{EditHelperBean.projects.redmineEnabled}" />
+                        <h:selectBooleanCheckbox id="redmineEnabled" value="#{editHelperBean.projects.redmineEnabled}" />
                         <h:message for="tracEnabled" />
 
                         <h:outputText id="owner" value="Właściciel"/>
@@ -42,11 +47,11 @@
 
                     <h:commandButton value="Dodaj/usuń developerów" action="#{EditHelperBean.addUsersToProject(EditHelperBean.projects)}" rendered="#{EditHelperBean.editingProjects}" />
                     <h:commandButton value="Dodaj/usuń gości" action="#{EditHelperBean.addReadOnlyUsers(EditHelperBean.projects)}" rendered="#{EditHelperBean.editingProjects and !EditHelperBean.projects.isPublic}" />
-                    <h:commandButton value="Zapisz zmiany" action="#{EditHelperBean.saveProject()}"/>
+                    <h:commandButton value="Zapisz zmiany" action="#{editHelperBean.saveProject(loginBean.loggedUser)}"/>
                     <h:commandButton value="Usuń projekt" action="#{EditHelperBean.usunProject()}" rendered="#{EditHelperBean.editingProjects}" />
                     <h:commandButton value="Anuluj" action="#{EditHelperBean.anuluj()}" immediate="true" />
 
-                    <h:dataTable border="0" var="Users" value="#{ProjectsManagerBean.usersActiveInProject(EditHelperBean.projects)}">
+                    <h:dataTable border="0" var="Users" value="#{ProjectsManagerBean.usersActiveInProject(EditHelperBean.projects)}" >
                         <h:column>
                             <f:facet name="header"><h:outputText value="Nazwa użytkownika" /></f:facet>                      
 

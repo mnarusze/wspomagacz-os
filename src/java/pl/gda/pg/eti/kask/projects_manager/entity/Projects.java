@@ -5,6 +5,7 @@
 package pl.gda.pg.eti.kask.projects_manager.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.Basic;
@@ -77,7 +78,7 @@ public class Projects implements Serializable {
     @ManyToMany
     private Collection<ProjectMessage> projectMessageCollection;
     @JoinColumn(name = "proj_description", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade= CascadeType.ALL)
     private ProjectDescription projDescription;
     @JoinColumn(name = "pub_type", referencedColumnName = "id")
     @ManyToOne(optional = false)
@@ -219,23 +220,37 @@ public class Projects implements Serializable {
     public boolean getIsPrivate() {
         return this.getPubType().isPrivate();
     }
-    
+
     public boolean getIsHidden() {
         return this.getPubType().isHidden();
     }
+    
+    public void addUserPerRole(Users a, Integer role){
+        if(projHasUsersCollection == null){
+            projHasUsersCollection = new ArrayList<ProjHasUsers>();
+        }
+        ProjHasUsers pu = new ProjHasUsers();
+        pu.setProjects(this);
+        pu.setRola(new UserRoles(role));
+        pu.setUsers(a);
+        pu.setProjHasUsersPK(new ProjHasUsersPK(this.getId(), a.getId()));
+        projHasUsersCollection.add(pu);
+    }
 
     public List<Users> getOwners() {
-        List<Users> result = null;
-        for (ProjHasUsers project : getProjHasUsersCollection()) {
-            if (project.getRola().isAdministrator()) {
-                result.add(project.getUsers());
+        List<Users> result = new ArrayList<Users>();
+        if (getProjHasUsersCollection() != null) {
+            for (ProjHasUsers project : getProjHasUsersCollection()) {
+                if (project.getRola().isAdministrator()) {
+                    result.add(project.getUsers());
+                }
             }
         }
         return result;
     }
 
     public List<Users> getDevelopers() {
-        List<Users> result = null;
+        List<Users> result = new ArrayList<Users>();
         for (ProjHasUsers project : getProjHasUsersCollection()) {
             if (project.getRola().isDeveloper()) {
                 result.add(project.getUsers());
@@ -245,7 +260,7 @@ public class Projects implements Serializable {
     }
 
     public List<Users> getGuests() {
-        List<Users> result = null;
+        List<Users> result = new ArrayList<Users>();
         for (ProjHasUsers project : getProjHasUsersCollection()) {
             if (project.getRola().isGuest()) {
                 result.add(project.getUsers());
