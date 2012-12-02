@@ -9,15 +9,15 @@
                 <h:form>
                     <h:panelGrid columns="3" >
                         <h:outputText value="Login" />
-                        <h:outputText id="nickname" value="#{loginBean.loggedUser.nickname}" />
+                        <h:outputText id="nickname" value="#{loginBean.loggedUser.login}" />
                         <h:message for="nickname" />
 
                         <h:outputText value="Imię" />
-                        <h:outputText id="firstname" value="#{loginBean.loggedUser.firstname}" />
+                        <h:outputText id="firstname" value="#{loginBean.loggedUser.firstName}" />
                         <h:message for="firstname" />
 
                         <h:outputText value="Nazwisko" />
-                        <h:outputText id="lastname" value="#{loginBean.loggedUser.lastname}" />
+                        <h:outputText id="lastname" value="#{loginBean.loggedUser.lastName}" />
                         <h:message for="lastname" />
 
                         <h:outputText value="E-mail" />
@@ -31,6 +31,9 @@
                         <h:outputText value="Publiczny klucz ssh" />
                         <h:selectBooleanCheckbox disabled="true" id="sshkey" value="#{loginBean.hasPublicKey()}"/>
                         <h:message for="sshkey" />
+                        
+                        <h:outputText value="Czas ostatniego logowania" />
+                        <h:outputText id="last_login" value="#{loginBean.loggedUser.lastLogin.toString()}" />
 
                     </h:panelGrid>
                     <h:commandButton value="Edytuj klucz ssh" action="ssh_key"/>

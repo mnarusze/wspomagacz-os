@@ -74,7 +74,7 @@ public class ProjectsManager {
             command.add("-N");
             command.add(project.getProjName());
             command.add("-O");
-            command.add(project.getOwner().getNickname());
+            command.add(project.getOwners().get(0).getLogin());
             ret &= executeCommand(command.toArray(new String[0]));
         }
         if(project.getGitEnabled()) {
@@ -89,7 +89,7 @@ public class ProjectsManager {
             command.add("-N");
             command.add(project.getProjName());
             command.add("-O");
-            command.add(project.getOwner().getNickname());
+            command.add(project.getOwners().get(0).getLogin());
             ret &= executeCommand(command.toArray(new String[0]));
         }
         if(project.getTracEnabled()) {
@@ -114,7 +114,7 @@ public class ProjectsManager {
         command.add("-n");
         command.add(project.getProjName());
         command.add("-u");
-        command.add(user.getNickname());
+        command.add(user.getLogin());
  
         return executeCommand(command.toArray(new String[0]));
     }
@@ -131,7 +131,7 @@ public class ProjectsManager {
         command.add("-n");
         command.add(project.getProjName());
         command.add("-u");
-        command.add(user.getNickname());
+        command.add(user.getLogin());
  
         return executeCommand(command.toArray(new String[0]));
     }

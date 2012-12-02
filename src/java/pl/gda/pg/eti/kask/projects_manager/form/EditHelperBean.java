@@ -13,6 +13,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import pl.gda.pg.eti.kask.projects_manager.entity.ProjHasUsers;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 import pl.gda.pg.eti.kask.projects_manager.entity.Users;
 import pl.gda.pg.eti.kask.projects_manager.facade.ProjectsFacade;
@@ -45,22 +46,18 @@ public class EditHelperBean implements Serializable {
         return localProjects;
     }
 
-    private void beginConversation()
-    {
-        if (conversation.isTransient())
-        {
+    private void beginConversation() {
+        if (conversation.isTransient()) {
             conversation.begin();
         }
     }
- 
-    private void endConversation()
-    {
-        if (!conversation.isTransient())
-        {
+
+    private void endConversation() {
+        if (!conversation.isTransient()) {
             conversation.end();
         }
     }
-    
+
     public Users getUser() {
         return localUsers;
     }
@@ -87,7 +84,7 @@ public class EditHelperBean implements Serializable {
     }
 
     public String editProject() {
-        
+
         beginConversation();
 
         localProjects = (Projects) FacesContext.getCurrentInstance()
@@ -148,9 +145,9 @@ public class EditHelperBean implements Serializable {
     public String saveReadOnlyUsers(Users u) {
         localUsers = u;
 
-        if (ProjectsManager.addUser(localProjects, localUsers)) {
-        localProjects.getUsersReadOnlyCollection().add(localUsers);
-        }
+//        if (ProjectsManager.addUser(localProjects, localUsers)) {
+//            localProjects.getReadOnlyUsersCollection().add(localUsers);
+//        }
 
 
         projectFacadeLocal.edit(localProjects);
@@ -160,9 +157,9 @@ public class EditHelperBean implements Serializable {
     public String removeReadOnlyUsers(Users u) {
         localUsers = u;
 
-        if (ProjectsManager.removeUser(localProjects, localUsers)) {
-        localProjects.getUsersReadOnlyCollection().remove(localUsers);
-        }
+//        if (ProjectsManager.removeUser(localProjects, localUsers)) {
+//            localProjects.getReadOnlyUsersCollection().remove(localUsers);
+//        }
         projectFacadeLocal.edit(localProjects);
         return "edit_projects";
     }
@@ -172,18 +169,29 @@ public class EditHelperBean implements Serializable {
                 .getExternalContext().getRequestMap()
                 .get("Users");
 
-        if (ProjectsManager.addUser(localProjects, localUsers)) {
-            localProjects.getUsersCollection().add(localUsers);
-        }
+//        if (ProjectsManager.addUser(localProjects, localUsers)) {
+//            localProjects.getUsersCollection().add(localUsers);
+//        }
 
 
         projectFacadeLocal.edit(localProjects);
         return "edit_projects";
     }
 
+    public boolean isOwnerInProject(Projects p, Users u) {
+        for (ProjHasUsers pu : p.getProjHasUsersCollection()) {
+            if(pu.getRola().getId().equals(1)){
+                if(pu.getUsers().getLogin().equals(u.getLogin())){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public String display(Projects p, Users u) {
         if (u != null) {
-            if (p.getOwner().getNickname().equals(u.getNickname())) {
+            if (isOwnerInProject(p, u)) {
                 return editProject(p);
             } else {
                 return viewProject(p);
@@ -196,9 +204,9 @@ public class EditHelperBean implements Serializable {
     public String saveUsersToProject(Users u) {
         localUsers = u;
 
-        if (ProjectsManager.addUser(localProjects, localUsers)) {
-            localProjects.getUsersCollection().add(localUsers);
-        }
+//        if (ProjectsManager.addUser(localProjects, localUsers)) {
+//            localProjects.getUsersCollection().add(localUsers);
+//        }
 
 
         projectFacadeLocal.edit(localProjects);
@@ -210,9 +218,9 @@ public class EditHelperBean implements Serializable {
                 .getExternalContext().getRequestMap()
                 .get("Users");
 
-        if (ProjectsManager.removeUser(localProjects, localUsers)) {
-            localProjects.getUsersCollection().remove(localUsers);
-        }
+//        if (ProjectsManager.removeUser(localProjects, localUsers)) {
+//            localProjects.getUsersCollection().remove(localUsers);
+//        }
         projectFacadeLocal.edit(localProjects);
         return "edit_projects";
     }
@@ -220,9 +228,9 @@ public class EditHelperBean implements Serializable {
     public String removeUsersFromProject(Users u) {
         localUsers = u;
 
-        if (ProjectsManager.removeUser(localProjects, localUsers)) {
-            localProjects.getUsersCollection().remove(localUsers);
-        }
+//        if (ProjectsManager.removeUser(localProjects, localUsers)) {
+//            localProjects.getUsersCollection().remove(localUsers);
+//        }
         projectFacadeLocal.edit(localProjects);
         return "edit_projects";
     }
@@ -282,7 +290,7 @@ public class EditHelperBean implements Serializable {
     public String usunProject() {
 
         if (ProjectsManager.deleteProject(localProjects) != true) {
-           FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja usunięcia projektu nie powiodła się; prosimy o kontakt z aministratorem", null)); 
+            FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja usunięcia projektu nie powiodła się; prosimy o kontakt z aministratorem", null));
         } else {
             projectFacadeLocal.remove(localProjects);
             FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie usunięto projekt " + localProjects.getProjName(), null));
@@ -305,10 +313,9 @@ public class EditHelperBean implements Serializable {
     public void setEditingProjects(boolean editingProjects) {
         this.editingProjects = editingProjects;
     }
-    
+
     @Remove
-    public void destroy()
-    {
+    public void destroy() {
         endConversation();
     }
 }

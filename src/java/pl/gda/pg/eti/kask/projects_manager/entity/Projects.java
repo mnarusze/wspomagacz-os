@@ -6,7 +6,9 @@ package pl.gda.pg.eti.kask.projects_manager.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +20,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -38,23 +41,18 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Projects.findBySvnEnabled", query = "SELECT p FROM Projects p WHERE p.svnEnabled = :svnEnabled"),
     @NamedQuery(name = "Projects.findByGitEnabled", query = "SELECT p FROM Projects p WHERE p.gitEnabled = :gitEnabled"),
     @NamedQuery(name = "Projects.findByTracEnabled", query = "SELECT p FROM Projects p WHERE p.tracEnabled = :tracEnabled"),
-    @NamedQuery(name = "Projects.findByRedmineEnabled", query = "SELECT p FROM Projects p WHERE p.tracEnabled = :tracEnabled"),
-    @NamedQuery(name = "Projects.findByIsPublic", query = "SELECT p FROM Projects p WHERE p.isPublic = :isPublic")})
+    @NamedQuery(name = "Projects.findByRedmineEnabled", query = "SELECT p FROM Projects p WHERE p.redmineEnabled = :redmineEnabled")})
 public class Projects implements Serializable {
-    @JoinTable(name = "proj_has_read_only_users", joinColumns = {
-        @JoinColumn(name = "projidro", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "useridro", referencedColumnName = "id")})
-    @ManyToMany
-    private Collection<Users> usersReadOnlyCollection;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    private Short id;
+    private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 30)
+    @Size(min = 1, max = 50)
     @Column(name = "proj_name")
     private String projName;
     @Basic(optional = false)
@@ -73,40 +71,41 @@ public class Projects implements Serializable {
     @NotNull
     @Column(name = "redmine_enabled")
     private boolean redmineEnabled;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "is_public")
-    private boolean isPublic;
-    @JoinTable(name = "proj_has_users", joinColumns = {
-        @JoinColumn(name = "projid", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "userid", referencedColumnName = "id")})
+    @JoinTable(name = "proj_has_messages", joinColumns = {
+        @JoinColumn(name = "projmsgid", referencedColumnName = "id")}, inverseJoinColumns = {
+        @JoinColumn(name = "msgid", referencedColumnName = "id")})
     @ManyToMany
-    private Collection<Users> usersCollection;
-    @JoinColumn(name = "owner", referencedColumnName = "id")
+    private Collection<ProjectMessage> projectMessageCollection;
+    @JoinColumn(name = "proj_description", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Users owner;
+    private ProjectDescription projDescription;
+    @JoinColumn(name = "pub_type", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private PublicationTypes pubType;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projects")
+    private Collection<ProjHasUsers> projHasUsersCollection;
 
     public Projects() {
     }
 
-    public Projects(Short id) {
+    public Projects(Integer id) {
         this.id = id;
     }
 
-    public Projects(Short id, String projName, boolean svnEnabled, boolean gitEnabled, boolean tracEnabled, boolean isPublic) {
+    public Projects(Integer id, String projName, boolean svnEnabled, boolean gitEnabled, boolean tracEnabled, boolean redmineEnabled) {
         this.id = id;
         this.projName = projName;
         this.svnEnabled = svnEnabled;
         this.gitEnabled = gitEnabled;
         this.tracEnabled = tracEnabled;
-        this.isPublic = isPublic;
+        this.redmineEnabled = redmineEnabled;
     }
 
-    public Short getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Short id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -142,7 +141,7 @@ public class Projects implements Serializable {
         this.tracEnabled = tracEnabled;
     }
 
-    public boolean isRedmineEnabled() {
+    public boolean getRedmineEnabled() {
         return redmineEnabled;
     }
 
@@ -150,30 +149,38 @@ public class Projects implements Serializable {
         this.redmineEnabled = redmineEnabled;
     }
 
-    
-    public boolean getIsPublic() {
-        return isPublic;
+    @XmlTransient
+    public Collection<ProjectMessage> getProjectMessageCollection() {
+        return projectMessageCollection;
     }
 
-    public void setIsPublic(boolean isPublic) {
-        this.isPublic = isPublic;
+    public void setProjectMessageCollection(Collection<ProjectMessage> projectMessageCollection) {
+        this.projectMessageCollection = projectMessageCollection;
+    }
+
+    public ProjectDescription getProjDescription() {
+        return projDescription;
+    }
+
+    public void setProjDescription(ProjectDescription projDescription) {
+        this.projDescription = projDescription;
+    }
+
+    public PublicationTypes getPubType() {
+        return pubType;
+    }
+
+    public void setPubType(PublicationTypes pubType) {
+        this.pubType = pubType;
     }
 
     @XmlTransient
-    public Collection<Users> getUsersCollection() {
-        return usersCollection;
+    public Collection<ProjHasUsers> getProjHasUsersCollection() {
+        return projHasUsersCollection;
     }
 
-    public void setUsersCollection(Collection<Users> usersCollection) {
-        this.usersCollection = usersCollection;
-    }
-
-    public Users getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Users owner) {
-        this.owner = owner;
+    public void setProjHasUsersCollection(Collection<ProjHasUsers> projHasUsersCollection) {
+        this.projHasUsersCollection = projHasUsersCollection;
     }
 
     @Override
@@ -201,13 +208,49 @@ public class Projects implements Serializable {
         return "pl.gda.pg.eti.kask.projects_manager.entity.Projects[ id=" + id + " ]";
     }
 
-    @XmlTransient
-    public Collection<Users> getUsersReadOnlyCollection() {
-        return usersReadOnlyCollection;
+    public boolean getIsPublic() {
+        return this.getPubType().isPublic();
     }
 
-    public void setUsersReadOnlyCollection(Collection<Users> usersCollection) {
-        this.usersReadOnlyCollection = usersCollection;
+    public boolean getIsPariatlyPublic() {
+        return this.getPubType().isPartialyPublic();
+    }
+
+    public boolean getIsPrivate() {
+        return this.getPubType().isPrivate();
     }
     
+    public boolean getIsHidden() {
+        return this.getPubType().isHidden();
+    }
+
+    public List<Users> getOwners() {
+        List<Users> result = null;
+        for (ProjHasUsers project : getProjHasUsersCollection()) {
+            if (project.getRola().isAdministrator()) {
+                result.add(project.getUsers());
+            }
+        }
+        return result;
+    }
+
+    public List<Users> getDevelopers() {
+        List<Users> result = null;
+        for (ProjHasUsers project : getProjHasUsersCollection()) {
+            if (project.getRola().isDeveloper()) {
+                result.add(project.getUsers());
+            }
+        }
+        return result;
+    }
+
+    public List<Users> getGuests() {
+        List<Users> result = null;
+        for (ProjHasUsers project : getProjHasUsersCollection()) {
+            if (project.getRola().isGuest()) {
+                result.add(project.getUsers());
+            }
+        }
+        return result;
+    }
 }

@@ -6,6 +6,7 @@ package pl.gda.pg.eti.kask.projects_manager.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,11 +14,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -33,100 +35,109 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u"),
     @NamedQuery(name = "Users.findById", query = "SELECT u FROM Users u WHERE u.id = :id"),
-    @NamedQuery(name = "Users.findByNickname", query = "SELECT u FROM Users u WHERE u.nickname = :nickname"),
-    @NamedQuery(name = "Users.findByFirstname", query = "SELECT u FROM Users u WHERE u.firstname = :firstname"),
-    @NamedQuery(name = "Users.findByLastname", query = "SELECT u FROM Users u WHERE u.lastname = :lastname"),
+    @NamedQuery(name = "Users.findByLogin", query = "SELECT u FROM Users u WHERE u.login = :login"),
+    @NamedQuery(name = "Users.findByLastLogin", query = "SELECT u FROM Users u WHERE u.lastLogin = :lastLogin"),
+    @NamedQuery(name = "Users.findByFirstName", query = "SELECT u FROM Users u WHERE u.firstName = :firstName"),
+    @NamedQuery(name = "Users.findByLastName", query = "SELECT u FROM Users u WHERE u.lastName = :lastName"),
     @NamedQuery(name = "Users.findByIndeks", query = "SELECT u FROM Users u WHERE u.indeks = :indeks"),
-    @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email")})
+    @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email"),
+    @NamedQuery(name = "Users.findBySshkey", query = "SELECT u FROM Users u WHERE u.sshkey = :sshkey")})
 public class Users implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    private Short id;
+    private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 30)
-    @Column(name = "nickname")
-    private String nickname;
+    @Size(min = 1, max = 50)
+    @Column(name = "login")
+    private String login;
+    @Column(name = "last_login")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastLogin;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 30)
-    @Column(name = "firstname")
-    private String firstname;
+    @Size(min = 1, max = 50)
+    @Column(name = "first_name")
+    private String firstName;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 30)
-    @Column(name = "lastname")
-    private String lastname;
+    @Size(min = 1, max = 50)
+    @Column(name = "last_name")
+    private String lastName;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 30)
+    @Size(min = 1, max = 15)
     @Column(name = "indeks")
     private String indeks;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 30)
+    @Size(min = 1, max = 100)
     @Column(name = "email")
     private String email;
-    @Basic(optional = true)
-    @NotNull
     @Size(max = 255)
     @Column(name = "sshkey")
     private String sshkey;
-    @ManyToMany(mappedBy = "usersCollection")
-    private Collection<Projects> projectsCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
-    private Collection<Projects> projectsCollection1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "users")
+    private Collection<ProjHasUsers> projHasUsersCollection;
 
     public Users() {
     }
 
-    public Users(Short id) {
+    public Users(Integer id) {
         this.id = id;
     }
 
-    public Users(Short id, String nickname, String firstname, String lastname, String indeks, String email) {
+    public Users(Integer id, String login, String firstName, String lastName, String indeks, String email) {
         this.id = id;
-        this.nickname = nickname;
-        this.firstname = firstname;
-        this.lastname = lastname;
+        this.login = login;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.indeks = indeks;
         this.email = email;
     }
 
-    public Short getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Short id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getLogin() {
+        return login;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public Date getLastLogin() {
+        return lastLogin;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getIndeks() {
@@ -152,25 +163,14 @@ public class Users implements Serializable {
     public void setSshkey(String sshkey) {
         this.sshkey = sshkey;
     }
-    
-    
 
     @XmlTransient
-    public Collection<Projects> getProjectsCollection() {
-        return projectsCollection;
+    public Collection<ProjHasUsers> getProjHasUsersCollection() {
+        return projHasUsersCollection;
     }
 
-    public void setProjectsCollection(Collection<Projects> projectsCollection) {
-        this.projectsCollection = projectsCollection;
-    }
-
-    @XmlTransient
-    public Collection<Projects> getProjectsCollection1() {
-        return projectsCollection1;
-    }
-
-    public void setProjectsCollection1(Collection<Projects> projectsCollection1) {
-        this.projectsCollection1 = projectsCollection1;
+    public void setProjHasUsersCollection(Collection<ProjHasUsers> projHasUsersCollection) {
+        this.projHasUsersCollection = projHasUsersCollection;
     }
 
     @Override

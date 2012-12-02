@@ -34,9 +34,7 @@
                         <h:message for="tracEnabled" />
 
                         <h:outputText id="owner" value="Właściciel"/>
-                        <h:selectOneMenu value="#{EditHelperBean.projects.owner}">
-                            <f:selectItems value="#{ProjectsManagerBean.usersAsSelectItems}"/>                  
-                        </h:selectOneMenu>
+                        <h:outputText value="#{loginBean.loggedUser.firstName} #{loginBean.loggedUser.lastName}" />
                         <h:message for="owner" />
 
                     </h:panelGrid>

