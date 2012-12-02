@@ -6,6 +6,7 @@ package pl.gda.pg.eti.kask.projects_manager.form;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ViewScoped;
@@ -100,7 +101,7 @@ public class ProjectsManagerBean implements Serializable {
         return usersFacade.findAll();
     }
 
-    public List<Users> usersActiveInProject(Projects p) {
+    public Collection<ProjHasUsers> usersActiveInProject(Projects p) {
 //        List<Users> result = new ArrayList<Users>();
 //        for (ProjHasUsers object : p.getProjHasUsersCollection()) {
 //            if(object.getRola().getId().equals(2))
@@ -109,17 +110,18 @@ public class ProjectsManagerBean implements Serializable {
 //            }
 //        }
 //        return result;
-        return p.getDevelopers();
+        return p.getProjHasUsersCollection();
     }
 
     public List<Users> usersReadOnlyInProject(Projects p) {
-        List<Users> result = null;
-        for (ProjHasUsers object : p.getProjHasUsersCollection()) {
-            if (object.getRola().getId().equals(3)) {
-                result.add(object.getUsers());
-            }
-        }
-        return result;
+//        List<Users> result = new ArrayList<Users>();
+//        for (ProjHasUsers object : p.getProjHasUsersCollection()) {
+//            if (object.getRola().getId().equals(3)) {
+//                result.add(object.getUsers());
+//            }
+//        }
+//        return result;
+        return p.getGuests();
     }
 
     public List<SelectItem> getUsersAsSelectItems() {

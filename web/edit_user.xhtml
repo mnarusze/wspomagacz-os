@@ -11,27 +11,27 @@
                 <h:form>
                     <h:panelGrid columns="3">
                         <h:outputText value="Nickname" />
-                        <h:inputText id="nickname" value="#{EditHelperBean.user.nickname}" />
+                        <h:inputText id="nickname" value="#{editHelperBean.user.nickname}" />
                         <h:message for="nickname" />
 
                         <h:outputText value="FirstName" />
-                        <h:inputText id="firstname" value="#{EditHelperBean.user.firstname}" />
+                        <h:inputText id="firstname" value="#{editHelperBean.user.firstname}" />
                         <h:message for="firstname" />
 
                         <h:outputText value="LastName" />
-                        <h:inputText id="lastname" value="#{EditHelperBean.user.lastname}" />
+                        <h:inputText id="lastname" value="#{editHelperBean.user.lastname}" />
                         <h:message for="lastname" />
 
                         <h:outputText value="email" />
-                        <h:inputText id="email" value="#{EditHelperBean.user.email}" />
+                        <h:inputText id="email" value="#{editHelperBean.user.email}" />
                         <h:message for="email" />
                         
                         <h:outputText value="index" />
-                        <h:inputText id="index" value="#{EditHelperBean.user.indeks}" />
+                        <h:inputText id="index" value="#{editHelperBean.user.indeks}" />
                         <h:message for="index" />
 
                     </h:panelGrid>
-                    <h:commandButton value="Save User" action="#{EditHelperBean.saveUser()}"/>
+                    <h:commandButton value="Save User" action="#{editHelperBean.saveUser()}"/>
                     <h:commandButton action="index" value="Anuluj" immediate="true" />
                 </h:form>
             </ui:define>

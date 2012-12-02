@@ -23,6 +23,10 @@
                             </h:commandLink>
                         </h:column>
                         <h:column>
+                            <f:facet name="header"><h:outputText value="Typ" /></f:facet>
+                            <h:outputText value="#{Projects.pubType.typeName}" />
+                        </h:column>
+                        <h:column>
                             <f:facet name="header"><h:outputText value="SVN" /></f:facet>
                             <h:selectBooleanCheckbox value="#{Projects.svnEnabled}" disabled="true" />
                         </h:column>

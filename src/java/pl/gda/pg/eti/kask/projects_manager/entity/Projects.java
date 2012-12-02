@@ -251,9 +251,11 @@ public class Projects implements Serializable {
 
     public List<Users> getDevelopers() {
         List<Users> result = new ArrayList<Users>();
-        for (ProjHasUsers project : getProjHasUsersCollection()) {
-            if (project.getRola().isDeveloper()) {
-                result.add(project.getUsers());
+        if (getProjHasUsersCollection() != null) {
+            for (ProjHasUsers project : getProjHasUsersCollection()) {
+                if (project.getRola().isDeveloper()) {
+                    result.add(project.getUsers());
+                }
             }
         }
         return result;
@@ -261,9 +263,11 @@ public class Projects implements Serializable {
 
     public List<Users> getGuests() {
         List<Users> result = new ArrayList<Users>();
-        for (ProjHasUsers project : getProjHasUsersCollection()) {
-            if (project.getRola().isGuest()) {
-                result.add(project.getUsers());
+        if (getProjHasUsersCollection() != null) {
+            for (ProjHasUsers project : getProjHasUsersCollection()) {
+                if (project.getRola().isGuest()) {
+                    result.add(project.getUsers());
+                }
             }
         }
         return result;

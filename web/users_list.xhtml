@@ -9,35 +9,35 @@
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <h:dataTable border="0" var="Users" value="#{ProjectsManagerBean.usersActiveInProject(EditHelperBean.projects)}">
+                    <h:dataTable border="0" var="Users" value="#{projectsManagerBean.usersActiveInProject(EditHelperBean.projects)}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>
-                            <h:commandButton value="Remove From Project" action="#{EditHelperBean.removeUsersFromProject(Users)}" />                         
+                            <h:commandButton value="Remove From Project" action="#{editHelperBean.removeUsersFromProject(Users)}" />                         
                             
                             <h:commandLink >
-                                <h:outputText value="#{Users.nickname}" />
+                                <h:outputText value="#{Users.users.login}" />
                             </h:commandLink>
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="First Name" /></f:facet>
-                            <h:outputText value="#{Users.firstname}"  />
+                            <h:outputText value="#{Users.users.firstName}"  />
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="Last Name" /></f:facet>
-                            <h:outputText value="#{Users.lastname}"  />
+                            <h:outputText value="#{Users.users.lastName}"  />
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="e-mail" /></f:facet>
-                            <h:outputText value="#{Users.email}"  />
+                            <h:outputText value="#{Users.users.email}"  />
                         </h:column>                        
                         <h:column>
                             <f:facet name="header"><h:outputText value="Index" /></f:facet>
-                            <h:outputText value="#{Users.indeks}"  />
+                            <h:outputText value="#{Users.users.indeks}"  />
                         </h:column>
 
                     </h:dataTable>
                     
-                    <h:dataTable border="0" var="Users" value="#{ProjectsManagerBean.users}">
+                    <h:dataTable border="0" var="Users" value="#{projectsManagerBean.users}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>
                                                   

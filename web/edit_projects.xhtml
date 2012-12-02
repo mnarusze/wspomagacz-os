@@ -5,13 +5,13 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core">
     <h:body>
-        
+
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                
+
                     <h:panelGrid columns="3">
-                                               
+
                         <h:outputText value="Nazwa projektu" />
                         <h:inputText id="projName" value="#{editHelperBean.projects.projName}" />
                         <h:message for="projName" />
@@ -55,50 +55,58 @@
                             <f:facet name="header"><h:outputText value="Nazwa użytkownika" /></f:facet>                      
 
                             <h:commandLink >
-                                <h:outputText value="#{Users.nickname}" />
+                                <h:outputText value="#{Users.users.login}" />
                             </h:commandLink>
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="Imię" /></f:facet>
-                            <h:outputText value="#{Users.firstname}"  />
+                            <h:outputText value="#{Users.users.firstName}"  />
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="Nazwisko" /></f:facet>
-                            <h:outputText value="#{Users.lastname}"  />
+                            <h:outputText value="#{Users.users.lastName}"  />
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="E-mail" /></f:facet>
-                            <h:outputText value="#{Users.email}"  />
+                            <h:outputText value="#{Users.users.email}"  />
                         </h:column>                        
                         <h:column>
                             <f:facet name="header"><h:outputText value="Indeks" /></f:facet>
-                            <h:outputText value="#{Users.indeks}"  />
+                            <h:outputText value="#{Users.users.indeks}"  />
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header"><h:outputText value="Rola" /></f:facet>
+                            <h:outputText value="#{Users.rola.roleName}"  />
                         </h:column>
 
                     </h:dataTable>
-
-                    <h:dataTable border="0" var="Users" value="#{ProjectsManagerBean.usersReadOnlyInProject(EditHelperBean.projects)}" rendered="#{!EditHelperBean.projects.isPublic}" >
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Nazwa użytkownika" /></f:facet>                      
-
-                            <h:commandLink >
-                                <h:outputText value="#{Users.nickname}" />
-                            </h:commandLink>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Imię" /></f:facet>
-                            <h:outputText value="#{Users.firstname}"  />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Nazwisko" /></f:facet>
-                            <h:outputText value="#{Users.lastname}"  />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="E-mail" /></f:facet>
-                            <h:outputText value="#{Users.email}"  />
-                        </h:column>
-                    </h:dataTable>
-
+                    <!--
+                                        <h:dataTable border="0" var="Users" value="#{projectsManagerBean.usersReadOnlyInProject(editHelperBean.projects)}" rendered="#{!EditHelperBean.projects.isPublic}" >
+                                            <h:column>
+                                                <f:facet name="header"><h:outputText value="Nazwa użytkownika" /></f:facet>                      
+                    
+                                                <h:commandLink >
+                                                    <h:outputText value="#{Users.login}" />
+                                                </h:commandLink>
+                                            </h:column>
+                                            <h:column>
+                                                <f:facet name="header"><h:outputText value="Imię" /></f:facet>
+                                                <h:outputText value="#{Users.firstName}"  />
+                                            </h:column>
+                                            <h:column>
+                                                <f:facet name="header"><h:outputText value="Nazwisko" /></f:facet>
+                                                <h:outputText value="#{Users.lastName}"  />
+                                            </h:column>
+                                            <h:column>
+                                                <f:facet name="header"><h:outputText value="E-mail" /></f:facet>
+                                                <h:outputText value="#{Users.email}"  />
+                                            </h:column>
+                                            <h:column>
+                                                <f:facet name="header"><h:outputText value="Indeks" /></f:facet>
+                                                <h:outputText value="#{Users.indeks}"  />
+                                            </h:column>
+                                        </h:dataTable>
+                    -->
                 </h:form>
             </ui:define>
         </ui:composition>
