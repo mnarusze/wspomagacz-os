@@ -13,7 +13,7 @@
                         <h:column>
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>
                             <h:commandButton value="Remove From Project" action="#{editHelperBean.removeUsersFromProject(Users)}" />                         
-                            
+
                             <h:commandLink >
                                 <h:outputText value="#{Users.users.login}" />
                             </h:commandLink>
@@ -36,12 +36,18 @@
                         </h:column>
 
                     </h:dataTable>
-                    
+
+                    <h:outputText value="Typ dodawanego uzytkownika" />
+                    <h:selectOneListbox id="user_role" value="#{editHelperBean.localRoles}">
+                        <f:selectItems value="#{projectsManagerBean.rolesAsSelectItems}" />
+                    </h:selectOneListbox>
+                    <h:message for="isPublic" />
+
                     <h:dataTable border="0" var="Users" value="#{projectsManagerBean.users}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>
-                                                  
-                            <h:commandButton value="Add To Project" action="#{editHelperBean.saveUsersToProject(Users)}"/>
+
+                            <h:commandButton value="Add To Project" action="#{editHelperBean.saveUsersToProject(Users, editHelperBean.localRoles)}"/>
                             <h:commandLink >
                                 <h:outputText value="#{Users.login}" />
                             </h:commandLink>
@@ -64,7 +70,7 @@
                         </h:column>
 
                     </h:dataTable>
-                   
+
                 </h:form>
             </ui:define>
         </ui:composition>

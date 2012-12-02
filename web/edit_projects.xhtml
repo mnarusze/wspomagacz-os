@@ -47,6 +47,7 @@
 
                     <h:commandButton value="Dodaj/usuń developerów" action="#{editHelperBean.addUsersToProject(editHelperBean.projects)}" rendered="#{editHelperBean.editingProjects}" />
                     <h:commandButton value="Zapisz zmiany" action="#{editHelperBean.saveProject(loginBean.loggedUser)}"/>
+                    <h:commandButton value="Zmien opis" action="#{editHelperBean.editProjDescription(editHelperBean.projects.projDescription)}"/>
                     <h:commandButton value="Usuń projekt" action="#{editHelperBean.usunProject()}" rendered="#{editHelperBean.editingProjects}" />
                     <h:commandButton value="Anuluj" action="#{editHelperBean.anuluj()}" immediate="true" />
 

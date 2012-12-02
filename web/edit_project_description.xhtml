@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:body>
+
+        <ui:composition template="./WEB-INF/template.xhtml">
+            <ui:define name="content">
+                <h:form>
+
+                    <h:panelGrid columns="3">
+
+                        <h:outputText value="Nazwa projektu" />
+                        <h:inputText id="projFullName" value="#{editHelperBean.editingProjDescription.projFullName}" />
+                        <h:message for="projName" />
+
+                        <h:outputText value="Opis projektu" />
+                        <h:inputTextarea id="projDescription" value="#{editHelperBean.editingProjDescription.projDescription}" />
+                        <h:message for="projName" />
+
+                        <h:outputText value="Logo projektu" />
+                        <h:inputText id="projLogo" value="#{editHelperBean.editingProjDescription.projLogo}" />
+                        <h:message for="projName" />
+
+                        
+                        
+                    </h:panelGrid>
+
+                    <h:commandButton value="Zapis" action="#{editHelperBean.saveProjDescription()}" />
+                    
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

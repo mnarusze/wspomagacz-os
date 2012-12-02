@@ -15,9 +15,11 @@ import javax.inject.Named;
 import pl.gda.pg.eti.kask.projects_manager.entity.ProjHasUsers;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 import pl.gda.pg.eti.kask.projects_manager.entity.PublicationTypes;
+import pl.gda.pg.eti.kask.projects_manager.entity.UserRoles;
 import pl.gda.pg.eti.kask.projects_manager.entity.Users;
 import pl.gda.pg.eti.kask.projects_manager.facade.ProjectsFacade;
 import pl.gda.pg.eti.kask.projects_manager.facade.PublicationTypesFacade;
+import pl.gda.pg.eti.kask.projects_manager.facade.UserRolesFacade;
 import pl.gda.pg.eti.kask.projects_manager.facade.UsersFacade;
 
 /**
@@ -34,6 +36,8 @@ public class ProjectsManagerBean implements Serializable {
     private UsersFacade usersFacade;
     @EJB
     private PublicationTypesFacade publicationFacade;
+    @EJB
+    private UserRolesFacade roleFacade;
 
     public ProjectsManagerBean() {
     }
@@ -148,6 +152,19 @@ public class ProjectsManagerBean implements Serializable {
         for (Object o : getPublicationTypes()) {
             PublicationTypes u = (PublicationTypes) o;
             list.add(new SelectItem(u, u.getPublicationDescription()));
+        }
+        return list;
+    }
+    
+    public List<UserRoles> getUserRoles() {
+        return roleFacade.findAll();
+    }
+
+    public List<SelectItem> getRolesAsSelectItems() {
+        ArrayList<SelectItem> list = new ArrayList<SelectItem>();
+        for (Object o : getUserRoles()) {
+            UserRoles u = (UserRoles) o;
+            list.add(new SelectItem(u, u.getRoleDescription()));
         }
         return list;
     }

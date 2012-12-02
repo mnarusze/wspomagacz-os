@@ -14,8 +14,10 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import pl.gda.pg.eti.kask.projects_manager.entity.ProjHasUsers;
+import pl.gda.pg.eti.kask.projects_manager.entity.ProjHasUsersPK;
 import pl.gda.pg.eti.kask.projects_manager.entity.ProjectDescription;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
+import pl.gda.pg.eti.kask.projects_manager.entity.UserRoles;
 import pl.gda.pg.eti.kask.projects_manager.entity.Users;
 import pl.gda.pg.eti.kask.projects_manager.facade.ProjHasUsersFacade;
 import pl.gda.pg.eti.kask.projects_manager.facade.ProjectDescriptionFacade;
@@ -34,6 +36,8 @@ public class EditHelperBean implements Serializable {
     @EJB
     private ProjectsFacade projectFacadeLocal;
     private Projects localProjects;
+    private UserRoles localRoles;
+    private ProjectDescription editingProjDescription;
     private boolean editingProjects;
     @EJB
     private ProjHasUsersFacade projectUsersFacadeLocal;
@@ -99,6 +103,29 @@ public class EditHelperBean implements Serializable {
 
         return "edit_projects";
 
+    }
+
+    public ProjectDescription getEditingProjDescription() {
+        return editingProjDescription;
+    }
+
+    public void setEditingProjDescription(ProjectDescription editingProjDescription) {
+        this.editingProjDescription = editingProjDescription;
+    }
+    
+    
+    
+    public String editProjDescription(ProjectDescription proj) {
+        editingProjDescription = proj;
+
+        return "edit_project_description";
+
+    }
+    
+    public String saveProjDescription() {
+        projectDescriptionFacadeLocal.edit(editingProjDescription);
+        
+        return "edit_projects";
     }
 
     public String viewProject() {
@@ -210,14 +237,22 @@ public class EditHelperBean implements Serializable {
         }
     }
 
-    public String saveUsersToProject(Users u) {
+    public String saveUsersToProject(Users u, UserRoles roles) {
         localUsers = u;
-
+        ProjHasUsers phu;
+        phu = new ProjHasUsers();
+        phu.setUsers(u);
+        phu.setProjects(localProjects);
+//        UserRoles ur = new UserRoles();
+//        ur.setId(2);
+        phu.setRola(roles);
+        phu.setProjHasUsersPK(new ProjHasUsersPK(localProjects.getId(), u.getId()));
+        localProjects.getProjHasUsersCollection().add(phu);
 //        if (ProjectsManager.addUser(localProjects, localUsers)) {
 //            localProjects.getUsersCollection().add(localUsers);
 //        }
 
-
+        
         projectFacadeLocal.edit(localProjects);
         return "edit_projects";
     }
@@ -240,6 +275,8 @@ public class EditHelperBean implements Serializable {
 //        if (ProjectsManager.removeUser(localProjects, localUsers)) {
 //            localProjects.getUsersCollection().remove(localUsers);
 //        }
+        
+        
         projectFacadeLocal.edit(localProjects);
         return "edit_projects";
     }
@@ -316,12 +353,12 @@ public class EditHelperBean implements Serializable {
 
     public String usunProject() {
 
-        if (ProjectsManager.deleteProject(localProjects) != true) {
-            FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja usunięcia projektu nie powiodła się; prosimy o kontakt z aministratorem", null));
-        } else {
+//        if (ProjectsManager.deleteProject(localProjects) != true) {
+//            FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja usunięcia projektu nie powiodła się; prosimy o kontakt z aministratorem", null));
+//        } else {
             projectFacadeLocal.remove(localProjects);
-            FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie usunięto projekt " + localProjects.getProjName(), null));
-        }
+//            FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie usunięto projekt " + localProjects.getProjName(), null));
+//        }
 
         endConversation();
         return "my_projects";
@@ -341,6 +378,16 @@ public class EditHelperBean implements Serializable {
         this.editingProjects = editingProjects;
     }
 
+    public UserRoles getLocalRoles() {
+        return localRoles;
+    }
+
+    public void setLocalRoles(UserRoles localRoles) {
+        this.localRoles = localRoles;
+    }
+
+    
+    
     @Remove
     public void destroy() {
         endConversation();

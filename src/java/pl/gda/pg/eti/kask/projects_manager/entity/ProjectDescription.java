@@ -103,7 +103,12 @@ public class ProjectDescription implements Serializable {
 
     public String getShortProjDescription() {
         if (projDescription != null) {
-            return projDescription.substring(0, 140);
+            if(projDescription.length() > 140){
+                return projDescription.substring(0, 140);
+            } else
+            {
+                return projDescription;
+            }
         }
         return "brak opisu";
     }
