@@ -7,39 +7,53 @@
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
+                    <h1>
+                        <h:outputText value="#{editHelperBean.projects.projDescription.projFullName}" />
+                    </h1>
+                    <h:graphicImage value="#{editHelperBean.projects.projDescription.projLogo}" />
+                    <br />
+                    <h:outputText value="#{editHelperBean.projects.projDescription.projDescription}" />
+
                     <h:panelGrid columns="3">
-                        <h:outputText value="Name of your new project" />
-                        <h:outputText id="projName" value="#{EditHelperBean.projects.projName}" />
+
+
+
+
+
+                        <h:outputText value="Name" />
+                        <h:outputText id="projName" value="#{editHelperBean.projects.projName}" />
                         <h:message for="projName" />
 
                         <h:outputText value="Project open to public" />
-                        <h:selectBooleanCheckbox disabled="true" id="isPublic" value="#{EditHelperBean.projects.isPublic}" />
+                        <h:selectBooleanCheckbox disabled="true" id="isPublic" value="#{editHelperBean.projects.isPublic}" />
                         <h:message for="isPublic" />
 
                         <h:outputText value="GIT" />
-                        <h:selectBooleanCheckbox disabled="true" id="gitEnabled" value="#{EditHelperBean.projects.gitEnabled}" />
+                        <h:selectBooleanCheckbox disabled="true" id="gitEnabled" value="#{editHelperBean.projects.gitEnabled}" />
                         <h:message for="gitEnabled" />
 
                         <h:outputText value="SVN" />
-                        <h:selectBooleanCheckbox disabled="true" id="svnEnabled" value="#{EditHelperBean.projects.svnEnabled}" />
+                        <h:selectBooleanCheckbox disabled="true" id="svnEnabled" value="#{editHelperBean.projects.svnEnabled}" />
                         <h:message for="svnEnabled" />
 
                         <h:outputText value="Trac" />
-                        <h:selectBooleanCheckbox disabled="true" id="tracEnabled" value="#{EditHelperBean.projects.tracEnabled}" />
+                        <h:selectBooleanCheckbox disabled="true" id="tracEnabled" value="#{editHelperBean.projects.tracEnabled}" />
                         <h:message for="tracEnabled" />
 
                         <h:outputText value="Trac" />
-                        <h:selectBooleanCheckbox disabled="true" id="redmineEnabled" value="#{EditHelperBean.projects.redmineEnabled}" />
+                        <h:selectBooleanCheckbox disabled="true" id="redmineEnabled" value="#{editHelperBean.projects.redmineEnabled}" />
                         <h:message for="tracEnabled" />
 
-                        <h:outputText id="owner" value="Owner"/>
-                        <h:outputText value="#{EditHelperBean.projects.owner.firstname} #{EditHelperBean.projects.owner.lastname}" />
-                        <h:message for="owner" />
-
                     </h:panelGrid> 
-                    <h:dataTable var="UserFromSelectedProject" value="#{EditHelperBean.projects.usersCollection}">
+                    <h:dataTable var="UserFromSelectedProject" value="#{editHelperBean.projects.owners}">
                         <h:column>
-                            <h:outputText value=" #{UserFromSelectedProject.firstname} #{UserFromSelectedProject.lastname}" />
+                            <h:outputText value=" #{UserFromSelectedProject.firstName} #{UserFromSelectedProject.lastName}" />
+                        </h:column>
+                    </h:dataTable>
+
+                    <h:dataTable var="UserFromSelectedProject" value="#{editHelperBean.projects.developers}">
+                        <h:column>
+                            <h:outputText value=" #{UserFromSelectedProject.firstName} #{UserFromSelectedProject.lastName}" />
                         </h:column>
                     </h:dataTable>
 

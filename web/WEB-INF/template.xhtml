@@ -65,10 +65,12 @@
                             </h:form>
                         </div>
                     </div>
-                    <div id="main">                      
-                        <div id="sidebar">
-                            <h3>[admin menu]</h3>
-                        </div>
+                    <div id="main"> 
+                        <c:if test="#{loginBean.isLogged()}">
+                            <div id="sidebar">
+                                <ui:insert name="sidebar">[AdminMenu]</ui:insert>
+                            </div>
+                        </c:if>
                         <div id="content">
                             <ui:insert name="content">[content]</ui:insert>
                         </div>

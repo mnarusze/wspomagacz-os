@@ -35,20 +35,16 @@ public class EditHelperBean implements Serializable {
     private ProjectsFacade projectFacadeLocal;
     private Projects localProjects;
     private boolean editingProjects;
-    
     @EJB
     private ProjHasUsersFacade projectUsersFacadeLocal;
-    
     @EJB
     private ProjectDescriptionFacade projectDescriptionFacadeLocal;
-    
     @EJB
     private UsersFacade usersFacadeLocal;
     private Users localUsers;
     private boolean editingUsers;
     @Inject
     Conversation conversation;
-
 
     public Projects getProjects() {
         return localProjects;
@@ -188,8 +184,8 @@ public class EditHelperBean implements Serializable {
 
     public boolean isOwnerInProject(Projects p, Users u) {
         for (ProjHasUsers pu : p.getProjHasUsersCollection()) {
-            if(pu.getRola().getId().equals(1)){
-                if(pu.getUsers().getLogin().equals(u.getLogin())){
+            if (pu.getRola().getId().equals(1)) {
+                if (pu.getUsers().getLogin().equals(u.getLogin())) {
                     return true;
                 }
             }
@@ -201,11 +197,16 @@ public class EditHelperBean implements Serializable {
         if (u != null) {
             if (isOwnerInProject(p, u)) {
                 return editProject(p);
-            } else {
+            } else if (p.getIsPariatlyPublic() || p.getIsPublic()) {
                 return viewProject(p);
+            } else {
+                return "accessdenied";
             }
-        } else {
+        } else if (p.getIsPublic()) {
+
             return viewProject(p);
+        } else {
+            return "accessdenied";
         }
     }
 
@@ -277,20 +278,20 @@ public class EditHelperBean implements Serializable {
         }
         return "projects_list";
     }
-    
-    private void saveNewProject(Users owner){
+
+    private void saveNewProject(Users owner) {
         ProjectDescription desc = new ProjectDescription();
         desc.setProjFullName(localProjects.getProjName());
 //        projectDescriptionFacadeLocal.create(desc);
         localProjects.setProjDescription(desc);
-        
+
 //        localProjects.addUserPerRole(owner, 1);
         projectFacadeLocal.create(localProjects);
         localProjects.addUserPerRole(owner, 1);
         projectFacadeLocal.edit(localProjects);
     }
-    
-    private void saveEditingProject(){
+
+    private void saveEditingProject() {
         projectFacadeLocal.edit(localProjects);
     }
 
@@ -303,8 +304,8 @@ public class EditHelperBean implements Serializable {
 //            } else {
 //                localProjects.setProjDescription(new ProjectDescription(localProjects.getProjName()));
 //                projectFacadeLocal.create(localProjects);
-                saveNewProject(owner);
-                FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie utworzono projekt " + localProjects.getProjName(), null));
+            saveNewProject(owner);
+            FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie utworzono projekt " + localProjects.getProjName(), null));
 //            }
         }
 

@@ -8,11 +8,25 @@
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.publicProjects(loginBean.loggedUser)}">
+                    <h:dataTable border="0" var="Projects" value="#{projectsManagerBean.publicProjects(loginBean.loggedUser)}">
+                        <h:column>
+                            <f:facet name="log"><h:outputText value="Logo" /></f:facet>
+                            <h:commandLink action="#{editHelperBean.display(Projects, loginBean.loggedUser)}">
+                                <h:graphicImage alt="#{Projects.projName}" value="#{Projects.projDescription.projLogo}" />
+                            </h:commandLink>
+
+                        </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="Nazwa" /></f:facet>
-                            <h:commandLink action="#{EditHelperBean.display(Projects, loginBean.loggedUser   )}">
-                                <h:outputText value="#{Projects.projName}" />
+                            <h:commandLink action="#{editHelperBean.display(Projects, loginBean.loggedUser)}">
+                                <h:outputText value="#{Projects.projDescription.projFullName}" />
+                            </h:commandLink>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header"><h:outputText value="Opis" /></f:facet>
+                            <h:outputText value="#{Projects.projDescription.shortProjDescription}..." />
+                            <h:commandLink action="#{editHelperBean.display(Projects, loginBean.loggedUser)}">
+                                <h:outputText value="Wiecej..." />
                             </h:commandLink>
                         </h:column>
                         <h:column>
@@ -32,14 +46,20 @@
                             <h:selectBooleanCheckbox value="#{Projects.redmineEnabled}" disabled="true" />
                         </h:column>
                         <h:column>
-                            <f:facet name="header"><h:outputText value="Właściciel" /></f:facet>
-                            <h:outputText value="#{Projects.owner.firstname} #{Projects.owner.lastname}" />
+                            <f:facet name="header"><h:outputText value="Własciciele" /></f:facet>
+                            <h:dataTable var="Dev" value="#{Projects.owners}">
+                                <h:column>
+
+                                    <h:outputText value=" #{Dev.firstName} #{Dev.lastName}" />
+
+                                </h:column>
+                            </h:dataTable>
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="Developerzy i goście" /></f:facet>
-                            <h:dataTable var="User" value="#{Projects.usersCollection}">
+                            <h:dataTable var="Dev" value="#{Projects.developers}">
                                 <h:column>
-                                    <h:outputText value=" #{User.firstname} #{User.lastname}" />
+                                    <h:outputText value=" #{Dev.firstName} #{Dev.lastName}" />
                                 </h:column>
                             </h:dataTable>
                         </h:column>

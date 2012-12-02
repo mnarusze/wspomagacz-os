@@ -100,6 +100,10 @@ public class ProjectDescription implements Serializable {
     public void setProjDescription(String projDescription) {
         this.projDescription = projDescription;
     }
+    
+    public String getShortProjDescription() {
+        return projDescription.substring(0, 140);
+    }
 
     public Date getCreationDate() {
         return creationDate;

@@ -43,11 +43,11 @@ public class ProjectsManagerBean implements Serializable {
 
     public List<Projects> publicProjects(Users user) {
         List<Projects> temp = getProjects();
-        List<Projects> value = new ArrayList();
+        List<Projects> value = new ArrayList<Projects>();
         for (Projects projects : temp) {
-            if (!projects.getPubType().getId().equals(4)) {
+            if (!projects.getPubType().isHidden()) {
                 value.add(projects);
-            } else if (user != null) {
+//            } else if (user != null) {
 //                if (projects.getOwner().getNickname().equals(user.getNickname())) {
 //                    value.add(projects);
 //                } else {

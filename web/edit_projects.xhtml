@@ -45,13 +45,12 @@
                     </h:panelGrid>
 
 
-                    <h:commandButton value="Dodaj/usuń developerów" action="#{EditHelperBean.addUsersToProject(EditHelperBean.projects)}" rendered="#{EditHelperBean.editingProjects}" />
-                    <h:commandButton value="Dodaj/usuń gości" action="#{EditHelperBean.addReadOnlyUsers(EditHelperBean.projects)}" rendered="#{EditHelperBean.editingProjects and !EditHelperBean.projects.isPublic}" />
+                    <h:commandButton value="Dodaj/usuń developerów" action="#{editHelperBean.addUsersToProject(editHelperBean.projects)}" rendered="#{editHelperBean.editingProjects}" />
                     <h:commandButton value="Zapisz zmiany" action="#{editHelperBean.saveProject(loginBean.loggedUser)}"/>
-                    <h:commandButton value="Usuń projekt" action="#{EditHelperBean.usunProject()}" rendered="#{EditHelperBean.editingProjects}" />
-                    <h:commandButton value="Anuluj" action="#{EditHelperBean.anuluj()}" immediate="true" />
+                    <h:commandButton value="Usuń projekt" action="#{editHelperBean.usunProject()}" rendered="#{editHelperBean.editingProjects}" />
+                    <h:commandButton value="Anuluj" action="#{editHelperBean.anuluj()}" immediate="true" />
 
-                    <h:dataTable border="0" var="Users" value="#{ProjectsManagerBean.usersActiveInProject(EditHelperBean.projects)}" >
+                    <h:dataTable border="0" var="Users" value="#{projectsManagerBean.usersActiveInProject(editHelperBean.projects)}" >
                         <h:column>
                             <f:facet name="header"><h:outputText value="Nazwa użytkownika" /></f:facet>                      
 
