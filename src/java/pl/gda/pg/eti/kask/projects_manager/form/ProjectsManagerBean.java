@@ -155,7 +155,7 @@ public class ProjectsManagerBean implements Serializable {
         }
         return list;
     }
-    
+
     public List<UserRoles> getUserRoles() {
         return roleFacade.findAll();
     }
@@ -167,5 +167,29 @@ public class ProjectsManagerBean implements Serializable {
             list.add(new SelectItem(u, u.getRoleDescription()));
         }
         return list;
+    }
+
+    public boolean userIsOwner(Projects p, Users u) {
+        if (u == null) {
+            return false;
+        }
+        for (Users test : p.getOwners()) {
+            if (test.getLogin().equals(u.getLogin())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean userIsDeveloper(Projects p, Users u) {
+        if (u == null) {
+            return false;
+        }
+        for (Users test : p.getDevelopers()) {
+            if (test.getLogin().equals(u.getLogin())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -17,9 +17,9 @@
                         <h:message for="projName" />
 
                         <h:outputText value="Typ projektu" />
-                        <h:selectOneListbox id="publicationType" value="#{editHelperBean.projects.pubType}">
+                        <h:selectOneMenu id="publicationType" value="#{editHelperBean.projects.pubType}">
                             <f:selectItems value="#{projectsManagerBean.publicationTypesAsSelectItems}" />
-                        </h:selectOneListbox>
+                        </h:selectOneMenu>
                         <h:message for="isPublic" />
 
                         <h:outputText value="SVN" />
@@ -47,17 +47,16 @@
 
                     <h:commandButton value="Dodaj/usuń developerów" action="#{editHelperBean.addUsersToProject(editHelperBean.projects)}" rendered="#{editHelperBean.editingProjects}" />
                     <h:commandButton value="Zapisz zmiany" action="#{editHelperBean.saveProject(loginBean.loggedUser)}"/>
-                    <h:commandButton value="Zmien opis" action="#{editHelperBean.editProjDescription(editHelperBean.projects.projDescription)}"/>
+                    <h:commandButton value="Zmien opis" action="#{editHelperBean.editProjDescription(editHelperBean.projects.projDescription)}" rendered="#{editHelperBean.editingProjects}" />
                     <h:commandButton value="Usuń projekt" action="#{editHelperBean.usunProject()}" rendered="#{editHelperBean.editingProjects}" />
                     <h:commandButton value="Anuluj" action="#{editHelperBean.anuluj()}" immediate="true" />
 
-                    <h:dataTable border="0" var="Users" value="#{projectsManagerBean.usersActiveInProject(editHelperBean.projects)}" >
+                    <h:dataTable border="0" var="Users" value="#{projectsManagerBean.usersActiveInProject(editHelperBean.projects)}" rendered="#{editHelperBean.editingProjects}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Nazwa użytkownika" /></f:facet>                      
 
-                            <h:commandLink >
-                                <h:outputText value="#{Users.users.login}" />
-                            </h:commandLink>
+
+                            <h:outputText value="#{Users.users.login}" />
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="Imię" /></f:facet>

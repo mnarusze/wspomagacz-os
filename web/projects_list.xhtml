@@ -24,7 +24,7 @@
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="Opis" /></f:facet>
-                            <h:outputText value="#{Projects.projDescription.shortProjDescription}..." />
+                            <h:outputText value="#{Projects.projDescription.printShortDescription()}" />
                             <h:commandLink action="#{editHelperBean.display(Projects, loginBean.loggedUser)}">
                                 <h:outputText value="Wiecej..." />
                             </h:commandLink>

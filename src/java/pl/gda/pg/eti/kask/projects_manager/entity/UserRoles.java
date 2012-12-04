@@ -17,8 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -26,7 +24,6 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "user_roles")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UserRoles.findAll", query = "SELECT u FROM UserRoles u"),
     @NamedQuery(name = "UserRoles.findById", query = "SELECT u FROM UserRoles u WHERE u.id = :id"),
@@ -56,6 +53,19 @@ public class UserRoles implements Serializable {
 
     public UserRoles(Integer id) {
         this.id = id;
+        switch (id) {
+            case 1:
+                this.roleName = "administrator";
+                break;
+            case 2:
+                this.roleName = "developer";
+                break;
+            case 3:
+                this.roleName = "guest";
+                break;
+            default:
+                this.roleName = "brak";
+        }
     }
 
     public UserRoles(Integer id, String roleName) {
@@ -87,7 +97,6 @@ public class UserRoles implements Serializable {
         this.roleDescription = roleDescription;
     }
 
-    @XmlTransient
     public Collection<ProjHasUsers> getProjHasUsersCollection() {
         return projHasUsersCollection;
     }
@@ -119,29 +128,5 @@ public class UserRoles implements Serializable {
     @Override
     public String toString() {
         return "pl.gda.pg.eti.kask.projects_manager.entity.UserRoles[ id=" + id + " ]";
-    }
-
-    public boolean isAdministrator() {
-        if (this.getId().equals(1)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isDeveloper() {
-        if (this.getId().equals(2)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isGuest() {
-        if (this.getId().equals(1)) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }

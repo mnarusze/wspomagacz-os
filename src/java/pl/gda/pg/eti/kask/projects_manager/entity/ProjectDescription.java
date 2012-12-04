@@ -22,8 +22,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -31,7 +29,6 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "project_description")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "ProjectDescription.findAll", query = "SELECT p FROM ProjectDescription p"),
     @NamedQuery(name = "ProjectDescription.findById", query = "SELECT p FROM ProjectDescription p WHERE p.id = :id"),
@@ -69,10 +66,6 @@ public class ProjectDescription implements Serializable {
     public ProjectDescription() {
     }
 
-    public ProjectDescription(String fullname) {
-        this.projFullName = fullname;
-    }
-
     public ProjectDescription(Integer id) {
         this.id = id;
     }
@@ -101,18 +94,6 @@ public class ProjectDescription implements Serializable {
         this.projDescription = projDescription;
     }
 
-    public String getShortProjDescription() {
-        if (projDescription != null) {
-            if(projDescription.length() > 140){
-                return projDescription.substring(0, 140);
-            } else
-            {
-                return projDescription;
-            }
-        }
-        return "brak opisu";
-    }
-
     public Date getCreationDate() {
         return creationDate;
     }
@@ -137,7 +118,6 @@ public class ProjectDescription implements Serializable {
         this.projLogo = projLogo;
     }
 
-    @XmlTransient
     public Collection<Projects> getProjectsCollection() {
         return projectsCollection;
     }
@@ -169,5 +149,20 @@ public class ProjectDescription implements Serializable {
     @Override
     public String toString() {
         return "pl.gda.pg.eti.kask.projects_manager.entity.ProjectDescription[ id=" + id + " ]";
+    }
+
+    public String printShortDescription() {
+        String wynik;
+
+        try {
+            if (this.projDescription.length() <= 140) {
+                wynik = this.projDescription;
+            } else {
+                wynik = this.projDescription.substring(0, 140);
+            }
+            return wynik;
+        } catch (Exception e) {
+            return "brak opisu";
+        }
     }
 }

@@ -12,11 +12,11 @@
                     <h:dataTable border="0" var="Users" value="#{projectsManagerBean.usersActiveInProject(editHelperBean.projects)}">
                         <h:column>
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>
-                            <h:commandButton value="Remove From Project" action="#{editHelperBean.removeUsersFromProject(Users)}" />                         
 
-                            <h:commandLink >
-                                <h:outputText value="#{Users.users.login}" />
-                            </h:commandLink>
+
+                            <h:commandButton value="Usun z projektu" action="#{editHelperBean.removeUsersFromProject(Users)}" />
+                            <h:outputText value="#{Users.users.login}" />
+
                         </h:column>
                         <h:column>
                             <f:facet name="header"><h:outputText value="First Name" /></f:facet>
@@ -38,38 +38,16 @@
                     </h:dataTable>
 
                     <h:outputText value="Typ dodawanego uzytkownika" />
-                    <h:selectOneListbox id="user_role" value="#{editHelperBean.localRoles}">
+                    <h:selectOneMenu id="user_role" value="#{editHelperBean.localRoles}">
                         <f:selectItems value="#{projectsManagerBean.rolesAsSelectItems}" />
-                    </h:selectOneListbox>
-                    <h:message for="isPublic" />
+                    </h:selectOneMenu>
 
-                    <h:dataTable border="0" var="Users" value="#{projectsManagerBean.users}">
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Login" /></f:facet>
+                    <h:outputText value="Dodawany uzytkownik" />
+                    <h:selectOneMenu id="adding_user" value="#{editHelperBean.localUsers}" >
+                        <f:selectItems value="#{projectsManagerBean.usersAsSelectItems}" />
+                    </h:selectOneMenu>
 
-                            <h:commandButton value="Add To Project" action="#{editHelperBean.saveUsersToProject(Users, editHelperBean.localRoles)}"/>
-                            <h:commandLink >
-                                <h:outputText value="#{Users.login}" />
-                            </h:commandLink>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="First Name" /></f:facet>
-                            <h:outputText value="#{Users.firstName}"  />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Last Name" /></f:facet>
-                            <h:outputText value="#{Users.lastName}"  />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="e-mail" /></f:facet>
-                            <h:outputText value="#{Users.email}"  />
-                        </h:column>                        
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Index" /></f:facet>
-                            <h:outputText value="#{Users.indeks}"  />
-                        </h:column>
-
-                    </h:dataTable>
+                    <h:commandButton value="Zapisz" action="#{editHelperBean.saveUsersToProject(editHelperBean.localUsers, editHelperBean.localRoles)}" />
 
                 </h:form>
             </ui:define>

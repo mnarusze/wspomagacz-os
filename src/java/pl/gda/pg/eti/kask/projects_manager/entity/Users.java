@@ -22,8 +22,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -31,7 +29,6 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "users")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u"),
     @NamedQuery(name = "Users.findById", query = "SELECT u FROM Users u WHERE u.id = :id"),
@@ -164,7 +161,6 @@ public class Users implements Serializable {
         this.sshkey = sshkey;
     }
 
-    @XmlTransient
     public Collection<ProjHasUsers> getProjHasUsersCollection() {
         return projHasUsersCollection;
     }

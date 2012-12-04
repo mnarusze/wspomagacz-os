@@ -16,8 +16,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -25,8 +23,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -34,7 +30,6 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "projects")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Projects.findAll", query = "SELECT p FROM Projects p"),
     @NamedQuery(name = "Projects.findById", query = "SELECT p FROM Projects p WHERE p.id = :id"),
@@ -44,7 +39,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Projects.findByTracEnabled", query = "SELECT p FROM Projects p WHERE p.tracEnabled = :tracEnabled"),
     @NamedQuery(name = "Projects.findByRedmineEnabled", query = "SELECT p FROM Projects p WHERE p.redmineEnabled = :redmineEnabled")})
 public class Projects implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,11 +66,6 @@ public class Projects implements Serializable {
     @NotNull
     @Column(name = "redmine_enabled")
     private boolean redmineEnabled;
-    @JoinTable(name = "proj_has_messages", joinColumns = {
-        @JoinColumn(name = "projmsgid", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "msgid", referencedColumnName = "id")})
-    @ManyToMany
-    private Collection<ProjectMessage> projectMessageCollection;
     @JoinColumn(name = "proj_description", referencedColumnName = "id")
     @ManyToOne(optional = false, cascade= CascadeType.ALL)
     private ProjectDescription projDescription;
@@ -86,6 +75,16 @@ public class Projects implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projects")
     private Collection<ProjHasUsers> projHasUsersCollection;
 
+    private final static int PUBLIC = 1;
+    private final static int PARTIALY_PUBLIC = 2;
+    private final static int PRIVATE = 3;
+    private final static int HIDDEN = 4;
+    
+    private final static int ADMINISTRATOR = 1;
+    private final static int DEVELOPER = 2;
+    private final static int GUEST = 3;
+    
+    
     public Projects() {
     }
 
@@ -150,15 +149,6 @@ public class Projects implements Serializable {
         this.redmineEnabled = redmineEnabled;
     }
 
-    @XmlTransient
-    public Collection<ProjectMessage> getProjectMessageCollection() {
-        return projectMessageCollection;
-    }
-
-    public void setProjectMessageCollection(Collection<ProjectMessage> projectMessageCollection) {
-        this.projectMessageCollection = projectMessageCollection;
-    }
-
     public ProjectDescription getProjDescription() {
         return projDescription;
     }
@@ -175,7 +165,6 @@ public class Projects implements Serializable {
         this.pubType = pubType;
     }
 
-    @XmlTransient
     public Collection<ProjHasUsers> getProjHasUsersCollection() {
         return projHasUsersCollection;
     }
@@ -210,66 +199,72 @@ public class Projects implements Serializable {
     }
 
     public boolean getIsPublic() {
-        return this.getPubType().isPublic();
+        if(this.pubType.getId().equals(PUBLIC)){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     public boolean getIsPariatlyPublic() {
-        return this.getPubType().isPartialyPublic();
-    }
-
-    public boolean getIsPrivate() {
-        return this.getPubType().isPrivate();
-    }
-
-    public boolean getIsHidden() {
-        return this.getPubType().isHidden();
-    }
-    
-    public void addUserPerRole(Users a, Integer role){
-        if(projHasUsersCollection == null){
-            projHasUsersCollection = new ArrayList<ProjHasUsers>();
+        if(this.pubType.getId().equals(PARTIALY_PUBLIC)){
+            return true;
+        } else {
+            return false;
         }
-        ProjHasUsers pu = new ProjHasUsers();
-        pu.setProjects(this);
-        pu.setRola(new UserRoles(role));
-        pu.setUsers(a);
-        pu.setProjHasUsersPK(new ProjHasUsersPK(this.getId(), a.getId()));
-        projHasUsersCollection.add(pu);
     }
 
-    public List<Users> getOwners() {
-        List<Users> result = new ArrayList<Users>();
-        if (getProjHasUsersCollection() != null) {
-            for (ProjHasUsers project : getProjHasUsersCollection()) {
-                if (project.getRola().isAdministrator()) {
-                    result.add(project.getUsers());
-                }
+    public void addUserPerRole(Users owner, int i) {
+        ProjHasUsers ph;
+        ph = new ProjHasUsers();
+        ph.setProjHasUsersPK(new ProjHasUsersPK(this.id, owner.getId()));
+        ph.setProjects(this);
+        ph.setUsers(owner);
+        
+        ph.setRola(new UserRoles(i));
+        
+        ProjHasUsers existing = null;
+        
+        for (ProjHasUsers projHasUsers : projHasUsersCollection) {
+            if (projHasUsers.getUsers().getLogin().equals(owner.getLogin())) {
+                existing = projHasUsers;
+            } else {
             }
         }
-        return result;
+        if (existing != null) {
+            this.projHasUsersCollection.remove(existing);
+        } else {
+        }
+        this.projHasUsersCollection.add(ph);
     }
 
-    public List<Users> getDevelopers() {
-        List<Users> result = new ArrayList<Users>();
-        if (getProjHasUsersCollection() != null) {
-            for (ProjHasUsers project : getProjHasUsersCollection()) {
-                if (project.getRola().isDeveloper()) {
-                    result.add(project.getUsers());
+    public List<Users> getUserPerRole(int role) {
+        List<Users> result;
+        result = new ArrayList<Users>();
+        try {
+            for (ProjHasUsers users : this.projHasUsersCollection) {
+                if (users.getRola().getId().equals(role)) {
+                    result.add(users.getUsers());
+                } else {
                 }
             }
+        } catch (Exception e) {
         }
+        
         return result;
     }
 
     public List<Users> getGuests() {
-        List<Users> result = new ArrayList<Users>();
-        if (getProjHasUsersCollection() != null) {
-            for (ProjHasUsers project : getProjHasUsersCollection()) {
-                if (project.getRola().isGuest()) {
-                    result.add(project.getUsers());
-                }
-            }
-        }
-        return result;
+        return getUserPerRole(GUEST);
     }
+
+    public List<Users> getDevelopers() {
+        return getUserPerRole(DEVELOPER);
+    }
+
+    public List<Users> getOwners() {
+        return getUserPerRole(ADMINISTRATOR);
+    }
+    
 }

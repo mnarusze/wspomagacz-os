@@ -18,8 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -27,7 +25,6 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "publication_types")
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "PublicationTypes.findAll", query = "SELECT p FROM PublicationTypes p"),
     @NamedQuery(name = "PublicationTypes.findById", query = "SELECT p FROM PublicationTypes p WHERE p.id = :id"),
@@ -51,6 +48,10 @@ public class PublicationTypes implements Serializable {
     private String publicationDescription;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pubType")
     private Collection<Projects> projectsCollection;
+    private final static int PUBLIC = 1;
+    private final static int PARTIALY_PUBLIC = 2;
+    private final static int PRIVATE = 3;
+    private final static int HIDDEN = 4;
 
     public PublicationTypes() {
     }
@@ -80,38 +81,6 @@ public class PublicationTypes implements Serializable {
         this.typeName = typeName;
     }
 
-    public boolean isPublic() {
-        if (this.getId().equals(1)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isPartialyPublic() {
-        if (this.getId().equals(2)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isPrivate() {
-        if (this.getId().equals(3)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isHidden() {
-        if (this.getId().equals(4)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public String getPublicationDescription() {
         return publicationDescription;
     }
@@ -120,7 +89,6 @@ public class PublicationTypes implements Serializable {
         this.publicationDescription = publicationDescription;
     }
 
-    @XmlTransient
     public Collection<Projects> getProjectsCollection() {
         return projectsCollection;
     }
@@ -152,5 +120,13 @@ public class PublicationTypes implements Serializable {
     @Override
     public String toString() {
         return "pl.gda.pg.eti.kask.projects_manager.entity.PublicationTypes[ id=" + id + " ]";
+    }
+
+    public boolean isHidden() {
+        if (this.id.equals(HIDDEN)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
