@@ -129,9 +129,10 @@ public class EditHelperBean implements Serializable {
     }
 
     public String saveProjDescription() {
+        
         projectDescriptionFacadeLocal.edit(editingProjDescription);
 
-        return "edit_projects";
+        return "my_projects";
     }
 
     public String viewProject() {

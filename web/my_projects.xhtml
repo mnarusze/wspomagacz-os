@@ -64,10 +64,10 @@
 
                     <p>
                         <h:outputText value="Projekty, w których uczestniczysz" />
-                        <h:dataTable border="0" var="Projects" value="#{ProjectsManagerBean.projectsForActive(loginBean.loggedUser)}">
+                        <h:dataTable border="0" var="Projects" value="#{projectsManagerBean.projectsForActive(loginBean.loggedUser)}">
                             <h:column>
                                 <f:facet name="header"><h:outputText value="Name" /></f:facet>
-                                <h:commandLink action="#{EditHelperBean.viewProject(Projects)}">
+                                <h:commandLink action="#{editHelperBean.editProjDescription(Projects.projDescription)}">
                                     <h:outputText value="#{Projects.projName}" />
                                 </h:commandLink>
                             </h:column>
@@ -88,14 +88,18 @@
                                 <h:selectBooleanCheckbox value="#{Projects.redmineEnabled}" disabled="true" />
                             </h:column>
                             <h:column>
-                                <f:facet name="header"><h:outputText value="Owner" /></f:facet>
-                                <h:outputText value="#{Projects.owner.firstname}" />
+                            <f:facet name="header"><h:outputText value="Administrators" /></f:facet>
+                            <h:dataTable var="User" value="#{Projects.owners}">
+                                <h:column>
+                                    <h:outputText value=" #{User.firstName} #{User.lastName}" />
+                                </h:column>
+                            </h:dataTable>
                             </h:column>
                             <h:column>
                                 <f:facet name="header"><h:outputText value="Users" /></f:facet>
-                                <h:dataTable var="User" value="#{Projects.usersCollection}">
+                                <h:dataTable var="User" value="#{Projects.developers}">
                                     <h:column>
-                                        <h:outputText value=" #{User.firstname} #{User.lastname}" />
+                                        <h:outputText value=" #{User.firstName} #{User.lastName}" />
                                     </h:column>
                                 </h:dataTable>
                             </h:column>
