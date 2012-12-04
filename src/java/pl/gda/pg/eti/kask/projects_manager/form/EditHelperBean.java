@@ -99,20 +99,6 @@ public class EditHelperBean implements Serializable {
 
     }
 
-    public String editProject() {
-
-        beginConversation();
-
-        localProjects = (Projects) FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestMap()
-                .get("Projects");
-        editingProjects = true;
-
-
-        return "edit_projects";
-
-    }
-
     public ProjectDescription getEditingProjDescription() {
         return editingProjDescription;
     }
@@ -135,18 +121,7 @@ public class EditHelperBean implements Serializable {
         return "my_projects";
     }
 
-    public String viewProject() {
-        localProjects = (Projects) FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestMap()
-                .get("Projects");
-
-        //localProjects = p;
-        //editingProjects = true;
-
-        return "project_view";
-
-    }
-
+ 
     public String viewProject(Projects p) {
 //        localProjects = (Projects) FacesContext.getCurrentInstance()
 //                .getExternalContext().getRequestMap()
@@ -158,15 +133,7 @@ public class EditHelperBean implements Serializable {
         return "project_view";
     }
 
-    public String addUsersToProject() {
 
-        localProjects = (Projects) FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestMap()
-                .get("Projects");
-
-
-        return "users_list";
-    }
 
     public String addUsersToProject(Projects p) {
         localProjects = p;
@@ -174,11 +141,7 @@ public class EditHelperBean implements Serializable {
         return "users_list";
     }
 
-    public String addReadOnlyUsers(Projects p) {
-        localProjects = p;
 
-        return "read_only_users_list";
-    }
 
     public String saveReadOnlyUsers(Users u) {
         localUsers = u;
@@ -192,29 +155,7 @@ public class EditHelperBean implements Serializable {
         return "edit_projects";
     }
 
-    public String removeReadOnlyUsers(Users u) {
-        localUsers = u;
 
-//        if (ProjectsManager.removeUser(localProjects, localUsers)) {
-//            localProjects.getReadOnlyUsersCollection().remove(localUsers);
-//        }
-        projectFacadeLocal.edit(localProjects);
-        return "edit_projects";
-    }
-
-    public String saveUsersToProject() {
-        localUsers = (Users) FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestMap()
-                .get("Users");
-
-//        if (ProjectsManager.addUser(localProjects, localUsers)) {
-//            localProjects.getUsersCollection().add(localUsers);
-//        }
-
-
-        projectFacadeLocal.edit(localProjects);
-        return "edit_projects";
-    }
 
     public boolean isOwnerInProject(Projects p, Users u) {
         for (ProjHasUsers pu : p.getProjHasUsersCollection()) {
@@ -305,24 +246,6 @@ public class EditHelperBean implements Serializable {
         return "edit_projects";
     }
 
-    public String deleteUsers() {
-        localUsers = (Users) FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestMap()
-                .get("User");
-
-        usersFacadeLocal.remove(localUsers);
-        projectFacadeLocal.edit(localProjects);
-        return "projects_list";
-    }
-
-    public String editUsers() {
-        localUsers = (Users) FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestMap()
-                .get("User");
-        editingUsers = true;
-
-        return "edit_user";
-    }
 
     public String newUser() {
         localUsers = new Users();
