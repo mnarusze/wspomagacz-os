@@ -14,7 +14,7 @@
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>
 
 
-                            <h:commandButton value="Usun z projektu" action="#{editHelperBean.removeUsersFromProject(Users)}" />
+                            <h:commandButton value="Usun z projektu" action="#{editHelperBean.removeUsersFromProject(Users.users)}" />
                             <h:outputText value="#{Users.users.login}" />
 
                         </h:column>

@@ -39,6 +39,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Projects.findByTracEnabled", query = "SELECT p FROM Projects p WHERE p.tracEnabled = :tracEnabled"),
     @NamedQuery(name = "Projects.findByRedmineEnabled", query = "SELECT p FROM Projects p WHERE p.redmineEnabled = :redmineEnabled")})
 public class Projects implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,24 +68,21 @@ public class Projects implements Serializable {
     @Column(name = "redmine_enabled")
     private boolean redmineEnabled;
     @JoinColumn(name = "proj_description", referencedColumnName = "id")
-    @ManyToOne(optional = false, cascade= CascadeType.ALL)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private ProjectDescription projDescription;
     @JoinColumn(name = "pub_type", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private PublicationTypes pubType;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projects")
     private Collection<ProjHasUsers> projHasUsersCollection;
-
     private final static int PUBLIC = 1;
     private final static int PARTIALY_PUBLIC = 2;
     private final static int PRIVATE = 3;
     private final static int HIDDEN = 4;
-    
     private final static int ADMINISTRATOR = 1;
     private final static int DEVELOPER = 2;
     private final static int GUEST = 3;
-    
-    
+
     public Projects() {
     }
 
@@ -199,16 +197,15 @@ public class Projects implements Serializable {
     }
 
     public boolean getIsPublic() {
-        if(this.pubType.getId().equals(PUBLIC)){
+        if (this.pubType.getId().equals(PUBLIC)) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }
 
     public boolean getIsPariatlyPublic() {
-        if(this.pubType.getId().equals(PARTIALY_PUBLIC)){
+        if (this.pubType.getId().equals(PARTIALY_PUBLIC)) {
             return true;
         } else {
             return false;
@@ -221,11 +218,11 @@ public class Projects implements Serializable {
         ph.setProjHasUsersPK(new ProjHasUsersPK(this.id, owner.getId()));
         ph.setProjects(this);
         ph.setUsers(owner);
-        
+
         ph.setRola(new UserRoles(i));
-        
+
         ProjHasUsers existing = null;
-        
+
         for (ProjHasUsers projHasUsers : projHasUsersCollection) {
             if (projHasUsers.getUsers().getLogin().equals(owner.getLogin())) {
                 existing = projHasUsers;
@@ -251,7 +248,7 @@ public class Projects implements Serializable {
             }
         } catch (Exception e) {
         }
-        
+
         return result;
     }
 
@@ -266,5 +263,21 @@ public class Projects implements Serializable {
     public List<Users> getOwners() {
         return getUserPerRole(ADMINISTRATOR);
     }
-    
+
+    public void removeUserFromProject(Users u) {
+        
+        ProjHasUsers existing = null;
+
+        for (ProjHasUsers projHasUsers : projHasUsersCollection) {
+            if (projHasUsers.getUsers().getLogin().equals(u.getLogin())) {
+                existing = projHasUsers;
+            } else {
+            }
+        }
+        if (existing != null) {
+            this.projHasUsersCollection.remove(existing);
+        } else {
+        }
+        
+    }
 }

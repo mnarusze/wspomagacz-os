@@ -283,15 +283,17 @@ public class EditHelperBean implements Serializable {
 //            localProjects.getUsersCollection().remove(localUsers);
 //        }
 
-        try {
-            for (ProjHasUsers pk : localProjects.getProjHasUsersCollection()) {
-                if (pk.getUsers().getLogin().equals(u.getLogin())) {
-                    projectUsersFacadeLocal.remove(pk);
-                }
-            }
-        } catch (Exception e) {
-        }
+//        try {
+//            for (ProjHasUsers pk : localProjects.getProjHasUsersCollection()) {
+//                if (pk.getUsers().getLogin().equals(u.getLogin())) {
+//                    projectUsersFacadeLocal.remove(pk);
+//                }
+//            }
+//        } catch (Exception e) {
+//        }
+        localProjects.removeUserFromProject(u);
         
+        projectFacadeLocal.edit(localProjects);
 
         //pk.setProjHasUsersPK(new ProjHasUsersPK(localProjects.getId(), u.getId()));
 
