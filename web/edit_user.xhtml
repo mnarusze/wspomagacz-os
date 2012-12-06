@@ -9,17 +9,20 @@
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
+                    <p>
+                        <h:messages layout="table" infoStyle="color: green" warnStyle="color: orange" errorStyle="color: red"></h:messages>
+                    </p>
                     <h:panelGrid columns="3">
                         <h:outputText value="Nickname" />
-                        <h:inputText id="nickname" value="#{editHelperBean.user.nickname}" />
+                        <h:inputText id="nickname" value="#{editHelperBean.user.login}" />
                         <h:message for="nickname" />
 
                         <h:outputText value="FirstName" />
-                        <h:inputText id="firstname" value="#{editHelperBean.user.firstname}" />
+                        <h:inputText id="firstname" value="#{editHelperBean.user.firstName}" />
                         <h:message for="firstname" />
 
                         <h:outputText value="LastName" />
-                        <h:inputText id="lastname" value="#{editHelperBean.user.lastname}" />
+                        <h:inputText id="lastname" value="#{editHelperBean.user.lastName}" />
                         <h:message for="lastname" />
 
                         <h:outputText value="email" />

@@ -76,7 +76,7 @@ GITWEB
 
 2) Ograniczamy uprawnienia
 -> /etc/httpd.d/git.conf -> przykładowy git.conf w folderze scripts
--> /etc/gitweb.conf -> przykładowy gitweb.conf w folderze scripts
+-> /etc/gitweb.conf -> przykładowy gitweb.conf w folderze scripts (pamiętać o ustawieniu "strict"!)
 -> od tej pory:
 	*) dostęp do Gitweb tylko po zalogowaniu (htpasswd/AD)
 	*) widać publiczne projekty (czyli te, które mają dopisane "R = daemon" w gitolite.conf) oraz projekty, do których ma się uprawnienia RW (zazwyczaj przynależność do ekipy projektowej)

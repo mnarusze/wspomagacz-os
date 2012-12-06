@@ -2,31 +2,29 @@
 
 . /home/maryl/NetBeansProjects/wspomagacz-os/scripts/common_functions.sh
 
-get_input $*
+get_input "$@"
 check_input_create_svn_repo
 
 # Kopia obecnego configu
 cp $SVN_ACCESS_CONTROL_FILE ${SVN_ACCESS_CONTROL_FILE}.swp
 
-# Szukamy pierwszej wolnej linii i dodajemy grupę RW
-LINE_NUMBER_FOR_USERS=$(cat $SVN_ACCESS_CONTROL_FILE | grep  ^$ -m 1 -n | sed 's/[^0-9].*//g')
-sed -i "$LINE_NUMBER_FOR_USERS i $PROJECT_NAME = $PROJECT_OWNER," $SVN_ACCESS_CONTROL_FILE
-
-# Jeśli prywatny, to dodajemy grupę read-only
-if [[ $PROJECT_TYPE == "PRIVATE" ]] ; then
-    ((LINE_NUMBER_FOR_USERS++))
-    sed -i "$LINE_NUMBER_FOR_USERS i ${PROJECT_NAME}_read_only = " $SVN_ACCESS_CONTROL_FILE
-fi
+# Szukamy pierwszej wolnej linii i dodajemy grupy
+LINE_NUMBER_FOR_GROUP=$(cat $SVN_ACCESS_CONTROL_FILE | grep  ^$ -m 1 -n | sed 's/[^0-9].*//g')
+sed -i "$LINE_NUMBER_FOR_GROUP i ${PROJECT_NAME}_RW = $PROJECT_OWNER," $SVN_ACCESS_CONTROL_FILE
+((LINE_NUMBER_FOR_GROUP++))
+sed -i "$LINE_NUMBER_FOR_GROUP i ${PROJECT_NAME}_R =" $SVN_ACCESS_CONTROL_FILE
 
 # Ustawiamy uprawnienia dla poszczególnych grup
 echo "#${PROJECT_NAME}_SECTION_BEGIN" >> $SVN_ACCESS_CONTROL_FILE
 echo "[$PROJECT_NAME:/]" >> $SVN_ACCESS_CONTROL_FILE
-echo "@$PROJECT_NAME = rw" >> $SVN_ACCESS_CONTROL_FILE
+echo "@${PROJECT_NAME}_RW = rw" >> $SVN_ACCESS_CONTROL_FILE
+echo "@${PROJECT_NAME}_R = r" >> $SVN_ACCESS_CONTROL_FILE
+
+# Globalne read-only jeśli publiczny
 if [[ $PROJECT_TYPE == "PUBLIC" ]] ; then
     echo "* = r" >> $SVN_ACCESS_CONTROL_FILE
-else
-    echo "@${PROJECT_NAME}_read_only = r" >> $SVN_ACCESS_CONTROL_FILE
 fi
+
 echo "#${PROJECT_NAME}_SECTION_END" >> $SVN_ACCESS_CONTROL_FILE
 echo "" >> $SVN_ACCESS_CONTROL_FILE
 

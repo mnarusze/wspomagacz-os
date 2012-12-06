@@ -2,7 +2,7 @@
 
 . /home/maryl/NetBeansProjects/wspomagacz-os/scripts/common_functions.sh
 
-get_input $*
+get_input "$@"
 check_input_create_git_repo
 
 cd "$GITOLITE_ADMIN_DIR"
@@ -22,9 +22,11 @@ sed -i "$LINE_NUMBER_FOR_GROUP i @${PROJECT_NAME}_R\t=\t" $GITOLITE_CONFIG_FILE
 echo "repo $PROJECT_NAME" >> "$GITOLITE_CONFIG_FILE"
 echo -e "\tRW+\t\t=\t@${PROJECT_NAME}_RW+" >> "$GITOLITE_CONFIG_FILE"
 echo -e "\tRW\t\t=\t@${PROJECT_NAME}_RW" >> "$GITOLITE_CONFIG_FILE"
-echo -e "\tR\t\t=\t@${PROJECT_NAME}_R" >> "$GITOLITE_CONFIG_FILE"
+echo -e -n "\tR\t\t=\t@${PROJECT_NAME}_R" >> "$GITOLITE_CONFIG_FILE"
 if [[ $PROJECT_TYPE == "PUBLIC" ]] ; then
-    echo -e "\tR\t\t=\tdaemon" >> "$GITOLITE_CONFIG_FILE"
+    echo -e " daemon" >> "$GITOLITE_CONFIG_FILE"
+else
+	echo "" >> "$GITOLITE_CONFIG_FILE"
 fi
 
 # Zapisujemy zmiany w Gitolite

@@ -75,7 +75,7 @@ public class Users implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "email")
     private String email;
-    @Size(max = 255)
+    @Size(max = 1025)
     @Column(name = "sshkey")
     private String sshkey;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "users")

@@ -36,6 +36,7 @@ public class EditHelperBean implements Serializable {
     @EJB
     private ProjectsFacade projectFacadeLocal;
     private Projects localProjects;
+    private Projects projectBeforeChange;
     private UserRoles localRoles;
     private ProjectDescription editingProjDescription;
     private boolean editingProjects;
@@ -46,6 +47,7 @@ public class EditHelperBean implements Serializable {
     @EJB
     private UsersFacade usersFacadeLocal;
     private Users localUsers;
+    private Users userBeforeChange;
     private boolean editingUsers;
     @Inject
     Conversation conversation;
@@ -92,6 +94,7 @@ public class EditHelperBean implements Serializable {
         beginConversation();
 
         localProjects = p;
+        projectBeforeChange = localProjects;
         editingProjects = true;
 
 
@@ -106,6 +109,8 @@ public class EditHelperBean implements Serializable {
         localProjects = (Projects) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("Projects");
+        projectBeforeChange = localProjects;
+
         editingProjects = true;
 
 
@@ -139,21 +144,12 @@ public class EditHelperBean implements Serializable {
         localProjects = (Projects) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("Projects");
-
-        //localProjects = p;
-        //editingProjects = true;
-
         return "project_view";
 
     }
 
     public String viewProject(Projects p) {
-//        localProjects = (Projects) FacesContext.getCurrentInstance()
-//                .getExternalContext().getRequestMap()
-//                .get("Projects");
-
         localProjects = p;
-        //editingProjects = true;
 
         return "project_view";
     }
@@ -163,7 +159,6 @@ public class EditHelperBean implements Serializable {
         localProjects = (Projects) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("Projects");
-
 
         return "users_list";
     }
@@ -245,24 +240,16 @@ public class EditHelperBean implements Serializable {
     }
 
     public String saveUsersToProject(Users u, UserRoles roles) {
-        localUsers = u;
-        localProjects.addUserPerRole(u, roles.getId());
-//        ProjHasUsers phu;
-//        phu = new ProjHasUsers();
-//        phu.setUsers(u);
-//        phu.setProjects(localProjects);
-//        UserRoles ur = new UserRoles();
-//        ur.setId(2);
-//        phu.setRola(roles);
-//        phu.setProjHasUsersPK(new ProjHasUsersPK(localProjects.getId(), u.getId()));
-//        localProjects.getProjHasUsersCollection().add(phu);
-//        if (ProjectsManager.addUser(localProjects, localUsers)) {
-//            localProjects.getUsersCollection().add(localUsers);
-//        }
-
-
-        projectFacadeLocal.edit(localProjects);
-        return "edit_projects";
+        if (ProjectsManager.addUser(localProjects, u, roles.getRoleName()) != true) {
+            FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja dodania użytkownika nie powiodła się; prosimy o kontakt z aministratorem", null));
+            return "edit_projects";
+        } else {
+            FacesContext.getCurrentInstance().addMessage("successMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Operacja dodania użytkownika powiodła się!", null));
+            localUsers = u;
+            localProjects.addUserPerRole(u, roles.getId());
+            projectFacadeLocal.edit(localProjects);
+            return "edit_projects";
+        }
     }
 
     public String removeUsersFromProject() {
@@ -270,39 +257,23 @@ public class EditHelperBean implements Serializable {
                 .getExternalContext().getRequestMap()
                 .get("Users");
 
-//        if (ProjectsManager.removeUser(localProjects, localUsers)) {
-//            localProjects.getUsersCollection().remove(localUsers);
-//        }
+        
         projectFacadeLocal.edit(localProjects);
         return "edit_projects";
     }
 
     public String removeUsersFromProject(Users u) {
-        localUsers = u;
-
-//        if (ProjectsManager.removeUser(localProjects, localUsers)) {
-//            localProjects.getUsersCollection().remove(localUsers);
-//        }
-
-//        try {
-//            for (ProjHasUsers pk : localProjects.getProjHasUsersCollection()) {
-//                if (pk.getUsers().getLogin().equals(u.getLogin())) {
-//                    projectUsersFacadeLocal.remove(pk);
-//                }
-//            }
-//        } catch (Exception e) {
-//        }
-        localProjects.removeUserFromProject(u);
+        if (ProjectsManager.removeUser(localProjects, u) != true) {
+            FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja usunięcia użytkownika nie powiodła się; prosimy o kontakt z aministratorem", null));
+            return "edit_projects";
+        } else {
+            FacesContext.getCurrentInstance().addMessage("successMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Operacja usunięcia użytkownika powiodła się!", null));
+            localUsers = u;
+            localProjects.removeUserFromProject(u);
+            projectFacadeLocal.edit(localProjects);
+            return "edit_projects";
+        }
         
-        projectFacadeLocal.edit(localProjects);
-
-        //pk.setProjHasUsersPK(new ProjHasUsersPK(localProjects.getId(), u.getId()));
-
-
-        //localProjects.getProjHasUsersCollection().remove(pk);
-        //usersFacadeLocal.edit(u);
-        //projectFacadeLocal.edit(localProjects);
-        return "edit_projects";
     }
 
     public String deleteUsers() {
@@ -319,6 +290,7 @@ public class EditHelperBean implements Serializable {
         localUsers = (Users) FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestMap()
                 .get("User");
+        
         editingUsers = true;
 
         return "edit_user";
@@ -343,10 +315,8 @@ public class EditHelperBean implements Serializable {
     private void saveNewProject(Users owner) {
         ProjectDescription desc = new ProjectDescription();
         desc.setProjFullName(localProjects.getProjName());
-//        projectDescriptionFacadeLocal.create(desc);
         localProjects.setProjDescription(desc);
 
-//        localProjects.addUserPerRole(owner, 1);
         projectFacadeLocal.create(localProjects);
         localProjects.addUserPerRole(owner, 1);
         projectFacadeLocal.edit(localProjects);
@@ -360,29 +330,25 @@ public class EditHelperBean implements Serializable {
         if (editingProjects) {
             saveEditingProject();
         } else {
-//            if (ProjectsManager.createProject(localProjects) != true) {
-//                FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja utworzenia projektu nie powiodła się; prosimy o kontakt z aministratorem", null));
-//            } else {
-//                localProjects.setProjDescription(new ProjectDescription(localProjects.getProjName()));
-//                projectFacadeLocal.create(localProjects);
-            saveNewProject(owner);
-            FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie utworzono projekt " + localProjects.getProjName(), null));
-//            }
+            if (ProjectsManager.createProject(localProjects, owner) != true) {
+                FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja utworzenia projektu nie powiodła się; prosimy o kontakt z aministratorem", null));
+            } else {
+                saveNewProject(owner);
+                FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie utworzono projekt " + localProjects.getProjName(), null));
+            }
         }
-
         endConversation();
-
         return "my_projects";
     }
 
     public String usunProject() {
 
-//        if (ProjectsManager.deleteProject(localProjects) != true) {
-//            FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja usunięcia projektu nie powiodła się; prosimy o kontakt z aministratorem", null));
-//        } else {
-        projectFacadeLocal.remove(localProjects);
-//            FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie usunięto projekt " + localProjects.getProjName(), null));
-//        }
+        if (ProjectsManager.deleteProject(localProjects) != true) {
+            FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja usunięcia projektu nie powiodła się; prosimy o kontakt z aministratorem", null));
+        } else {
+            projectFacadeLocal.remove(localProjects);
+            FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie usunięto projekt " + localProjects.getProjName(), null));
+        }
 
         endConversation();
         return "my_projects";

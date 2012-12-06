@@ -40,26 +40,26 @@ public class ProjectsManager {
             command.add(getScriptsDir() + "/remove_trac.sh");
             command.add("-N");
             command.add(project.getProjName());
-            ret &= executeCommand(command.toArray(new String[0]));
+            ret &= executeCommand(command);
         }
         if(project.getSvnEnabled()) {
             command = new ArrayList<String>();
             command.add(getScriptsDir() + "/delete_svn_repo.sh");
             command.add("-N");
             command.add(project.getProjName());
-            ret &= executeCommand(command.toArray(new String[0]));
+            ret &= executeCommand(command);
         }
         if(project.getGitEnabled()) {
             command = new ArrayList<String>();
             command.add(getScriptsDir() + "/delete_git_repo.sh");
             command.add("-N");
             command.add(project.getProjName());
-            ret &= executeCommand(command.toArray(new String[0]));
+            ret &= executeCommand(command);
         }
         return ret;
     }
     
-    public static boolean createProject(Projects project) {
+    public static boolean createProject(Projects project, Users owner) {
         List<String> command = null;
         boolean ret = true;
         if(project.getSvnEnabled()) {
@@ -68,14 +68,18 @@ public class ProjectsManager {
             command.add("-T");
             if(project.getIsPublic()) {
                 command.add("PUBLIC");
-            } else {
+            } else if (project.getIsPariatlyPublic()) {
+                command.add("PARTIALLY_PUBLIC");
+            } else if (project.getIsPrivate()) {
                 command.add("PRIVATE");
+            } else if (project.getIsHidden()) {
+                command.add("HIDDEN");
             }
             command.add("-N");
             command.add(project.getProjName());
             command.add("-O");
-            command.add(project.getOwners().get(0).getLogin());
-            ret &= executeCommand(command.toArray(new String[0]));
+            command.add(owner.getLogin());
+            ret &= executeCommand(command);
         }
         if(project.getGitEnabled()) {
             command = new ArrayList<String>();
@@ -83,60 +87,72 @@ public class ProjectsManager {
             command.add("-T");
             if(project.getIsPublic()) {
                 command.add("PUBLIC");
-            } else {
+            } else if (project.getIsPariatlyPublic()) {
+                command.add("PARTIALLY_PUBLIC");
+            } else if (project.getIsPrivate()) {
                 command.add("PRIVATE");
+            } else if (project.getIsHidden()) {
+                command.add("HIDDEN");
             }
             command.add("-N");
             command.add(project.getProjName());
             command.add("-O");
-            command.add(project.getOwners().get(0).getLogin());
-            ret &= executeCommand(command.toArray(new String[0]));
+            command.add(owner.getLogin());
+            ret &= executeCommand(command);
         }
         if(project.getTracEnabled()) {
             command = new ArrayList<String>();
             command.add(getScriptsDir() + "/add_trac.sh");
             command.add("-N");
             command.add(project.getProjName());
-            ret &= executeCommand(command.toArray(new String[0]));
+            ret &= executeCommand(command);
         }
         return ret;
     }
     
-    public static boolean addUser(Projects project, Users user) {
+    public static boolean addUser(Projects project, Users user, String role) {
         List<String> command = new ArrayList<String>();
-        command.add(getScriptsDir() + "/add_user_to_project.sh");
+        command.add(getScriptsDir() + "/add_user.sh");
+        command.add("-L");
+        command.add(user.getLogin());
+        command.add("-N");
+        command.add(project.getProjName());
+        command.add("-A");
+        command.add(role);
         if(project.getSvnEnabled()) {
             command.add("-s");
         }
         if(project.getGitEnabled()) {
             command.add("-g");
         }
-        command.add("-n");
-        command.add(project.getProjName());
-        command.add("-u");
-        command.add(user.getLogin());
- 
-        return executeCommand(command.toArray(new String[0]));
+        return executeCommand(command);
     }
     
     public static boolean removeUser(Projects project, Users user) {
-         List<String> command = new ArrayList<String>();
-        command.add(getScriptsDir() + "/remove_user_from_project.sh");
+        List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/remove_user.sh");
+        command.add("-L");
+        command.add(user.getLogin());
+        command.add("-N");
+        command.add(project.getProjName());
         if(project.getSvnEnabled()) {
             command.add("-s");
         }
         if(project.getGitEnabled()) {
             command.add("-g");
         }
-        command.add("-n");
-        command.add(project.getProjName());
-        command.add("-u");
-        command.add(user.getLogin());
- 
-        return executeCommand(command.toArray(new String[0]));
+        return executeCommand(command);
     }
     
-    private static boolean executeCommand(String[] command) {
+    public static boolean changeSSHKey(Users user, String newKey) {
+        List<String> command = new ArrayList<String>();
+        command.add("bash");
+        command.add("-c");
+        command.add(getScriptsDir() + "/change_ssh_key.sh" + " -L " + user.getLogin() + " -S \"" + newKey + "\"");
+        return executeCommand(command);
+    }
+    
+    private static boolean executeCommand(List<String> command) {
         InputStream in = null;
         Process p = null;
         ProcessBuilder pb = new ProcessBuilder(command);

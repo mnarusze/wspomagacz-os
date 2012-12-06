@@ -8,13 +8,11 @@
             <ui:define name="content">
                 <h:form>
                     <h:panelGrid columns="3" >
-                        
                         <h:outputText value="Publiczny klucz ssh" />
                         <h:inputTextarea id="sshkey" value="#{loginBean.loggedUser.sshkey}"/>
                         <h:message for="sshkey" />
-
                     </h:panelGrid>
-                    <h:commandButton value="Dodaj klucz ssh" action="#{loginBean.saveUser()}"/>
+                    <h:commandButton value="Dodaj klucz ssh" action="#{loginBean.saveUser('ssh')}"/>
                     <h:commandButton value="Usun klucz ssh" action="#{loginBean.deleteSshKey()}" />
                     
                 </h:form>

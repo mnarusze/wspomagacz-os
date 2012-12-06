@@ -15,7 +15,7 @@ CREATE TABLE users (
     last_name varchar(50) not null,
     indeks varchar(15) not null,
     email varchar(100) not null,
-    sshkey varchar(255),
+    sshkey varchar(1025),
     PRIMARY KEY (id)
 );
 
@@ -84,7 +84,6 @@ CREATE TABLE proj_has_messages (
 );
 
 INSERT INTO users (login,first_name,last_name,indeks,email) VALUES
-    ("121514nm","Maciej","Naruszewicz","121514","maciek.naruszewicz@gmail.com"),
     ("12111dd","Dominik","Dziag","121111","deezet@gmail.com"),
     ("121514zm","Mateusz","Zalewski","121514","zalewski.mateusz@gmail.com");
 

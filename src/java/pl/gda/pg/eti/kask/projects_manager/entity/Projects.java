@@ -197,19 +197,19 @@ public class Projects implements Serializable {
     }
 
     public boolean getIsPublic() {
-        if (this.pubType.getId().equals(PUBLIC)) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.pubType.getId().equals(PUBLIC);
     }
 
     public boolean getIsPariatlyPublic() {
-        if (this.pubType.getId().equals(PARTIALY_PUBLIC)) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.pubType.getId().equals(PARTIALY_PUBLIC);
+    }
+    
+    public boolean getIsPrivate() {
+        return this.pubType.getId().equals(PRIVATE);
+    }
+    
+    public boolean getIsHidden() {
+        return this.pubType.getId().equals(HIDDEN);
     }
 
     public void addUserPerRole(Users owner, int i) {

@@ -7,7 +7,7 @@ if [[ -z $SCRIPTS_MASTER_DIR || ! -d $SCRIPTS_MASTER_DIR ]] ; then
 fi
 
 . $SCRIPTS_MASTER_DIR/common_functions.sh
-get_input $*
+get_input "$@"
 
 #################
 # Global checks #

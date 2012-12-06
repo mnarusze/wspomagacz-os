@@ -30,6 +30,7 @@ import pl.gda.pg.eti.kask.projects_manager.entity.ProjHasUsers;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 import pl.gda.pg.eti.kask.projects_manager.entity.Users;
 import pl.gda.pg.eti.kask.projects_manager.facade.UsersFacade;
+import pl.gda.pg.eti.kask.projects_manager.managers.ProjectsManager;
 
 @ManagedBean
 @SessionScoped
@@ -69,7 +70,14 @@ public class LoginBean implements Serializable {
         this.loggedUser = logedUser;
     }
 
-    public String saveUser() {
+    public String saveUser(String action) {
+        if (action.equals("ssh")) {
+            if (ProjectsManager.changeSSHKey(loggedUser, loggedUser.getSshkey()) != true) {
+                FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja zmiany klucza SSH nie powiodła się; prosimy o kontakt z aministratorem", null));
+                return "my_account";
+            }
+        }
+        FacesContext.getCurrentInstance().addMessage("successMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Operacja zmiany klucza SSH powiodła się!", null));
         usersFacade.edit(loggedUser);
         return "my_account";
     }
@@ -140,11 +148,11 @@ public class LoginBean implements Serializable {
                     return "failure";
                 }
             }
-
+            
             return "success";
 
         } catch (ServletException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Nie udało się zalogować", null));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Nie udało się zalogować", null));
             ex.printStackTrace();
             return "failure";
         }
