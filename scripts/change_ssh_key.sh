@@ -7,6 +7,20 @@ check_input_change_ssh_key
 
 cd "$GITOLITE_KEYS_DIR"
 
+# Dodajemy siebie do listy użytkowników, nawet jeśli klucz jest pusty
+USERS_LIST=$(cat $GITOLITE_CONFIG_FILE | grep ^@users)
+if [[ -z $(echo "$USERS_LIST" | grep -P "\s$USER_NAME\s") ]] ; then
+	sed -i "s/$USERS_LIST/${USERS_LIST}${USER_NAME} /" "$GITOLITE_CONFIG_FILE"
+	git add "$GITOLITE_CONFIG_FILE"
+	git commit "$GITOLITE_CONFIG_FILE" -m "Dodaję użytkownika $USER_NAME do listy w gitolite.conf"
+	git push origin master
+	if [[ $? -ne 0 ]] ; then
+		echo "Błąd: nie udało się dodać użytkownika do listy w gitolite.conf" > /dev/stderr
+		git reset --hard
+		exit 4
+	fi
+fi
+
 # W zależności od tego, czy plik istniał wcześniej czy nie,
 # podajemy różny commit message w repozytorium Gitolite
 if [[ -f $GITOLITE_KEY_FILE && -z "$USER_SSH_KEY" ]] ; then
@@ -34,7 +48,7 @@ git push origin master
 
 # Sprawdzamy, czy zmiany się spushowały
 if [[ $? -ne 0 || -z $(git log -n 1 | grep "$COMMIT_MESSAGE") ]] ; then
-	echo "Błąd: nie udało się zapisać zmian w repozytorium" > /dev/stderr
+	echo "Błąd: nie udało się zmienić klucza SSH" > /dev/stderr
 	git reset --hard
-	exit 3
+	exit 5
 fi

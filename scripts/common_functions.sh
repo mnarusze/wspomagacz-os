@@ -27,7 +27,9 @@ function get_input()
     GITOLITE_KEYS_DIR=$GITOLITE_ADMIN_DIR/keydir
     GIT_REPOS_DIR=/var/lib/git/repositories
     SVN_REPOS_DIR=/var/www/svn
+    SVN_PUB_REPOS_DIR=$SVN_REPOS_DIR/pub
     SVN_ACCESS_CONTROL_FILE=$SVN_REPOS_DIR/.access
+    SVN_PUB_ACCESS_CONTROL_FILE=$SVN_PUB_REPOS_DIR/.access
     PROJECTS_ARCHIVE_DIR=/home/maryl/Archive
 
     while getopts ":sgtrT:N:O:D:L:A:S:" optname ; do
@@ -117,6 +119,13 @@ function check_input_create_git_repo()
 
 function check_input_create_svn_repo()
 {
+    if [[ $PROJECT_TYPE == "PUBLIC" ]] ; then
+        SVN_ACCESS_CONTROL_FILE=$SVN_PUB_ACCESS_CONTROL_FILE
+        SVN_REPO_DIR="$SVN_PUB_REPOS_DIR/$PROJECT_NAME"
+    else
+        SVN_REPO_DIR="$SVN_REPOS_DIR/$PROJECT_NAME"
+    fi
+
     if [[ -z "$PROJECT_NAME" ]] ; then
         echo "Błąd: pusta nazwa" > /dev/stderr
         exit 1
@@ -135,8 +144,6 @@ function check_input_create_svn_repo()
     if [[ -z "$SVN_REPOS_DIR" || ! -d "$SVN_REPOS_DIR" ]] ; then
         echo "Błąd: nie podano lub nieprawidłowa ścieżka do repozytoriów SVN : $SVN_REPOS_DIR" > /dev/stderr
         exit 4
-    else
-        SVN_REPO_DIR="$SVN_REPOS_DIR/$PROJECT_NAME"
     fi
 
     if [[ -z "$SVN_ACCESS_CONTROL_FILE" || ! -f "$SVN_ACCESS_CONTROL_FILE" ]] ; then
@@ -237,6 +244,10 @@ function check_input_delete_git_repo()
 
 function check_input_add_user()
 {
+    if [[ $PROJECT_TYPE == "PUBLIC" ]] ; then
+        SVN_ACCESS_CONTROL_FILE=$SVN_PUB_ACCESS_CONTROL_FILE
+    fi
+
     if [[ -z "$USER_NAME" ]] ; then
         echo "Błąd: nie podano nazwy uzytkownika USER_NAME" > /dev/stderr
         exit 1
@@ -270,6 +281,10 @@ function check_input_add_user()
 
 function check_input_remove_user()
 {
+    if [[ $PROJECT_TYPE == "PUBLIC" ]] ; then
+        SVN_ACCESS_CONTROL_FILE=$SVN_PUB_ACCESS_CONTROL_FILE
+    fi
+
     if [[ -z "$USER_NAME" ]] ; then
         echo "Błąd: nie podano nazwy uzytkownika USER_NAME" > /dev/stderr
         exit 1
@@ -307,6 +322,11 @@ function check_input_change_ssh_key()
         echo "Błąd: nie podano lub nieprawidłowa ścieżka do katalogu kluczy SSH GITOLITE_KEYS_DIR:\
          $GITOLITE_KEYS_DIR" > /dev/stderr
         exit 2 
+    fi
+
+    if [[ ! -f "$GITOLITE_CONFIG_FILE" ]] ; then
+        echo "Błąd: brak pliku konfiguracyjnego Gitolite: $GITOLITE_CONFIG_FILE" > /dev/stderr
+        exit 3
     fi
 
     GITOLITE_KEY_FILE=$GITOLITE_KEYS_DIR/${USER_NAME}.pub

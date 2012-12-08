@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import pl.gda.pg.eti.kask.projects_manager.entity.ProjHasUsers;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 import pl.gda.pg.eti.kask.projects_manager.entity.Users;
 
@@ -33,81 +34,135 @@ public class ProjectsManager {
     }
     
     public static boolean deleteProject(Projects project) {
-        List<String> command = null;
-        boolean ret = true;
         if(project.getTracEnabled()) {
-            command = new ArrayList<String>();
-            command.add(getScriptsDir() + "/remove_trac.sh");
-            command.add("-N");
-            command.add(project.getProjName());
-            ret &= executeCommand(command);
+            if (removeTrac(project) == false) {
+                return false;
+            }
         }
         if(project.getSvnEnabled()) {
-            command = new ArrayList<String>();
-            command.add(getScriptsDir() + "/delete_svn_repo.sh");
-            command.add("-N");
-            command.add(project.getProjName());
-            ret &= executeCommand(command);
+            if (deleteSvnRepo(project) == false) {
+                return false;
+            }
         }
         if(project.getGitEnabled()) {
-            command = new ArrayList<String>();
-            command.add(getScriptsDir() + "/delete_git_repo.sh");
-            command.add("-N");
-            command.add(project.getProjName());
-            ret &= executeCommand(command);
+            if (deleteGitRepo(project) == false) {
+                return false;
+            }
         }
-        return ret;
+        return true;
     }
     
     public static boolean createProject(Projects project, Users owner) {
-        List<String> command = null;
-        boolean ret = true;
         if(project.getSvnEnabled()) {
-            command = new ArrayList<String>();
-            command.add(getScriptsDir() + "/create_svn_repo.sh");
-            command.add("-T");
-            if(project.getIsPublic()) {
-                command.add("PUBLIC");
-            } else if (project.getIsPariatlyPublic()) {
-                command.add("PARTIALLY_PUBLIC");
-            } else if (project.getIsPrivate()) {
-                command.add("PRIVATE");
-            } else if (project.getIsHidden()) {
-                command.add("HIDDEN");
+            if (createSvnRepo(project,owner) == false) {
+                return false;
             }
-            command.add("-N");
-            command.add(project.getProjName());
-            command.add("-O");
-            command.add(owner.getLogin());
-            ret &= executeCommand(command);
         }
         if(project.getGitEnabled()) {
-            command = new ArrayList<String>();
-            command.add(getScriptsDir() + "/create_git_repo.sh");
-            command.add("-T");
-            if(project.getIsPublic()) {
-                command.add("PUBLIC");
-            } else if (project.getIsPariatlyPublic()) {
-                command.add("PARTIALLY_PUBLIC");
-            } else if (project.getIsPrivate()) {
-                command.add("PRIVATE");
-            } else if (project.getIsHidden()) {
-                command.add("HIDDEN");
+            if (createGitRepo(project,owner) == false) {
+                return false;
             }
-            command.add("-N");
-            command.add(project.getProjName());
-            command.add("-O");
-            command.add(owner.getLogin());
-            ret &= executeCommand(command);
         }
         if(project.getTracEnabled()) {
-            command = new ArrayList<String>();
-            command.add(getScriptsDir() + "/add_trac.sh");
-            command.add("-N");
-            command.add(project.getProjName());
-            ret &= executeCommand(command);
+            if (addTrac(project) == false) {
+                return false;
+            }
         }
-        return ret;
+        return true;
+    }
+    
+    public static boolean editProject(Projects oldProject, Projects newProject) {
+        if (oldProject.getGitEnabled() != newProject.getGitEnabled()) {
+            if (oldProject.getGitEnabled() == true) {
+                if (deleteGitRepo(oldProject) == false) {
+                    return false;
+                }
+            } else {
+                if (createGitRepo(newProject, oldProject.getOwners().get(0)) == false) {
+                    return false;
+                }
+                if (updateUsers(oldProject, newProject, "GIT") == false) {
+                    return false;
+                }
+            }
+        }
+        if (oldProject.getSvnEnabled() != newProject.getSvnEnabled()) {
+            if (oldProject.getSvnEnabled() == true) {
+                if (deleteSvnRepo(oldProject) == false) {
+                    return false;
+                }
+            } else {
+                if (createSvnRepo(newProject, oldProject.getOwners().get(0)) == false) {
+                    return false;
+                }
+                if (updateUsers(oldProject, newProject, "SVN") == false) {
+                    return false;
+                }
+            }
+        }
+        
+        if (oldProject.getTracEnabled() != newProject.getTracEnabled()) {
+            if (oldProject.getTracEnabled() == true) {
+                if (removeTrac(oldProject) == false) {
+                    return false;
+                }
+            } else {
+                if (addTrac(oldProject) == false) {
+                    return false;
+                }
+                if (updateUsers(oldProject, newProject, "TRAC") == false) {
+                    return false;
+                }
+            }
+        }
+        
+        if (oldProject.getRedmineEnabled() != newProject.getRedmineEnabled()) {
+            if (oldProject.getRedmineEnabled() == true) {
+                if (removeRedmine(oldProject) == false) {
+                    return false;
+                }
+            } else {
+                if (addRedmine(newProject, oldProject.getOwners().get(0)) == false) {
+                    return false;
+                }
+                if (updateUsers(oldProject, newProject, "REDMINE") == false) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    private static boolean updateUsers(Projects oldProject, Projects newProject, String target) {
+        for (Users owner : oldProject.getOwners()) {
+            for (ProjHasUsers proj : owner.getProjHasUsersCollection()) {
+                if (proj.getProjects().getId() == oldProject.getId()) {
+                    if (addUser(newProject, owner, proj.getRola().getRoleName(), target) == false) {
+                        return false;
+                    }
+                }
+            }
+        }
+        for (Users developer : oldProject.getDevelopers()) {
+            for (ProjHasUsers proj : developer.getProjHasUsersCollection()) {
+                if (proj.getProjects().getId() == oldProject.getId()) {
+                    if (addUser(newProject, developer, proj.getRola().getRoleName(), target) == false) {
+                        return false;
+                    }
+                }
+            }
+        }
+        for (Users guest : oldProject.getGuests()) {
+            for (ProjHasUsers proj : guest.getProjHasUsersCollection()) {
+                if (proj.getProjects().getId() == oldProject.getId()) {
+                    if (addUser(newProject, guest, proj.getRola().getRoleName(), target) == false) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
     
     public static boolean addUser(Projects project, Users user, String role) {
@@ -117,6 +172,8 @@ public class ProjectsManager {
         command.add(user.getLogin());
         command.add("-N");
         command.add(project.getProjName());
+        command.add("-T");
+        command.add(project.getProjectTypeAsString());
         command.add("-A");
         command.add(role);
         if(project.getSvnEnabled()) {
@@ -124,6 +181,29 @@ public class ProjectsManager {
         }
         if(project.getGitEnabled()) {
             command.add("-g");
+        }
+        return executeCommand(command);
+    }
+    
+    public static boolean addUser(Projects project, Users user, String role, String changeType) {
+        List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/add_user.sh");
+        command.add("-L");
+        command.add(user.getLogin());
+        command.add("-N");
+        command.add(project.getProjName());
+        command.add("-T");
+        command.add(project.getProjectTypeAsString());
+        command.add("-A");
+        command.add(role);
+        if(changeType.equals("SVN")) {
+            command.add("-s");
+        } else if(changeType.equals("GIT")) {
+            command.add("-g");
+        } else if(changeType.equals("TRAC")) {
+            command.add("-t");
+        } else if(changeType.equals("REDMINE")) {
+            command.add("-r");
         }
         return executeCommand(command);
     }
@@ -151,6 +231,89 @@ public class ProjectsManager {
         command.add(getScriptsDir() + "/change_ssh_key.sh" + " -L " + user.getLogin() + " -S \"" + newKey + "\"");
         return executeCommand(command);
     }
+    
+    private static boolean createGitRepo(Projects project, Users owner) {
+        List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/create_git_repo.sh");
+        command.add("-T");
+        command.add(project.getProjectTypeAsString());
+        command.add("-N");
+        command.add(project.getProjName());
+        command.add("-O");
+        command.add(owner.getLogin());
+        return executeCommand(command);
+    }
+    
+    private static boolean deleteGitRepo(Projects project) {
+        List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/delete_git_repo.sh");
+        command.add("-N");
+        command.add(project.getProjName());
+        command.add("-T");
+        command.add(project.getProjectTypeAsString());
+        return executeCommand(command);
+    }
+    
+    private static boolean createSvnRepo(Projects project, Users owner) {
+        List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/create_svn_repo.sh");
+        command.add("-T");
+        command.add(project.getProjectTypeAsString());
+        command.add("-N");
+        command.add(project.getProjName());
+        command.add("-O");
+        command.add(owner.getLogin());
+        return executeCommand(command);
+    }
+    
+    private static boolean deleteSvnRepo(Projects project) {
+        List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/delete_svn_repo.sh");
+        command.add("-N");
+        command.add(project.getProjName());
+        command.add("-T");
+        command.add(project.getProjectTypeAsString());
+        return executeCommand(command);
+    }
+    
+    private static boolean addTrac(Projects project) {
+        List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/add_trac.sh");
+        command.add("-N");
+        command.add(project.getProjName());
+        return executeCommand(command);
+    }
+    
+    private static boolean removeTrac(Projects project) {
+       List<String> command = new ArrayList<String>();
+       command.add(getScriptsDir() + "/remove_trac.sh");
+       command.add("-N");
+       command.add(project.getProjName());
+       command.add("-T");
+       command.add(project.getProjectTypeAsString());
+       return executeCommand(command);
+    }
+    
+    private static boolean addRedmine(Projects project,Users owner) {
+        List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/add_redmine.sh");
+        command.add("-N");
+        command.add(project.getProjName());
+        command.add("-O");
+        command.add(owner.getLogin());
+        return executeCommand(command);
+    }
+    
+    private static boolean removeRedmine(Projects project) {
+       List<String> command = new ArrayList<String>();
+       command.add(getScriptsDir() + "/remove_redmine.sh");
+       command.add("-N");
+       command.add(project.getProjName());
+       command.add("-T");
+       command.add(project.getProjectTypeAsString());
+       return executeCommand(command);
+    }
+    
     
     private static boolean executeCommand(List<String> command) {
         InputStream in = null;

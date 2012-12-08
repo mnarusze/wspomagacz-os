@@ -66,8 +66,8 @@ public class LoginBean implements Serializable {
         return result;
     }
 
-    public void setLogedUser(Users logedUser) {
-        this.loggedUser = logedUser;
+    public void setLoggedUser(Users loggedUser) {
+        this.loggedUser = loggedUser;
     }
 
     public String saveUser(String action) {
@@ -118,7 +118,7 @@ public class LoginBean implements Serializable {
 
     public String loginBackdoor() {
         List<Users> users = usersFacade.findAll();
-        setLogedUser(users.get(0));
+        setLoggedUser(users.get(0));
         return "success";
     }
 

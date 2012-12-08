@@ -140,12 +140,7 @@ public class EditHelperBean implements Serializable {
 
     public String saveReadOnlyUsers(Users u) {
         localUsers = u;
-
-//        if (ProjectsManager.addUser(localProjects, localUsers)) {
-//            localProjects.getReadOnlyUsersCollection().add(localUsers);
-//        }
-
-
+        
         projectFacadeLocal.edit(localProjects);
         return "edit_projects";
     }
@@ -249,7 +244,12 @@ public class EditHelperBean implements Serializable {
 
     public String saveProject(Users owner) {
         if (editingProjects) {
-            saveEditingProject();
+            if (ProjectsManager.editProject(projectBeforeChange, localProjects) != true) {
+                FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja modyfikacji projektu nie powiodła się; prosimy o kontakt z aministratorem", null));
+            } else {
+                saveEditingProject();
+                FacesContext.getCurrentInstance().addMessage("infoMessage", new FacesMessage(FacesMessage.SEVERITY_INFO, "Pomyślnie zmodyfikowano projekt " + localProjects.getProjName(), null));
+            }
         } else {
             if (ProjectsManager.createProject(localProjects, owner) != true) {
                 FacesContext.getCurrentInstance().addMessage("errorMessage", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Operacja utworzenia projektu nie powiodła się; prosimy o kontakt z aministratorem", null));

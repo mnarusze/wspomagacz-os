@@ -12,7 +12,7 @@ if [[ "$SVN_ENABLED" -eq 1 ]] ; then
 	else
 		ACCESS_TYPE=R
 	fi
-    USERS_LIST="$(cat $SVN_ACCESS_CONTROL_FILE | grep -m 1 "^@${PROJECT_NAME}_${ACCESS_TYPE} = ")"
+    USERS_LIST="$(cat $SVN_ACCESS_CONTROL_FILE | grep -m 1 "^${PROJECT_NAME}_${ACCESS_TYPE} = ")"
     sed -i "s/$USERS_LIST/$USERS_LIST $USER_NAME,/" "$SVN_ACCESS_CONTROL_FILE"
     if [[ -z $(cat $SVN_ACCESS_CONTROL_FILE | grep "$USERS_LIST $USER_NAME,") ]] ; then
     	echo "Błąd: nie udało się dodać użytkownika!"

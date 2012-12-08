@@ -90,6 +90,20 @@ public class Projects implements Serializable {
         this.id = id;
     }
 
+    public String getProjectTypeAsString() {
+        if(this.getIsPublic()) {
+            return "PUBLIC";
+        } else if (this.getIsPariatlyPublic()) {
+            return "PARTIALLY_PUBLIC";
+        } else if (this.getIsPrivate()) {
+            return "PRIVATE";
+        } else if (this.getIsHidden()) {
+            return "HIDDEN";
+        } else {
+            return "UNKNOWN";
+        }
+    }
+    
     public Projects(Integer id, String projName, boolean svnEnabled, boolean gitEnabled, boolean tracEnabled, boolean redmineEnabled) {
         this.id = id;
         this.projName = projName;

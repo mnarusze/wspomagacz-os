@@ -2,6 +2,8 @@ ACCESS
 
 1) Stworzenie pliku /var/www/.htpasswd z danymi logowania lokalnych użytkowników 
 2) Instalacja Apache (httpd)
+3) Skopiowanie plików konfiguracyjnych apache z szablonów (git.conf, subversion.conf etc.)
+4) Stworzyć dowiązania w /var/www/{git,svn}/pub wskazujące na ten sam katalog
 
 SVN:
 

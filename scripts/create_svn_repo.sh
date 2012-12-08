@@ -21,12 +21,11 @@ echo "@${PROJECT_NAME}_RW = rw" >> $SVN_ACCESS_CONTROL_FILE
 echo "@${PROJECT_NAME}_R = r" >> $SVN_ACCESS_CONTROL_FILE
 
 # Globalne read-only jeśli publiczny
-if [[ $PROJECT_TYPE == "PUBLIC" ]] ; then
+if [[ $PROJECT_TYPE == "PUBLIC" || $PROJECT_TYPE == "$PARTIALLY_PUBLIC" ]] ; then
     echo "* = r" >> $SVN_ACCESS_CONTROL_FILE
 fi
 
 echo "#${PROJECT_NAME}_SECTION_END" >> $SVN_ACCESS_CONTROL_FILE
-echo "" >> $SVN_ACCESS_CONTROL_FILE
 
 # Tworzymy nowe repo
 svnadmin create "$SVN_REPO_DIR"
