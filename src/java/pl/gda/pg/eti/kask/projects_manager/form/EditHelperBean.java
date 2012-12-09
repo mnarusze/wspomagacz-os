@@ -94,9 +94,12 @@ public class EditHelperBean implements Serializable {
         beginConversation();
 
         localProjects = p;
-        projectBeforeChange = localProjects;
+        try {
+            projectBeforeChange = (Projects) p.clone();
+        } catch (CloneNotSupportedException ex) {
+            ex.printStackTrace();
+        }
         editingProjects = true;
-
 
         return "edit_projects";
 

@@ -38,7 +38,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Projects.findByGitEnabled", query = "SELECT p FROM Projects p WHERE p.gitEnabled = :gitEnabled"),
     @NamedQuery(name = "Projects.findByTracEnabled", query = "SELECT p FROM Projects p WHERE p.tracEnabled = :tracEnabled"),
     @NamedQuery(name = "Projects.findByRedmineEnabled", query = "SELECT p FROM Projects p WHERE p.redmineEnabled = :redmineEnabled")})
-public class Projects implements Serializable {
+public class Projects implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -103,7 +103,7 @@ public class Projects implements Serializable {
             return "UNKNOWN";
         }
     }
-    
+
     public Projects(Integer id, String projName, boolean svnEnabled, boolean gitEnabled, boolean tracEnabled, boolean redmineEnabled) {
         this.id = id;
         this.projName = projName;
@@ -293,5 +293,10 @@ public class Projects implements Serializable {
         } else {
         }
         
+    }
+    
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

@@ -13,18 +13,18 @@ sed -i "$LINE_NUMBER_FOR_GROUP i @${PROJECT_NAME}_RW+\t=\t$PROJECT_OWNER " $GITO
 ((LINE_NUMBER_FOR_GROUP++))
 sed -i "$LINE_NUMBER_FOR_GROUP i @${PROJECT_NAME}_RW\t=\t" $GITOLITE_CONFIG_FILE
 ((LINE_NUMBER_FOR_GROUP++))
-sed -i "$LINE_NUMBER_FOR_GROUP i @${PROJECT_NAME}_R\t=\t" $GITOLITE_CONFIG_FILE
-
+if [[ $PROJECT_TYPE == "PUBLIC" ]] ; then
+	sed -i "$LINE_NUMBER_FOR_GROUP i @${PROJECT_NAME}_R\t=\tdaemon " $GITOLITE_CONFIG_FILE
+elif [[ $PROJECT_TYPE == "PARTIALLY_PUBLIC" ]] ; then
+	sed -i "$LINE_NUMBER_FOR_GROUP i @${PROJECT_NAME}_R\t=\t@users" $GITOLITE_CONFIG_FILE
+else
+	sed -i "$LINE_NUMBER_FOR_GROUP i @${PROJECT_NAME}_R\t=\t" $GITOLITE_CONFIG_FILE
+fi
 # Tworzymy projekt i zapisujemy opcje dostępu
 echo "repo $PROJECT_NAME" >> "$GITOLITE_CONFIG_FILE"
 echo -e "\tRW+\t\t=\t@${PROJECT_NAME}_RW+" >> "$GITOLITE_CONFIG_FILE"
 echo -e "\tRW\t\t=\t@${PROJECT_NAME}_RW" >> "$GITOLITE_CONFIG_FILE"
 echo -e "\tR\t\t=\t@${PROJECT_NAME}_R" >> "$GITOLITE_CONFIG_FILE"
-if [[ $PROJECT_TYPE == "PUBLIC" ]] ; then
-    echo -e "\tR\t\t=\tdaemon" >> "$GITOLITE_CONFIG_FILE"
-elif [[ $PROJECT_TYPE == "PARTIALLY_PUBLIC" ]] ; then
-	echo -e "\tR\t\t=\t@users" >> "$GITOLITE_CONFIG_FILE"
-fi
 
 # Zapisujemy zmiany w Gitolite
 git add $GITOLITE_CONFIG_FILE

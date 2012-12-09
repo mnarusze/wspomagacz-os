@@ -8,12 +8,13 @@ check_input_add_user
 if [[ "$SVN_ENABLED" -eq 1 ]] ; then
 	if [[ "$USER_ACCESS_RIGHTS" == "administrator" || 
 		"$USER_ACCESS_RIGHTS" == "developer" ]] ; then
-		ACCESS_TYPE=RW
+		ACCESS_TYPE="RW"
 	else
-		ACCESS_TYPE=R
+		ACCESS_TYPE="R"
 	fi
-    USERS_LIST="$(cat $SVN_ACCESS_CONTROL_FILE | grep -m 1 "^${PROJECT_NAME}_${ACCESS_TYPE} = ")"
-    sed -i "s/$USERS_LIST/$USERS_LIST $USER_NAME,/" "$SVN_ACCESS_CONTROL_FILE"
+    USERS_LIST=$(cat $SVN_ACCESS_CONTROL_FILE | grep -m 1 "^${PROJECT_NAME}_${ACCESS_TYPE} =")
+    echo "USERS_LIST: $USERS_LIST" > /dev/stderr
+    sed -i "s/^$USERS_LIST/$USERS_LIST $USER_NAME,/" "$SVN_ACCESS_CONTROL_FILE"
     if [[ -z $(cat $SVN_ACCESS_CONTROL_FILE | grep "$USERS_LIST $USER_NAME,") ]] ; then
     	echo "Błąd: nie udało się dodać użytkownika!"
     	exit 6

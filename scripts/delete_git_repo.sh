@@ -24,11 +24,6 @@ sed -i -e "${LINE_NUMBER_TO_DELETE}d" $GITOLITE_CONFIG_FILE
 sed -i -e "${LINE_NUMBER_TO_DELETE}d" $GITOLITE_CONFIG_FILE
 sed -i -e "${LINE_NUMBER_TO_DELETE}d" $GITOLITE_CONFIG_FILE
 sed -i -e "${LINE_NUMBER_TO_DELETE}d" $GITOLITE_CONFIG_FILE
-if [[ -n $(sed -n "${LINE_NUMBER_TO_DELETE}p" $GITOLITE_CONFIG_FILE | grep daemon) ]] ; then
-	sed -i -e "${LINE_NUMBER_TO_DELETE}d" $GITOLITE_CONFIG_FILE
-elif [[ -n $(sed -n "${LINE_NUMBER_TO_DELETE}p" $GITOLITE_CONFIG_FILE | grep @users) ]] ; then
-    sed -i -e "${LINE_NUMBER_TO_DELETE}d" $GITOLITE_CONFIG_FILE
-fi
 
 # Sprawdźmy, czy w configu nie ma żadnej linii z naszym repo  czy zawiera
 # standardowe info o wszystkich repozytoriach (repo @all)

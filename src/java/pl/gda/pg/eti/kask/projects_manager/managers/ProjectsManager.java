@@ -85,7 +85,12 @@ public class ProjectsManager {
                     return false;
                 }
             }
+        } else if (oldProject.getGitEnabled() && ! oldProject.getProjectTypeAsString().equals(newProject.getProjectTypeAsString())) {
+            if (changeProjectType(oldProject, newProject, "GIT") == false) {
+                return false;
+            }
         }
+        
         if (oldProject.getSvnEnabled() != newProject.getSvnEnabled()) {
             if (oldProject.getSvnEnabled() == true) {
                 if (deleteSvnRepo(oldProject) == false) {
@@ -98,6 +103,10 @@ public class ProjectsManager {
                 if (updateUsers(oldProject, newProject, "SVN") == false) {
                     return false;
                 }
+            }
+        } else if (oldProject.getSvnEnabled() && ! oldProject.getProjectTypeAsString().equals(newProject.getProjectTypeAsString())) {
+            if (changeProjectType(oldProject, newProject, "SVN") == false) {
+                return false;
             }
         }
         
@@ -114,6 +123,10 @@ public class ProjectsManager {
                     return false;
                 }
             }
+        } else if (oldProject.getTracEnabled() && ! oldProject.getProjectTypeAsString().equals(newProject.getProjectTypeAsString())) {
+            if (changeProjectType(oldProject, newProject, "TRAC") == false) {
+                return false;
+            }
         }
         
         if (oldProject.getRedmineEnabled() != newProject.getRedmineEnabled()) {
@@ -129,17 +142,23 @@ public class ProjectsManager {
                     return false;
                 }
             }
+        } else if (oldProject.getRedmineEnabled() && ! oldProject.getProjectTypeAsString().equals(newProject.getProjectTypeAsString())) {
+            if (changeProjectType(oldProject, newProject, "REDMINE") == false) {
+                return false;
+            }
         }
         
         return true;
     }
     
     private static boolean updateUsers(Projects oldProject, Projects newProject, String target) {
-        for (Users owner : oldProject.getOwners()) {
-            for (ProjHasUsers proj : owner.getProjHasUsersCollection()) {
-                if (proj.getProjects().getId() == oldProject.getId()) {
-                    if (addUser(newProject, owner, proj.getRola().getRoleName(), target) == false) {
-                        return false;
+        if (oldProject.getOwners().size() > 1) {
+            for (Users owner : oldProject.getOwners().subList(1, oldProject.getOwners().size()-1)) {
+                for (ProjHasUsers proj : owner.getProjHasUsersCollection()) {
+                    if (proj.getProjects().getId() == oldProject.getId()) {
+                        if (addUser(newProject, owner, proj.getRola().getRoleName(), target) == false) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -182,6 +201,12 @@ public class ProjectsManager {
         if(project.getGitEnabled()) {
             command.add("-g");
         }
+        if(project.getTracEnabled()) {
+            command.add("-t");
+        }
+        if(project.getRedmineEnabled()) {
+            command.add("-r");
+        }
         return executeCommand(command);
     }
     
@@ -220,6 +245,12 @@ public class ProjectsManager {
         }
         if(project.getGitEnabled()) {
             command.add("-g");
+        }
+        if(project.getTracEnabled()) {
+            command.add("-t");
+        }
+        if(project.getRedmineEnabled()) {
+            command.add("-r");
         }
         return executeCommand(command);
     }
@@ -285,13 +316,13 @@ public class ProjectsManager {
     }
     
     private static boolean removeTrac(Projects project) {
-       List<String> command = new ArrayList<String>();
-       command.add(getScriptsDir() + "/remove_trac.sh");
-       command.add("-N");
-       command.add(project.getProjName());
-       command.add("-T");
-       command.add(project.getProjectTypeAsString());
-       return executeCommand(command);
+        List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/remove_trac.sh");
+        command.add("-N");
+        command.add(project.getProjName());
+        command.add("-T");
+        command.add(project.getProjectTypeAsString());
+        return executeCommand(command);
     }
     
     private static boolean addRedmine(Projects project,Users owner) {
@@ -305,13 +336,34 @@ public class ProjectsManager {
     }
     
     private static boolean removeRedmine(Projects project) {
-       List<String> command = new ArrayList<String>();
-       command.add(getScriptsDir() + "/remove_redmine.sh");
-       command.add("-N");
-       command.add(project.getProjName());
-       command.add("-T");
-       command.add(project.getProjectTypeAsString());
-       return executeCommand(command);
+        List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/remove_redmine.sh");
+        command.add("-N");
+        command.add(project.getProjName());
+        command.add("-T");
+        command.add(project.getProjectTypeAsString());
+        return executeCommand(command);
+    }
+    
+    private static boolean changeProjectType(Projects oldProject, Projects newProject, String changeType) {
+        List<String> command = new ArrayList<String>();
+        command.add(getScriptsDir() + "/change_project_type.sh");
+        command.add("-N");
+        command.add(oldProject.getProjName());
+        command.add("-P");
+        command.add(oldProject.getProjectTypeAsString());
+        command.add("-T");
+        command.add(newProject.getProjectTypeAsString());
+        if(changeType.equals("SVN")) {
+            command.add("-s");
+        } else if(changeType.equals("GIT")) {
+            command.add("-g");
+        } else if(changeType.equals("TRAC")) {
+            command.add("-t");
+        } else if(changeType.equals("REDMINE")) {
+            command.add("-r");
+        }
+        return executeCommand(command);
     }
     
     

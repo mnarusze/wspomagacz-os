@@ -10,6 +10,7 @@ function get_input()
     
     # Project variables
     PROJECT_TYPE= #T
+    PROJECT_PREVIOUS_TYPE= #P
     PROJECT_NAME= #N
     PROJECT_OWNER= #O
     PROJECT_DESCRIPTION= #D
@@ -32,7 +33,7 @@ function get_input()
     SVN_PUB_ACCESS_CONTROL_FILE=$SVN_PUB_REPOS_DIR/.access
     PROJECTS_ARCHIVE_DIR=/home/maryl/Archive
 
-    while getopts ":sgtrT:N:O:D:L:A:S:" optname ; do
+    while getopts ":sgtrT:P:N:O:D:L:A:S:" optname ; do
         echo "Opcja : $optname arg: $OPTARG" > /dev/stderr
         case "$optname" in
             "s")
@@ -50,6 +51,9 @@ function get_input()
             "T")
                 PROJECT_TYPE="$OPTARG"
                 ;;
+            "P")
+                PROJECT_PREVIOUS_TYPE="$OPTARG"
+                ;;    
             "N")
                 PROJECT_NAME="$OPTARG"
                 ;;
@@ -242,6 +246,57 @@ function check_input_delete_git_repo()
     fi
 }
 
+function check_input_delete_svn_repo()
+{
+    if [[ $PROJECT_TYPE == "PUBLIC" ]] ; then
+        SVN_ACCESS_CONTROL_FILE="$SVN_PUB_ACCESS_CONTROL_FILE"
+        SVN_REPO_DIR="$SVN_PUB_REPOS_DIR/$PROJECT_NAME"
+    else
+        SVN_REPO_DIR="$SVN_REPOS_DIR/$PROJECT_NAME"
+        SVN_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
+    fi
+
+    if [[ -z "$PROJECT_NAME" ]] ; then
+        echo "Błąd: pusta nazwa projektu" > /dev/stderr
+        exit 1
+    fi
+
+    if [[ -z "$PROJECT_TYPE" ]] ; then
+        echo "Błąd: brakuje typu projektu PROJECT_TYPE!!" > /dev/stderr
+        exit 2
+    fi
+
+    if [[ -z "$SVN_REPOS_DIR" || ! -d "$SVN_REPOS_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do repozytoriów SVN : $SVN_REPOS_DIR" > /dev/stderr
+        exit 3
+    fi
+
+    if [[ -z "$SVN_ACCESS_CONTROL_FILE" || ! -f "$SVN_ACCESS_CONTROL_FILE" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do pliku kontroli dostępu SVN_ACCESS_CONTROL_FILE \
+        : $SVN_ACCESS_CONTROL_FILE" > /dev/stderr
+        exit 4
+    fi
+
+    if [[ ! -d "$SVN_REPO_DIR" ]] ; then
+        echo "Błąd: Repozytorium $SVN_REPO_DIR nie istnieje!" > /dev/stderr
+        exit 5
+    fi
+    
+    if [[ -z "$PROJECTS_ARCHIVE_DIR" || ! -d "$PROJECTS_ARCHIVE_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do archiwum PROJECTS_ARCHIVE_DIR: $PROJECTS_ARCHIVE_DIR" > /dev/stderr
+        exit 6
+    fi
+
+    TODAY=$(date +%F)
+
+    if [[ ! -d "$PROJECTS_ARCHIVE_DIR/$TODAY/svn" ]] ; then
+        mkdir -p "$PROJECTS_ARCHIVE_DIR/$TODAY/svn"
+    elif [[ -d "$PROJECTS_ARCHIVE_DIR/$TODAY/svn/$PROJECT_NAME" ]] ; then
+        echo "Błąd: Repozytorium $PROJECT_NAME zostało już dzisiaj ($TODAY) umieszczone w archiwum!" > /dev/stderr
+        exit 7
+    fi
+}
+
 function check_input_add_user()
 {
     if [[ $PROJECT_TYPE == "PUBLIC" ]] ; then
@@ -333,5 +388,69 @@ function check_input_change_ssh_key()
 
     if [[ -z "$USER_SSH_KEY" ]] ; then
         echo "Uwaga: nie podano nowego klucza USER_SSH_KEY" > /dev/stderr
+    fi
+}
+
+function check_input_change_project_type()
+{
+    if [[ -z "$PROJECT_TYPE" || -z "$PROJECT_PREVIOUS_TYPE" ]] ; then
+        echo "Błąd: brakuje przynajmniej jednego z typu projektów \
+        PROJECT_TYPE lub PROJECT_PREVIOUS_TYPE"
+        exit 1
+    fi
+
+    if [[ "$PROJECT_PREVIOUS_TYPE" == "PUBLIC" ]] ; then
+        SVN_PREVIOUS_REPO_DIR="$SVN_PUB_REPOS_DIR/$PROJECT_NAME"
+        SVN_REPO_DIR="$SVN_REPOS_DIR/$PROJECT_NAME"
+        SVN_PREVIOUS_ACCESS_CONTROL_FILE="$SVN_PUB_ACCESS_CONTROL_FILE"
+        SVN_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
+        if [[ ! -d "$SVN_PREVIOUS_REPO_DIR" ]] ; then
+            echo "Błąd: Repozytorium $SVN_PREVIOUS_REPO_DIR nie istnieje!" > /dev/stderr
+            exit 2
+        elif [[ -d "$SVN_REPO_DIR" ]] ; then
+            echo "Błąd: Repozytorium $SVN_REPO_DIR istnieje!" > /dev/stderr
+            exit 3
+        fi
+
+    elif [[ "$PROJECT_TYPE" == "PUBLIC" ]] ; then
+        SVN_PREVIOUS_REPO_DIR="$SVN_REPOS_DIR/$PROJECT_NAME"
+        SVN_REPO_DIR="$SVN_PUB_REPOS_DIR/$PROJECT_NAME"
+        SVN_PREVIOUS_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
+        SVN_ACCESS_CONTROL_FILE="$SVN_PUB_ACCESS_CONTROL_FILE"
+        if [[ ! -d "$SVN_PREVIOUS_REPO_DIR" ]] ; then
+            echo "Błąd: Repozytorium $SVN_PREVIOUS_REPO_DIR nie istnieje!" > /dev/stderr
+            exit 2
+        elif [[ -d "$SVN_REPO_DIR" ]] ; then
+            echo "Błąd: Repozytorium $SVN_REPO_DIR istnieje!" > /dev/stderr
+            exit 3
+        fi
+    else
+        SVN_PREVIOUS_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
+        SVN_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
+    fi
+
+    if [[ -z "$PROJECT_NAME" ]] ; then
+        echo "Błąd: pusta nazwa projektu" > /dev/stderr
+        exit 2
+    fi
+
+    if [[ "$SVN_ENABLED" -eq 1 ]] ; then
+        if [[ -z "$SVN_ACCESS_CONTROL_FILE" || ! -f "$SVN_ACCESS_CONTROL_FILE" ]] ; then
+            echo "Błąd: nie podano lub nieprawidłowa ścieżka do pliku kontroli dostępu SVN_ACCESS_CONTROL_FILE \
+                : $SVN_ACCESS_CONTROL_FILE" > /dev/stderr
+            exit 3
+        fi
+        if [[ -z "$SVN_PREVIOUS_ACCESS_CONTROL_FILE" || ! -f "$SVN_PREVIOUS_ACCESS_CONTROL_FILE" ]] ; then
+            echo "Błąd: nie podano lub nieprawidłowa ścieżka do pliku kontroli dostępu SVN_PREVIOUS_ACCESS_CONTROL_FILE \
+                : $SVN_PREVIOUS_ACCESS_CONTROL_FILE" > /dev/stderr
+            exit 4
+        fi
+    fi
+
+    if [[ "$GIT_ENABLED" -eq 1 ]] ; then
+        if [[ ! -f "$GITOLITE_CONFIG_FILE" ]] ; then
+            echo "Błąd: brak pliku konfiguracyjnego Gitolite: $GITOLITE_CONFIG_FILE" > /dev/stderr
+            exit 5
+        fi
     fi
 }
