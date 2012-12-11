@@ -14,7 +14,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import pl.gda.pg.eti.kask.projects_manager.entity.ProjHasUsers;
-import pl.gda.pg.eti.kask.projects_manager.entity.ProjHasUsersPK;
 import pl.gda.pg.eti.kask.projects_manager.entity.ProjectDescription;
 import pl.gda.pg.eti.kask.projects_manager.entity.Projects;
 import pl.gda.pg.eti.kask.projects_manager.entity.UserRoles;

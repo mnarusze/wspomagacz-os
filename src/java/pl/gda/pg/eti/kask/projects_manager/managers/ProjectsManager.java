@@ -68,6 +68,11 @@ public class ProjectsManager {
                 return false;
             }
         }
+        if(project.getRedmineEnabled()) {
+            if (RedmineManager.createProject(project) == false) {
+                return false;
+            }
+        }
         return true;
     }
     
