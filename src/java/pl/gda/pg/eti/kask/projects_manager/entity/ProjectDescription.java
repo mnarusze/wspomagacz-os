@@ -155,10 +155,10 @@ public class ProjectDescription implements Serializable {
         String wynik;
 
         try {
-            if (this.projDescription.length() <= 140) {
+            if (this.projDescription.length() <= 50) {
                 wynik = this.projDescription;
             } else {
-                wynik = this.projDescription.substring(0, 140);
+                wynik = this.projDescription.substring(0, 50);
             }
             return wynik;
         } catch (Exception e) {

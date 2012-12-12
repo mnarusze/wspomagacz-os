@@ -3,7 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:p="http://primefaces.org/ui">
     <h:body>
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
@@ -11,62 +13,95 @@
                     <p>
                         <h:messages layout="table" infoStyle="color: green" warnStyle="color: orange" errorStyle="color: red"></h:messages>
                     </p>
-                    <h:dataTable border="0" var="Projects" value="#{projectsManagerBean.publicProjects(loginBean.loggedUser)}">
-                        <h:column>
-                            <f:facet name="log"><h:outputText value="Logo" /></f:facet>
-                            <h:commandLink action="#{editHelperBean.display(Projects, loginBean.loggedUser)}">
+                    <p:dataTable border="0" var="Projects"
+                                 paginator="true" rows="10"
+
+
+                                 value="#{projectsManagerBean.publicProjects(loginBean.loggedUser)}">
+                        <p:column id="logoHeader" style="width: 10%">
+                            <f:facet name="header">
+                                <h:outputText value="Logo" />
+                            </f:facet>
+                            <p:commandLink id="logoLink" action="#{editHelperBean.display(Projects, loginBean.loggedUser)}">
                                 <h:graphicImage alt="#{Projects.projName}" value="#{Projects.projDescription.projLogo}" />
-                            </h:commandLink>
-
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Nazwa" /></f:facet>
-                            <h:commandLink action="#{editHelperBean.display(Projects, loginBean.loggedUser)}">
+                            </p:commandLink>
+                            <p:tooltip for="logoLink" value="#{Projects.projDescription.projFullName}" />
+                        </p:column>
+                        <p:column  style="width: 12%" id="projNameHeader" sortBy="#{Projects.projDescription.projFullName}" >
+                            <f:facet name="header">
+                                <h:outputText value="Nazwa Projektu" />
+                            </f:facet>
+                            <p:commandLink id="projPage" action="#{editHelperBean.display(Projects, loginBean.loggedUser)}">
                                 <h:outputText value="#{Projects.projDescription.projFullName}" />
-                            </h:commandLink>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Opis" /></f:facet>
-                            <h:outputText value="#{Projects.projDescription.printShortDescription()}" />
-                            <h:commandLink action="#{editHelperBean.display(Projects, loginBean.loggedUser)}">
-                                <h:outputText value="Wiecej..." />
-                            </h:commandLink>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="SVN" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{Projects.svnEnabled}" disabled="true" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="GIT" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{Projects.gitEnabled}" disabled="true" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Trac" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{Projects.tracEnabled}" disabled="true" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Redmine" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{Projects.redmineEnabled}" disabled="true" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Własciciele" /></f:facet>
-                            <h:dataTable var="Dev" value="#{Projects.owners}">
-                                <h:column>
+                            </p:commandLink>
+                           
+                        </p:column>
+                        <p:column headerText="Opis Projektu" style="width: 20%" >
 
-                                    <h:outputText value=" #{Dev.firstName} #{Dev.lastName}" />
+                            <h:outputText value="#{Projects.projDescription.printShortDescription()} " />
+                            <p:rowToggler id="opis" />  
+                            
+                        </p:column>
+                        
+                        <p:column headerText="SVN">
 
-                                </h:column>
-                            </h:dataTable>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header"><h:outputText value="Developerzy i goście" /></f:facet>
-                            <h:dataTable var="Dev" value="#{Projects.developers}">
-                                <h:column>
-                                    <h:outputText value=" #{Dev.firstName} #{Dev.lastName}" />
-                                </h:column>
-                            </h:dataTable>
-                        </h:column>
-                    </h:dataTable>
+                            <p:selectBooleanButton value="#{Projects.svnEnabled}" 
+                                                   disabled="true" onLabel="Tak" offLabel="Nie"
+                                                   onIcon="ui-icon-check" offIcon="ui-icon-close"/>
+                        </p:column>
+                        <p:column headerText="GIT">
+
+                            <p:selectBooleanButton value="#{Projects.gitEnabled}"
+                                                   disabled="true" onLabel="Tak" offLabel="Nie"
+                                                   onIcon="ui-icon-check" offIcon="ui-icon-close"/>
+                        </p:column>
+                        <p:column headerText="Trac">
+
+                            <p:selectBooleanButton value="#{Projects.tracEnabled}"
+                                                   disabled="true" onLabel="Tak" offLabel="Nie"
+                                                   onIcon="ui-icon-check" offIcon="ui-icon-close"/>
+                        </p:column>
+                        <p:column headerText="Redmine" >
+
+                            <p:selectBooleanButton value="#{Projects.redmineEnabled}" 
+                                                   disabled="true" onLabel="Tak" offLabel="Nie"
+                                                   onIcon="ui-icon-check" offIcon="ui-icon-close"/>
+                        </p:column>
+                        <p:column headerText="Właściciele">
+
+                            <p:dataTable var="Dev" value="#{Projects.owners}">
+                                <p:column>
+                                    
+                                    <h:outputText id="ownerName" value=" #{Dev.firstName} #{Dev.lastName}" />
+                                    <p:tooltip for="ownerName" value="#{Dev.email}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                        <p:column headerText="Developerzy">
+
+                            <p:dataTable var="Dev" value="#{Projects.developers}">
+                                <p:column>
+                                    <h:outputText id="devName" value=" #{Dev.firstName} #{Dev.lastName}" />
+                                    <p:tooltip for="devName" value="#{Dev.email}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+
+                        <p:rowExpansion>
+                            
+
+                            <h:outputText value="#{Projects.projDescription.projDescription}" />
+
+
+
+                        </p:rowExpansion>
+
+                        <f:facet name="footer">
+                            <h:outputText value="W sumie mamy
+                                          #{fn:length(projectsManagerBean.publicProjects(loginBean.loggedUser))}
+                                          projekty" />
+                        </f:facet>
+                    </p:dataTable>
 
                 </h:form>
             </ui:define>
