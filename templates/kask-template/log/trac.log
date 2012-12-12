@@ -1,9 +1,0 @@
-2009-05-04 13:53:52,787 Trac[env] INFO: Reloading environment due to configuration change
-2009-05-04 13:53:53,311 Trac[env] INFO: Reloading environment due to configuration change
-2009-05-04 13:54:05,136 Trac[env] INFO: Reloading environment due to configuration change
-2009-05-04 13:54:05,677 Trac[env] INFO: Reloading environment due to configuration change
-2009-05-04 13:54:06,873 Trac[env] INFO: Reloading environment due to configuration change
-2009-05-04 13:54:07,920 Trac[env] INFO: Reloading environment due to configuration change
-2009-05-04 13:55:03,233 Trac[env] INFO: Reloading environment due to configuration change
-2009-05-04 13:55:06,101 Trac[env] INFO: Reloading environment due to configuration change
-2009-05-04 13:55:27,883 Trac[web_ui] ERROR: Failure sending notification on change to ticket #1: error: (111, 'Connection refused')

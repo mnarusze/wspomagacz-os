@@ -21,8 +21,6 @@ function get_input()
     USER_SSH_KEY= #S
 
     # Constants
-    TEMPLATES_DIR=/home/maryl/NetBeansProjects/wspomagacz-os/templates
-    TRAC_MASTER_DIR=/var/www/trac
     GITOLITE_ADMIN_DIR=/home/maryl/repositories/gitolite-admin
     GITOLITE_CONFIG_FILE=$GITOLITE_ADMIN_DIR/conf/gitolite.conf
     GITOLITE_KEYS_DIR=$GITOLITE_ADMIN_DIR/keydir
@@ -32,6 +30,21 @@ function get_input()
     SVN_ACCESS_CONTROL_FILE=$SVN_REPOS_DIR/.access
     SVN_PUB_ACCESS_CONTROL_FILE=$SVN_PUB_REPOS_DIR/.access
     PROJECTS_ARCHIVE_DIR=/home/maryl/Archive
+    TEMPLATES_DIR=/home/maryl/NetBeansProjects/wspomagacz-os/templates
+    TRAC_MASTER_DIR=/var/www/trac
+    TRAC_ANONYMOUS_ACCESS_RIGHTS="BROWSER_VIEW CHANGESET_VIEW FILE_VIEW \
+        LOG_VIEW MILESTONE_VIEW REPORT_SQL_VIEW REPORT_VIEW ROADMAP_VIEW SEARCH_VIEW TICKET_VIEW \
+        TIMELINE_VIEW WIKI_VIEW"
+    TRAC_AUTHENTICATED_ACCESS_RIGHTS="BROWSER_VIEW CHANGESET_VIEW FILE_VIEW \
+        LOG_VIEW MILESTONE_VIEW REPORT_SQL_VIEW REPORT_VIEW ROADMAP_VIEW SEARCH_VIEW TICKET_VIEW \
+        TIMELINE_VIEW WIKI_VIEW TICKET_CREATE TICKET_MODIFY"
+    TRAC_GUEST_ACCESS_RIGHTS="$TRAC_ANONYMOUS_ACCESS_RIGHTS"
+    TRAC_DEVELOPER_ACCESS_RIGHTS="BROWSER_VIEW CHANGESET_VIEW FILE_VIEW \
+        LOG_VIEW MILESTONE_VIEW REPORT_SQL_VIEW REPORT_VIEW ROADMAP_VIEW SEARCH_VIEW TICKET_VIEW \
+        TIMELINE_VIEW WIKI_VIEW TICKET_CREATE TICKET_MODIFY WIKI_CREATE WIKI_MODIFY"
+    TRAC_ADMIN_ACCESS_RIGHTS="BROWSER_VIEW CHANGESET_VIEW FILE_VIEW \
+        LOG_VIEW MILESTONE_ADMIN REPORT_ADMIN SEARCH_VIEW \
+        TIMELINE_VIEW TICKET_ADMIN WIKI_ADMIN"
 
     while getopts ":sgtrT:P:N:O:D:L:A:S:" optname ; do
         echo "Opcja : $optname arg: $OPTARG" > /dev/stderr
@@ -160,6 +173,19 @@ function check_input_create_svn_repo()
         echo "Błąd: Repozytorium $SVN_REPO_DIR już istnieje!" > /dev/stderr
         exit 6
     fi
+
+    if [[ "$TRAC_ENABLED" -eq 1 ]] ; then
+        if [[ -z "$TRAC_MASTER_DIR" || ! -d "$TRAC_MASTER_DIR" ]] ; then
+            echo "Błąd: nie podano lub nieprawidłowa ścieżka do traca TRAC_MASTER_DIR : $TRAC_MASTER_DIR" > /dev/stderr
+            exit 7
+        else
+            TRAC_DIR="$TRAC_MASTER_DIR/$PROJECT_NAME"
+            if [[ ! -d "$TRAC_DIR" ]] ; then
+                echo "Błąd: katalog TRAC_DIR $TRAC_DIR nie istnieje!" > /dev/stderr
+                exit 8
+            fi
+        fi
+    fi
 }
 
 function check_input_add_trac()
@@ -181,18 +207,25 @@ function check_input_add_trac()
         exit 3
     fi
 
-    # Na razie description sypie resztę - oszukujemy system...
-    #if [[ -z "$PROJECT_DESCRIPTION" ]] ; then
-    #    echo "Błąd: nie podano opisu projektu PROJECT_DESCRIPTION" > /dev/stderr
-    #    exit 4
-    #fi
+    if [[ -z "$PROJECT_TYPE" ]] ; then
+        echo "Błąd: nie podano typu projektu PROJECT_TYPE" > /dev/stderr
+        exit 4
+    fi
+    if [[ "$PROJECT_TYPE" == "PUBLIC" ]] ; then
+        SVN_REPO_DIR="$SVN_REPOS_DIR"/pub/"$PROJECT_NAME"
+    else
+        SVN_REPO_DIR="$SVN_REPOS_DIR"/"$PROJECT_NAME"
+    fi   
 
-    SVN_REPO_DIR=$SVN_REPOS_DIR/$PROJECT_NAME
-
-    if [[ -z "$SVN_REPO_DIR" || ! -d "$SVN_REPO_DIR" ]] ; then
+    if [[ "$SVN_ENABLED" -eq 1 ]] && [[ -z "$SVN_REPO_DIR" || ! -d "$SVN_REPO_DIR" ]] ; then
         echo "Błąd: nie podano lub nieprawidłowa ścieżka do repozytorium SVN_REPO_DIR : $SVN_REPO_DIR" > /dev/stderr
         exit 5
     fi    
+
+    if [[ -z "$PROJECT_OWNER" ]] ; then
+        echo "Błąd: nie podano właściciela projektu PROJECT_OWNER" > /dev/stderr
+        exit 6
+    fi
 }
 
 function check_input_delete_git_repo()
@@ -332,6 +365,19 @@ function check_input_add_user()
             exit 5
         fi
     fi
+
+    if [[ "$TRAC_ENABLED" -eq 1 ]] ; then
+        if [[ -z "$TRAC_MASTER_DIR" || ! -d "$TRAC_MASTER_DIR" ]] ; then
+            echo "Błąd: nie podano lub nieprawidłowa ścieżka do traca TRAC_MASTER_DIR : $TRAC_MASTER_DIR" > /dev/stderr
+            exit 6
+        else
+            TRAC_DIR="$TRAC_MASTER_DIR/$PROJECT_NAME"
+            if [[ ! -d "$TRAC_DIR" ]] ; then
+                echo "Błąd: katalog TRAC_DIR $TRAC_DIR nie istnieje!" > /dev/stderr
+                exit 7
+            fi
+        fi
+    fi
 }
 
 function check_input_remove_user()
@@ -362,6 +408,19 @@ function check_input_remove_user()
         if [[ ! -f "$GITOLITE_CONFIG_FILE" ]] ; then
             echo "Błąd: brak pliku konfiguracyjnego Gitolite: $GITOLITE_CONFIG_FILE" > /dev/stderr
             exit 4
+        fi
+    fi
+
+    if [[ "$TRAC_ENABLED" -eq 1 ]] ; then
+        if [[ -z "$TRAC_MASTER_DIR" || ! -d "$TRAC_MASTER_DIR" ]] ; then
+            echo "Błąd: nie podano lub nieprawidłowa ścieżka do traca TRAC_MASTER_DIR : $TRAC_MASTER_DIR" > /dev/stderr
+            exit 6
+        else
+            TRAC_DIR="$TRAC_MASTER_DIR/$PROJECT_NAME"
+            if [[ ! -d "$TRAC_DIR" ]] ; then
+                echo "Błąd: katalog TRAC_DIR $TRAC_DIR nie istnieje!" > /dev/stderr
+                exit 7
+            fi
         fi
     fi
 }
@@ -399,34 +458,36 @@ function check_input_change_project_type()
         exit 1
     fi
 
-    if [[ "$PROJECT_PREVIOUS_TYPE" == "PUBLIC" ]] ; then
-        SVN_PREVIOUS_REPO_DIR="$SVN_PUB_REPOS_DIR/$PROJECT_NAME"
-        SVN_REPO_DIR="$SVN_REPOS_DIR/$PROJECT_NAME"
-        SVN_PREVIOUS_ACCESS_CONTROL_FILE="$SVN_PUB_ACCESS_CONTROL_FILE"
-        SVN_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
-        if [[ ! -d "$SVN_PREVIOUS_REPO_DIR" ]] ; then
-            echo "Błąd: Repozytorium $SVN_PREVIOUS_REPO_DIR nie istnieje!" > /dev/stderr
-            exit 2
-        elif [[ -d "$SVN_REPO_DIR" ]] ; then
-            echo "Błąd: Repozytorium $SVN_REPO_DIR istnieje!" > /dev/stderr
-            exit 3
-        fi
+    if [[ "$SVN_ENABLED" -eq 1 ]] ; then
+        if [[ "$PROJECT_PREVIOUS_TYPE" == "PUBLIC" ]] ; then
+            SVN_PREVIOUS_REPO_DIR="$SVN_PUB_REPOS_DIR/$PROJECT_NAME"
+            SVN_REPO_DIR="$SVN_REPOS_DIR/$PROJECT_NAME"
+            SVN_PREVIOUS_ACCESS_CONTROL_FILE="$SVN_PUB_ACCESS_CONTROL_FILE"
+            SVN_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
+            if [[ ! -d "$SVN_PREVIOUS_REPO_DIR" ]] ; then
+                echo "Błąd: Repozytorium $SVN_PREVIOUS_REPO_DIR nie istnieje!" > /dev/stderr
+                exit 2
+            elif [[ -d "$SVN_REPO_DIR" ]] ; then
+                echo "Błąd: Repozytorium $SVN_REPO_DIR istnieje!" > /dev/stderr
+                exit 3
+            fi
 
-    elif [[ "$PROJECT_TYPE" == "PUBLIC" ]] ; then
-        SVN_PREVIOUS_REPO_DIR="$SVN_REPOS_DIR/$PROJECT_NAME"
-        SVN_REPO_DIR="$SVN_PUB_REPOS_DIR/$PROJECT_NAME"
-        SVN_PREVIOUS_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
-        SVN_ACCESS_CONTROL_FILE="$SVN_PUB_ACCESS_CONTROL_FILE"
-        if [[ ! -d "$SVN_PREVIOUS_REPO_DIR" ]] ; then
-            echo "Błąd: Repozytorium $SVN_PREVIOUS_REPO_DIR nie istnieje!" > /dev/stderr
-            exit 2
-        elif [[ -d "$SVN_REPO_DIR" ]] ; then
-            echo "Błąd: Repozytorium $SVN_REPO_DIR istnieje!" > /dev/stderr
-            exit 3
+        elif [[ "$PROJECT_TYPE" == "PUBLIC" ]] ; then
+            SVN_PREVIOUS_REPO_DIR="$SVN_REPOS_DIR/$PROJECT_NAME"
+            SVN_REPO_DIR="$SVN_PUB_REPOS_DIR/$PROJECT_NAME"
+            SVN_PREVIOUS_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
+            SVN_ACCESS_CONTROL_FILE="$SVN_PUB_ACCESS_CONTROL_FILE"
+            if [[ ! -d "$SVN_PREVIOUS_REPO_DIR" ]] ; then
+                echo "Błąd: Repozytorium $SVN_PREVIOUS_REPO_DIR nie istnieje!" > /dev/stderr
+                exit 2
+            elif [[ -d "$SVN_REPO_DIR" ]] ; then
+                echo "Błąd: Repozytorium $SVN_REPO_DIR istnieje!" > /dev/stderr
+                exit 3
+            fi
+        else
+            SVN_PREVIOUS_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
+            SVN_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
         fi
-    else
-        SVN_PREVIOUS_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
-        SVN_ACCESS_CONTROL_FILE="$SVN_ACCESS_CONTROL_FILE"
     fi
 
     if [[ -z "$PROJECT_NAME" ]] ; then
@@ -452,5 +513,47 @@ function check_input_change_project_type()
             echo "Błąd: brak pliku konfiguracyjnego Gitolite: $GITOLITE_CONFIG_FILE" > /dev/stderr
             exit 5
         fi
+    fi
+
+    if [[ "$TRAC_ENABLED" -eq 1 ]] ; then
+        if [[ -z "$TRAC_MASTER_DIR" || ! -d "$TRAC_MASTER_DIR" ]] ; then
+            echo "Błąd: nie podano lub nieprawidłowa ścieżka do traca TRAC_MASTER_DIR : $TRAC_MASTER_DIR" > /dev/stderr
+            exit 6
+        else
+            TRAC_DIR="$TRAC_MASTER_DIR/$PROJECT_NAME"
+            if [[ ! -d "$TRAC_DIR" ]] ; then
+                echo "Błąd: katalog TRAC_DIR $TRAC_DIR nie istnieje!" > /dev/stderr
+                exit 7
+            fi
+        fi
+    fi
+}
+
+function check_input_remove_trac()
+{
+    if [[ -z "$PROJECT_NAME" ]] ; then
+        echo "Błąd: pusta nazwa" > /dev/stderr
+        exit 1
+    fi
+
+    if [[ -z "$TRAC_MASTER_DIR" || ! -d "$TRAC_MASTER_DIR" ]] ; then
+        echo "Błąd: nie podano lub nieprawidłowa ścieżka do traca TRAC_MASTER_DIR : $TRAC_MASTER_DIR" > /dev/stderr
+        exit 2
+    else
+        TRAC_DIR="$TRAC_MASTER_DIR/$PROJECT_NAME"
+    fi  
+
+    if [[ ! -d "$TRAC_DIR" ]] ; then
+        echo "Błąd: Katalog $TRAC_DIR nie istnieje!" > /dev/stderr
+        exit 3
+    fi
+
+    TODAY=$(date +%F)
+
+    if [[ ! -d "$PROJECTS_ARCHIVE_DIR/$TODAY/trac" ]] ; then
+        mkdir -p "$PROJECTS_ARCHIVE_DIR/$TODAY/trac"
+    elif [[ -d "$PROJECTS_ARCHIVE_DIR/$TODAY/trac/$PROJECT_NAME" ]] ; then
+        echo "Błąd: Trac dla $PROJECT_NAME został już dzisiaj ($TODAY) umieszczone w archiwum!" > /dev/stderr
+        exit 4
     fi
 }

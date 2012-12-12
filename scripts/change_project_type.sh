@@ -82,3 +82,19 @@ if [[ "$GIT_ENABLED" -eq 1 ]] ; then
     	exit 8
     fi	
 fi
+
+if [[ "$TRAC_ENABLED" -eq 1 ]] ; then
+	if [[ "$PROJECT_PREVIOUS_TYPE" == "PUBLIC" && "$PROJECT_TYPE" == "PARTIALLY_PUBLIC" ]] ; then
+		trac-admin "$TRAC_DIR" permission remove anonymous '*'
+	elif [[ "$PROJECT_PREVIOUS_TYPE" == "PUBLIC" ]] ; then
+		trac-admin "$TRAC_DIR" permission remove anonymous '*'
+		trac-admin "$TRAC_DIR" permission remove authenticated '*'
+	elif [[ "$PROJECT_PREVIOUS_TYPE" == "PARTIALLY_PUBLIC" && "$PROJECT_TYPE" != "PUBLIC" ]] ; then
+		trac-admin "$TRAC_DIR" permission remove authenticated '*'
+	elif [[ "$PROJECT_TYPE" == "PARTIALLY_PUBLIC" ]] ; then
+		trac-admin "$TRAC_DIR" permission add authenticated $TRAC_AUTHENTICATED_ACCESS_RIGHTS
+	elif [[ "$PROJECT_TYPE" == "PUBLIC" ]] ; then
+		trac-admin "$TRAC_DIR" permission add authenticated $TRAC_AUTHENTICATED_ACCESS_RIGHTS
+		trac-admin "$TRAC_DIR" permission add anonymous $TRAC_ANONYMOUS_ACCESS_RIGHTS
+	fi
+fi

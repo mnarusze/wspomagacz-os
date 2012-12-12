@@ -49,6 +49,11 @@ public class ProjectsManager {
                 return false;
             }
         }
+        if(project.getRedmineEnabled()) {
+            if (RedmineManager.deleteProject(project) == false) {
+                return false;
+            }
+        }
         return true;
     }
     
@@ -64,7 +69,7 @@ public class ProjectsManager {
             }
         }
         if(project.getTracEnabled()) {
-            if (addTrac(project) == false) {
+            if (addTrac(project, owner) == false) {
                 return false;
             }
         }
@@ -121,7 +126,7 @@ public class ProjectsManager {
                     return false;
                 }
             } else {
-                if (addTrac(oldProject) == false) {
+                if (addTrac(oldProject, oldProject.getOwners().get(0)) == false) {
                     return false;
                 }
                 if (updateUsers(oldProject, newProject, "TRAC") == false) {
@@ -136,11 +141,11 @@ public class ProjectsManager {
         
         if (oldProject.getRedmineEnabled() != newProject.getRedmineEnabled()) {
             if (oldProject.getRedmineEnabled() == true) {
-                if (removeRedmine(oldProject) == false) {
+                if (RedmineManager.deleteProject(oldProject) == false) {
                     return false;
                 }
             } else {
-                if (addRedmine(newProject, oldProject.getOwners().get(0)) == false) {
+                if (RedmineManager.createProject(newProject) == false) {
                     return false;
                 }
                 if (updateUsers(oldProject, newProject, "REDMINE") == false) {
@@ -254,9 +259,6 @@ public class ProjectsManager {
         if(project.getTracEnabled()) {
             command.add("-t");
         }
-        if(project.getRedmineEnabled()) {
-            command.add("-r");
-        }
         return executeCommand(command);
     }
     
@@ -312,11 +314,18 @@ public class ProjectsManager {
         return executeCommand(command);
     }
     
-    private static boolean addTrac(Projects project) {
+    private static boolean addTrac(Projects project, Users owner) {
         List<String> command = new ArrayList<String>();
         command.add(getScriptsDir() + "/add_trac.sh");
         command.add("-N");
         command.add(project.getProjName());
+        command.add("-T");
+        command.add(project.getProjectTypeAsString());
+        command.add("-O");
+        command.add(owner.getLogin());
+        if (project.getSvnEnabled()) {
+            command.add("-s");
+        }
         return executeCommand(command);
     }
     
@@ -325,28 +334,6 @@ public class ProjectsManager {
         command.add(getScriptsDir() + "/remove_trac.sh");
         command.add("-N");
         command.add(project.getProjName());
-        command.add("-T");
-        command.add(project.getProjectTypeAsString());
-        return executeCommand(command);
-    }
-    
-    private static boolean addRedmine(Projects project,Users owner) {
-        List<String> command = new ArrayList<String>();
-        command.add(getScriptsDir() + "/add_redmine.sh");
-        command.add("-N");
-        command.add(project.getProjName());
-        command.add("-O");
-        command.add(owner.getLogin());
-        return executeCommand(command);
-    }
-    
-    private static boolean removeRedmine(Projects project) {
-        List<String> command = new ArrayList<String>();
-        command.add(getScriptsDir() + "/remove_redmine.sh");
-        command.add("-N");
-        command.add(project.getProjName());
-        command.add("-T");
-        command.add(project.getProjectTypeAsString());
         return executeCommand(command);
     }
     

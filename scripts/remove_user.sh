@@ -35,3 +35,7 @@ if [[ "$GIT_ENABLED" -eq 1 ]] ; then
     	exit 7
     fi	
 fi
+
+if [[ "$TRAC_ENABLED" -eq 1 ]] ; then
+    trac-admin "$TRAC_DIR" permission remove "$USER_NAME" '*'
+fi
