@@ -33,7 +33,7 @@ if [[ "$GIT_ENABLED" -eq 1 ]] ; then
 	USERS_LIST=$(cat $GITOLITE_CONFIG_FILE | grep -P "^@${PROJECT_NAME}_${ACCESS_TYPE}\t")
 	sed -i "s/${USERS_LIST}/${USERS_LIST}${USER_NAME} /" "$GITOLITE_CONFIG_FILE"
 	if [[ -z $(cat $GITOLITE_CONFIG_FILE | grep "${USERS_LIST}${USER_NAME}") ]] ; then
-    	echo "Błąd: nie udało się dodać użytkownika!"
+    	echo "Błąd: nie udało się dodać użytkownika!" > /dev/stderr
         git reset --hard
     	exit 7
     fi
@@ -44,8 +44,18 @@ if [[ "$GIT_ENABLED" -eq 1 ]] ; then
     git push origin master
 
     if [[ -z $(git log -n 1 | grep "Dodaję użytkownika $USER_NAME do projektu $PROJECT_NAME") ]] ; then
-    	echo "Błąd: nie udało się dodać użytkownika!"
+    	echo "Błąd: nie udało się dodać użytkownika!" /dev/stderr
     	git reset --hard
     	exit 8
     fi	
+fi
+
+if [[ "$TRAC_ENABLED" -eq 1 ]] ; then
+    if [[ "$USER_ACCESS_RIGHTS" == "administrator" ]] ; then
+        trac-admin "$TRAC_DIR" permission add "$USER_NAME" $TRAC_ADMIN_ACCESS_RIGHTS
+    elif [[ "$USER_ACCESS_RIGHTS" == "developer" ]] ; then
+        trac-admin "$TRAC_DIR" permission add "$USER_NAME" $TRAC_DEVELOPER_ACCESS_RIGHTS
+    else
+        trac-admin "$TRAC_DIR" permission add "$USER_NAME" $TRAC_GUEST_ACCESS_RIGHTS
+    fi    
 fi
