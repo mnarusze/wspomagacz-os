@@ -20,10 +20,17 @@
                             Projekty, których jesteś właścicielem
                         </f:facet>
                         <p:column>
-                            <f:facet name="header"><h:outputText value="Name" /></f:facet>
+                            <f:facet name="header"><h:outputText value="Nazwa" /></f:facet>
+
+                            <p:commandLink ajax="false" action="#{editHelperBean.display(Projects, loginBean.loggedUser)}">
+                                <h:outputText value="#{Projects.projName}" />
+                            </p:commandLink>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header"><h:outputText value="Edycja" /></f:facet>
 
                             <p:commandLink ajax="false" action="#{editHelperBean.editProject(Projects)}">
-                                <h:outputText value="#{Projects.projName}" />
+                                <h:outputText value="Edytuj" />
                             </p:commandLink>
                         </p:column>
                         <p:column>
@@ -50,7 +57,8 @@
                             <f:facet name="header"><h:outputText value="Administrators" /></f:facet>
                             <p:dataTable var="User" value="#{Projects.owners}">
                                 <p:column>
-                                    <h:outputText value=" #{User.firstName} #{User.lastName}" />
+                                    <h:outputText id="adminName" value=" #{User.firstName} #{User.lastName}" />
+                                    <p:tooltip for="adminName" value="#{User.email}" />
                                 </p:column>
                             </p:dataTable>
                         </p:column>
@@ -58,7 +66,8 @@
                             <f:facet name="header"><h:outputText value="Developers" /></f:facet>
                             <p:dataTable var="User" value="#{Projects.developers}">
                                 <p:column>
-                                    <h:outputText value=" #{User.firstName} #{User.lastName}" />
+                                    <h:outputText id="develName" value=" #{User.firstName} #{User.lastName}" />
+                                    <p:tooltip for="develName" value="#{User.email}" />
                                 </p:column>
                             </p:dataTable>
                         </p:column>

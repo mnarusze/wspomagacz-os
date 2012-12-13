@@ -30,15 +30,29 @@
                         </p:tab>
 
                         <p:tab id="tab7" title="Repozytoria">
-                            <h:panelGrid columns="2" cellpadding="10">
-                                <h:outputText value="Jakie repozytorium" />
-                                <p:commandLink ajax="false" >
-                                    <h:outputText value="Tu umiesc link do repozytorium" />
-                                </p:commandLink>
-                                <h:outputText value="Jakie repozytorium" />
-                                <p:commandLink ajax="false" >
-                                    <h:outputText value="Tu umiesc link do repozytorium" />
-                                </p:commandLink>
+                            <h:panelGrid columns="2" cellpadding="10" rendered="#{editHelperBean.projects.svnEnabled &amp;&amp; editHelperBean.projects.isPublic}">
+                                <h:outputText value="SVN" />
+                                <h:outputLink value="#{editHelperBean.projects.SVNPubRepositoryURL}">
+                                    <h:outputText value="#{editHelperBean.projects.SVNPubRepositoryURL}" />
+                                </h:outputLink>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" cellpadding="10" rendered="#{editHelperBean.projects.svnEnabled &amp;&amp; !editHelperBean.projects.isPublic}">
+                                <h:outputText value="SVN" />
+                                <h:outputLink value="#{editHelperBean.projects.SVNRepositoryURL}" >
+                                    <h:outputText value="#{editHelperBean.projects.SVNRepositoryURL}" />
+                                </h:outputLink>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" cellpadding="10" rendered="#{editHelperBean.projects.gitEnabled &amp;&amp; editHelperBean.projects.isPublic}">
+                                <h:outputText value="GIT read-only" />
+                                <h:outputLink value="#{editHelperBean.projects.GITPubRepositoryURL}" >
+                                    <h:outputText value="#{editHelperBean.projects.GITPubRepositoryURL}" />
+                                </h:outputLink>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" cellpadding="10" rendered="#{editHelperBean.projects.gitEnabled}">
+                                <h:outputText value="GIT RW" />
+                                <h:outputLink value="#{editHelperBean.projects.GITRepositoryURL}">
+                                    <h:outputText value="#{editHelperBean.projects.GITRepositoryURL}" />
+                                </h:outputLink>
                             </h:panelGrid>
                         </p:tab>
 

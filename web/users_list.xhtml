@@ -13,8 +13,6 @@
                     <p:dataTable border="0" var="Users" value="#{projectsManagerBean.usersActiveInProject(editHelperBean.projects)}">
                         <p:column>
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>
-
-
                             <p:commandButton value="Usun z projektu" onclick="deletion.show()" />
                             <h:outputText value="#{Users.users.login}" />
 

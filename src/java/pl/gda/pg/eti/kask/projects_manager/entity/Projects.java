@@ -184,6 +184,22 @@ public class Projects implements Serializable, Cloneable {
     public void setProjHasUsersCollection(Collection<ProjHasUsers> projHasUsersCollection) {
         this.projHasUsersCollection = projHasUsersCollection;
     }
+    
+    public String getSVNPubRepositoryURL() {
+        return "http://localhost/svn/pub/" + this.getProjName();
+    }
+    
+    public String getGITPubRepositoryURL() {
+        return "git://localhost/git/pub/" + this.getProjName();
+    }
+    
+    public String getSVNRepositoryURL() {
+        return "http://localhost/svn/" + this.getProjName();
+    }
+    
+    public String getGITRepositoryURL() {
+        return "git@localhost:" + this.getProjName();
+    }
 
     @Override
     public int hashCode() {

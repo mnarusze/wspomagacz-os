@@ -8,9 +8,9 @@
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <h:panelGrid columns="3" >
-                        <h:outputText value="Publiczny klucz ssh" />
-                        <p:inputTextarea id="sshkey" value="#{loginBean.loggedUser.sshkey}"/>
+                    <h:outputText value="Publiczny klucz ssh" />
+                    <h:panelGrid columns="2" >
+                        <p:inputTextarea id="sshkey" value="#{loginBean.loggedUser.sshkey}" style="width: 400px; height: 200px;"/>
                         <p:message for="sshkey" />
                     </h:panelGrid>
                     <p:tooltip for="sshkey" value="Wklej swój publiczny klucz ssh jako plain text." />
