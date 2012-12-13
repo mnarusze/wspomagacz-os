@@ -2,61 +2,113 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:ui="http://java.sun.com/jsf/facelets">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
     <h:body>
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
 
-                    <h1>
-                        <h:outputText value="#{editHelperBean.projects.projDescription.projFullName}" />
-                    </h1>
-                    <h:graphicImage value="#{editHelperBean.projects.projDescription.projLogo}" />
-                    <br />
-                    <h:outputText value="#{editHelperBean.projects.projDescription.projDescription}" />
+                    <p:tabView id="tabView">
 
-                    <h:panelGrid columns="3">
+                        <p:tab id="tab1" title="Podsumowanie">
+                            <h1>
+                                <h:outputText value="#{editHelperBean.projects.projDescription.projFullName}" />
+                            </h1>
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <h:graphicImage value="#{editHelperBean.projects.projDescription.projLogo}" />
+                                <h:outputText value="#{editHelperBean.projects.projDescription.projDescription}" />
+                            </h:panelGrid>
+                        </p:tab>
+
+                        <p:tab id="tab2" title="Pliki">
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <h:graphicImage value="#{editHelperBean.projects.projDescription.projLogo}" />
+                                <h:outputText id="tab2Text" value="Pliki związane z projektem."/>
+                            </h:panelGrid>
+                        </p:tab>
+
+                        <p:tab id="tab5" title="Tracker">
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <h:outpuText 
+                            </h:panelGrid>
+                        </p:tab>
+
+                        <p:tab id="tab3" title="Developerzy">
+                            <p:dataTable var="UserFromSelectedProject" value="#{editHelperBean.projects.owners}">
+                                <f:facet name="header" >
+                                    Właściciele projektu
+                                </f:facet>
+                                <p:column style="width: 50%">
+                                    <f:facet name="header">Imie i Nazwisko
+                                    </f:facet>
+                                    <h:outputText value=" #{UserFromSelectedProject.firstName} #{UserFromSelectedProject.lastName}" />
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">E-mail
+                                    </f:facet>
+                                    <h:outputText value="#{UserFromSelectedProject.email}" />
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:dataTable var="UserFromSelectedProject" value="#{editHelperBean.projects.developers}">
+                                <f:facet name="header" >
+                                    Developerzy projektu
+                                </f:facet>
+                                <p:column style="width: 50%">
+                                    <f:facet name="header">Imie i Nazwisko
+                                    </f:facet>
+                                    <h:outputText value=" #{UserFromSelectedProject.firstName} #{UserFromSelectedProject.lastName}" />
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">E-mail
+                                    </f:facet>
+                                    <h:outputText value="#{UserFromSelectedProject.email}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+
+                        <p:tab id="tab4" title="Kod źródłowy" >
+                            <iframe src="http://www.primefaces.org" width="800px" height="800px" frameborder="0" />
+
+                        </p:tab>
+                        <p:tab id="tab5" title="Tracker">
+                            <iframe src="http://www.primefaces.org" width="800px" height="800px" frameborder="0" />
+                        </p:tab>
+
+                        <p:tab id="tab6" title="Narzędzia">
+                            <h:panelGrid columns="3">
+
+                                <h:outputText value="Name" />
+                                <h:outputText id="projName" value="#{editHelperBean.projects.projName}" />
+                                <p:message for="projName" />
+
+                                <h:outputText value="Project open to public" />
+                                <p:selectBooleanCheckbox disabled="true" id="isPublic" value="#{editHelperBean.projects.isPublic}" />
+                                <p:message for="isPublic" />
+
+                                <h:outputText value="GIT" />
+                                <p:selectBooleanCheckbox disabled="true" id="gitEnabled" value="#{editHelperBean.projects.gitEnabled}" />
+                                <p:message for="gitEnabled" />
+
+                                <h:outputText value="SVN" />
+                                <p:selectBooleanCheckbox disabled="true" id="svnEnabled" value="#{editHelperBean.projects.svnEnabled}" />
+                                <p:message for="svnEnabled" />
+
+                                <h:outputText value="Trac" />
+                                <p:selectBooleanCheckbox disabled="true" id="tracEnabled" value="#{editHelperBean.projects.tracEnabled}" />
+                                <p:message for="tracEnabled" />
+
+                                <h:outputText value="Trac" />
+                                <p:selectBooleanCheckbox disabled="true" id="redmineEnabled" value="#{editHelperBean.projects.redmineEnabled}" />
+                                <p:message for="tracEnabled" />
+
+                            </h:panelGrid> 
+                        </p:tab>
 
 
-
-
-
-                        <h:outputText value="Name" />
-                        <h:outputText id="projName" value="#{editHelperBean.projects.projName}" />
-                        <h:message for="projName" />
-
-                        <h:outputText value="Project open to public" />
-                        <h:selectBooleanCheckbox disabled="true" id="isPublic" value="#{editHelperBean.projects.isPublic}" />
-                        <h:message for="isPublic" />
-
-                        <h:outputText value="GIT" />
-                        <h:selectBooleanCheckbox disabled="true" id="gitEnabled" value="#{editHelperBean.projects.gitEnabled}" />
-                        <h:message for="gitEnabled" />
-
-                        <h:outputText value="SVN" />
-                        <h:selectBooleanCheckbox disabled="true" id="svnEnabled" value="#{editHelperBean.projects.svnEnabled}" />
-                        <h:message for="svnEnabled" />
-
-                        <h:outputText value="Trac" />
-                        <h:selectBooleanCheckbox disabled="true" id="tracEnabled" value="#{editHelperBean.projects.tracEnabled}" />
-                        <h:message for="tracEnabled" />
-
-                        <h:outputText value="Trac" />
-                        <h:selectBooleanCheckbox disabled="true" id="redmineEnabled" value="#{editHelperBean.projects.redmineEnabled}" />
-                        <h:message for="tracEnabled" />
-
-                    </h:panelGrid> 
-                    <h:dataTable var="UserFromSelectedProject" value="#{editHelperBean.projects.owners}">
-                        <h:column>
-                            <h:outputText value=" #{UserFromSelectedProject.firstName} #{UserFromSelectedProject.lastName}" />
-                        </h:column>
-                    </h:dataTable>
-
-                    <h:dataTable var="UserFromSelectedProject" value="#{editHelperBean.projects.developers}">
-                        <h:column>
-                            <h:outputText value=" #{UserFromSelectedProject.firstName} #{UserFromSelectedProject.lastName}" />
-                        </h:column>
-                    </h:dataTable>
+                    </p:tabView>
 
                 </h:form>
             </ui:define>

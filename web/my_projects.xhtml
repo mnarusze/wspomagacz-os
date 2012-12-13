@@ -16,6 +16,9 @@
                         <h:outputText value="Projekty, których jesteś właścicielem"/>
                     </p>
                     <p:dataTable border="0" var="Projects" value="#{projectsManagerBean.projectsForOwner(loginBean.loggedUser)}">
+                        <f:facet name="header">
+                            Projekty, których jesteś właścicielem
+                        </f:facet>
                         <p:column>
                             <f:facet name="header"><h:outputText value="Name" /></f:facet>
 
@@ -66,6 +69,9 @@
                     <p>
                         <h:outputText value="Projekty, w których uczestniczysz" />
                         <p:dataTable border="0" var="Projects" value="#{projectsManagerBean.projectsForActive(loginBean.loggedUser)}">
+                            <f:facet name="header">
+                                Projekty, w których uczestniczysz
+                            </f:facet>
                             <p:column>
                                 <f:facet name="header"><h:outputText value="Name" /></f:facet>
                                 <p:commandLink ajax="false" action="#{editHelperBean.editProjDescription(Projects.projDescription)}">
