@@ -4,50 +4,78 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
       xmlns:c="http://java.sun.com/jsp/jstl/core">
     <h:body>
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <h:dataTable border="0" var="Users" value="#{projectsManagerBean.usersActiveInProject(editHelperBean.projects)}">
-                        <h:column>
+                    <p:dataTable border="0" var="Users" value="#{projectsManagerBean.usersActiveInProject(editHelperBean.projects)}">
+                        <p:column>
                             <f:facet name="header"><h:outputText value="Login" /></f:facet>
 
 
-                            <h:commandButton value="Usun z projektu" action="#{editHelperBean.removeUsersFromProject(Users.users)}" />
+                            <p:commandButton value="Usun z projektu" onclick="deletion.show()" />
                             <h:outputText value="#{Users.users.login}" />
 
-                        </h:column>
-                        <h:column>
+                            <p:confirmDialog id="deletionDialog"  message="Czy na pewno chcesz 
+                                             usunąć wybranego użytkownika z projektu? 
+                                             Użytkownik: #{Users.users.login} #{Users.users.firstName} #{Users.users.lastName}
+                                             Data ostatniego logowania: #{Users.users.lastLogin}
+                                             email: #{Users.users.email}"
+                                             header="Usuwanie użytkowników" severity="alert" widgetVar="deletion">
+
+                                <p:commandButton ajax="false" id="confirmDelete" value="Tak, na pewno" oncomplete="deletion.hide()"
+                                                 action="#{editHelperBean.removeUsersFromProject(Users.users)}"  />
+                                <p:commandButton id="declineDelete" value="Nie, jeszcze nie." onclick="deletion.hide()" type="button" /> 
+
+                            </p:confirmDialog>
+
+                        </p:column>
+                        <p:column>
                             <f:facet name="header"><h:outputText value="First Name" /></f:facet>
                             <h:outputText value="#{Users.users.firstName}"  />
-                        </h:column>
-                        <h:column>
+                        </p:column>
+                        <p:column>
                             <f:facet name="header"><h:outputText value="Last Name" /></f:facet>
                             <h:outputText value="#{Users.users.lastName}"  />
-                        </h:column>
-                        <h:column>
+                        </p:column>
+                        <p:column>
                             <f:facet name="header"><h:outputText value="e-mail" /></f:facet>
                             <h:outputText value="#{Users.users.email}"  />
-                        </h:column>                     
-                        <h:column>
+                        </p:column>                     
+                        <p:column>
                             <f:facet name="header"><h:outputText value="Index" /></f:facet>
                             <h:outputText value="#{Users.users.indeks}"  />
-                        </h:column>
+                        </p:column>
 
-                    </h:dataTable>
+                    </p:dataTable>
+                    <h:panelGrid columsn="2" >
+                        <h:outputText value="Typ dodawanego uzytkownika" />
+                        <p:selectOneMenu id="user_role" value="#{editHelperBean.localRoles}">
+                            <f:selectItems value="#{projectsManagerBean.rolesAsSelectItems}" />
+                        </p:selectOneMenu>
 
-                    <h:outputText value="Typ dodawanego uzytkownika" />
-                    <h:selectOneMenu id="user_role" value="#{editHelperBean.localRoles}">
-                        <f:selectItems value="#{projectsManagerBean.rolesAsSelectItems}" />
-                    </h:selectOneMenu>
+                        <h:outputText value="Dodawany uzytkownik" />
+                        <p:selectOneMenu id="adding_user" value="#{editHelperBean.localUsers}" >
+                            <f:selectItems value="#{projectsManagerBean.usersAsSelectItems}" />
+                        </p:selectOneMenu>
 
-                    <h:outputText value="Dodawany uzytkownik" />
-                    <h:selectOneMenu id="adding_user" value="#{editHelperBean.localUsers}" >
-                        <f:selectItems value="#{projectsManagerBean.usersAsSelectItems}" />
-                    </h:selectOneMenu>
+                    </h:panelGrid>
 
-                    <h:commandButton value="Zapisz" action="#{editHelperBean.saveUsersToProject(editHelperBean.localUsers, editHelperBean.localRoles)}" />
+                    <p:commandButton value="Zapisz" onclick="confirmation.show()" />
+                    <p:commandButton ajax="false" value="Anuluj" action="#{editHelperBean.anuluj()}" immediate="true" />
+
+                    <p:confirmDialog id="confirmDialog"  message="Czy na pewno chcesz dodać wybranego użytkownika do projektu?"
+                                     header="Dodawanie do projektu" severity="alert" widgetVar="confirmation">
+
+                        <p:commandButton ajax="false" id="confirm" value="Tak, na pewno" oncomplete="confirmation.hide()"
+                                         action="#{editHelperBean.saveUsersToProject(editHelperBean.localUsers, editHelperBean.localRoles)}"  />
+                        <p:commandButton id="decline" value="Nie, jeszcze nie." onclick="confirmation.hide()" type="button" /> 
+
+                    </p:confirmDialog>
+
+
 
                 </h:form>
             </ui:define>

@@ -2,19 +2,32 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://java.sun.com/jsf/facelets">
-   <h:body>
+    <h:body>
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
                     <h:panelGrid columns="3" >
                         <h:outputText value="Publiczny klucz ssh" />
-                        <h:inputTextarea id="sshkey" value="#{loginBean.loggedUser.sshkey}"/>
-                        <h:message for="sshkey" />
+                        <p:inputTextarea id="sshkey" value="#{loginBean.loggedUser.sshkey}"/>
+                        <p:message for="sshkey" />
                     </h:panelGrid>
-                    <h:commandButton value="Dodaj klucz ssh" action="#{loginBean.saveUser('ssh')}"/>
-                    <h:commandButton value="Usun klucz ssh" action="#{loginBean.deleteSshKey()}" />
+                    <p:tooltip for="sshkey" value="Wklej swój publiczny klucz ssh jako plain text." />
                     
+                    <p:commandButton ajax="false" value="Dodaj klucz ssh" action="#{loginBean.saveUser('ssh')}"/>
+                    
+                    <p:commandButton id="showDialogButton" value="Usun klucz ssh" onclick="confirmation.show()" type="button"/>                   
+
+                    <p:confirmDialog id="confirmDialog"  message="Czy na pewno chcesz usunąć swój klucz z projektu?"
+                                     header="Usuwanie klucza ssh" severity="alert" widgetVar="confirmation">
+
+                        <p:commandButton ajax="false" id="confirm" value="Tak, na pewno" oncomplete="confirmation.hide()"
+                                         action="#{loginBean.deleteSshKey()}"  />
+                        <p:commandButton id="decline" value="Nie, jeszcze nie." onclick="confirmation.hide()" type="button" /> 
+
+                    </p:confirmDialog>
+
                 </h:form>
             </ui:define>
         </ui:composition>

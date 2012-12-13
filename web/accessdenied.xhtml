@@ -2,16 +2,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:body>
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
-    
+
                 <h:outputText value="Dostęp zabrionony!!!" styleClass="header"></h:outputText>
                 <h:form>
-                    <h:commandLink value="Powrót na stronę logowania." action="login"></h:commandLink>
+                    <p:commandLink ajax="false" value="Powrót na stronę logowania." action="login"></p:commandLink>
                 </h:form>
-                
+
             </ui:define>
         </ui:composition>
     </h:body>

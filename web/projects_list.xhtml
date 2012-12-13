@@ -22,7 +22,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Logo" />
                             </f:facet>
-                            <p:commandLink id="logoLink" action="#{editHelperBean.display(Projects, loginBean.loggedUser)}">
+                            <p:commandLink ajax="false" id="logoLink" action="#{editHelperBean.display(Projects, loginBean.loggedUser)}">
                                 <h:graphicImage alt="#{Projects.projName}" value="#{Projects.projDescription.projLogo}" />
                             </p:commandLink>
                             <p:tooltip for="logoLink" value="#{Projects.projDescription.projFullName}" />

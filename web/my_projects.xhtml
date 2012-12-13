@@ -3,107 +3,112 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core">
     <h:body>
         <ui:composition template="./WEB-INF/template.xhtml">
             <ui:define name="content">
                 <h:form>
                     <p>
-                        <h:messages layout="table" infoStyle="color: green" warnStyle="color: orange" errorStyle="color: red"></h:messages>
+                        <p:messages />
                     </p>
                     <p>
                         <h:outputText value="Projekty, których jesteś właścicielem"/>
                     </p>
-                    <h:dataTable border="0" var="Projects" value="#{projectsManagerBean.projectsForOwner(loginBean.loggedUser)}">
-                        <h:column>
+                    <p:dataTable border="0" var="Projects" value="#{projectsManagerBean.projectsForOwner(loginBean.loggedUser)}">
+                        <p:column>
                             <f:facet name="header"><h:outputText value="Name" /></f:facet>
 
-                            <h:commandLink action="#{editHelperBean.editProject(Projects)}">
+                            <p:commandLink ajax="false" action="#{editHelperBean.editProject(Projects)}">
                                 <h:outputText value="#{Projects.projName}" />
-                            </h:commandLink>
-                        </h:column>
-                        <h:column>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column>
                             <f:facet name="header"><h:outputText value="Typ" /></f:facet>
                             <h:outputText value="#{Projects.pubType.typeName}" />
-                        </h:column>
-                        <h:column>
+                        </p:column>
+                        <p:column>
                             <f:facet name="header"><h:outputText value="SVN" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{Projects.svnEnabled}" disabled="true" />
-                        </h:column>
-                        <h:column>
+                            <p:selectBooleanCheckbox value="#{Projects.svnEnabled}" disabled="true" />
+                        </p:column>
+                        <p:column>
                             <f:facet name="header"><h:outputText value="GIT" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{Projects.gitEnabled}" disabled="true" />
-                        </h:column>
-                        <h:column>
+                            <p:selectBooleanCheckbox value="#{Projects.gitEnabled}" disabled="true" />
+                        </p:column>
+                        <p:column>
                             <f:facet name="header"><h:outputText value="Trac" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{Projects.tracEnabled}" disabled="true" />
-                        </h:column>
-                        <h:column>
+                            <p:selectBooleanCheckbox value="#{Projects.tracEnabled}" disabled="true" />
+                        </p:column>
+                        <p:column>
                             <f:facet name="header"><h:outputText value="Redmine" /></f:facet>
-                            <h:selectBooleanCheckbox value="#{Projects.redmineEnabled}" disabled="true" />
-                        </h:column>
-                        <h:column>
+                            <p:selectBooleanCheckbox value="#{Projects.redmineEnabled}" disabled="true" />
+                        </p:column>
+                        <p:column>
                             <f:facet name="header"><h:outputText value="Administrators" /></f:facet>
-                            <h:dataTable var="User" value="#{Projects.owners}">
-                                <h:column>
+                            <p:dataTable var="User" value="#{Projects.owners}">
+                                <p:column>
                                     <h:outputText value=" #{User.firstName} #{User.lastName}" />
-                                </h:column>
-                            </h:dataTable>
-                        </h:column>
-                        <h:column>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                        <p:column>
                             <f:facet name="header"><h:outputText value="Developers" /></f:facet>
-                            <h:dataTable var="User" value="#{Projects.developers}">
-                                <h:column>
+                            <p:dataTable var="User" value="#{Projects.developers}">
+                                <p:column>
                                     <h:outputText value=" #{User.firstName} #{User.lastName}" />
-                                </h:column>
-                            </h:dataTable>
-                        </h:column>
-                    </h:dataTable>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:dataTable>
 
 
 
                     <p>
                         <h:outputText value="Projekty, w których uczestniczysz" />
-                        <h:dataTable border="0" var="Projects" value="#{projectsManagerBean.projectsForActive(loginBean.loggedUser)}">
-                            <h:column>
+                        <p:dataTable border="0" var="Projects" value="#{projectsManagerBean.projectsForActive(loginBean.loggedUser)}">
+                            <p:column>
                                 <f:facet name="header"><h:outputText value="Name" /></f:facet>
-                                <h:commandLink action="#{editHelperBean.editProjDescription(Projects.projDescription)}">
+                                <p:commandLink ajax="false" action="#{editHelperBean.editProjDescription(Projects.projDescription)}">
                                     <h:outputText value="#{Projects.projName}" />
-                                </h:commandLink>
-                            </h:column>
-                            <h:column>
+                                </p:commandLink>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header"><h:outputText value="Typ" /></f:facet>
+                                <h:outputText value="#{Projects.pubType.typeName}" />
+                            </p:column>
+                            <p:column>
                                 <f:facet name="header"><h:outputText value="SVN" /></f:facet>
-                                <h:selectBooleanCheckbox value="#{Projects.svnEnabled}" disabled="true" />
-                            </h:column>
-                            <h:column>
+                                <p:selectBooleanCheckbox value="#{Projects.svnEnabled}" disabled="true" />
+                            </p:column>
+                            <p:column>
                                 <f:facet name="header"><h:outputText value="GIT" /></f:facet>
-                                <h:selectBooleanCheckbox value="#{Projects.gitEnabled}" disabled="true" />
-                            </h:column>
-                            <h:column>
+                                <p:selectBooleanCheckbox value="#{Projects.gitEnabled}" disabled="true" />
+                            </p:column>
+                            <p:column>
                                 <f:facet name="header"><h:outputText value="Trac" /></f:facet>
-                                <h:selectBooleanCheckbox value="#{Projects.tracEnabled}" disabled="true" />
-                            </h:column>
-                            <h:column>
+                                <p:selectBooleanCheckbox value="#{Projects.tracEnabled}" disabled="true" />
+                            </p:column>
+                            <p:column>
                                 <f:facet name="header"><h:outputText value="Redmine" /></f:facet>
-                                <h:selectBooleanCheckbox value="#{Projects.redmineEnabled}" disabled="true" />
-                            </h:column>
-                            <h:column>
-                            <f:facet name="header"><h:outputText value="Administrators" /></f:facet>
-                            <h:dataTable var="User" value="#{Projects.owners}">
-                                <h:column>
-                                    <h:outputText value=" #{User.firstName} #{User.lastName}" />
-                                </h:column>
-                            </h:dataTable>
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header"><h:outputText value="Users" /></f:facet>
-                                <h:dataTable var="User" value="#{Projects.developers}">
-                                    <h:column>
+                                <p:selectBooleanCheckbox value="#{Projects.redmineEnabled}" disabled="true" />
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header"><h:outputText value="Administrators" /></f:facet>
+                                <p:dataTable var="User" value="#{Projects.owners}">
+                                    <p:column>
                                         <h:outputText value=" #{User.firstName} #{User.lastName}" />
-                                    </h:column>
-                                </h:dataTable>
-                            </h:column>
-                        </h:dataTable>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header"><h:outputText value="Users" /></f:facet>
+                                <p:dataTable var="User" value="#{Projects.developers}">
+                                    <p:column>
+                                        <h:outputText value=" #{User.firstName} #{User.lastName}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </p:column>
+                        </p:dataTable>
                     </p>
                 </h:form>
             </ui:define>
