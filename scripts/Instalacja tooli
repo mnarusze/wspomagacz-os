@@ -1,23 +1,25 @@
-ACCESS
-
-1) Stworzenie pliku /var/www/.htpasswd z danymi logowania lokalnych użytkowników 
-2) Instalacja Apache (httpd)
-3) Skopiowanie plików konfiguracyjnych apache z szablonów (git.conf, subversion.conf etc.)
-4) Stworzyć dowiązania w /var/www/{git,svn}/pub wskazujące na ten sam katalog
+Zakładamy, że aplikacja jest odpalana w kontekście użytkownika obsługującego Apache ! Jeśli nie, trzeba tak pozmieniać ustawienia, aby user odpalający aplikację miał dostęp do repozytoriów GIT, do zapisu w katalogach należących do Apache, a uzytkownik Apache aby miał dostęp RWX do plików przez niego stworzonych.
 
 SVN:
 
 1) Zainstalować SVNa z dystrybucji
 	-> sudo yum install subversion
 
-2) Ograniczenie dostępu do repozytoriów 
--> /etc/httpd.d/subversion.conf -> subversion.conf w katalogu scripts
+2) Utworzyć katalog dla repozytoriów dostępny dla Apache
+	-> wybraliśmy /var/www/svn
+	-> stworzyć katalog dla publicznych repo /var/www/svn/pub
+	-> podmienić wartość zmiennej SVN_REPOS_DIR w common_functions.sh , jeśli wybrano inną lokację niż /var/www/svn
 
-3) Stworzenie pliku SVN access
-->  /var/www/svn/.access -> svn.access w katalogu scripts
+3) Konfiguracja SVN w Apache 
+	-> nasze subversion.conf w katalogu ./templates/apache
 
-4) Repozytoria tworzymy w /var/www/svn zmieniając właściciela na apache:apache
-5) Restart httpd powinien umożliwić przeglądanie repozytoriów po WWW oraz pull/push - wszystko z uwierzytelnianiem i autoryzacją.
+3) Stworzenie plików SVN access
+	-> nasze ./templates/svn/svn.access , umieszczamy jako .access w /var/www/svn i /var/www/svn/pub
+	-> jeśli ścieżka do pliju inna, podmieniamy w konfiguracji subversion.conf SVN AuthzSVNAccessFile
+
+4) Skrypty będą tworzyć epozytoria w /var/www/svn lub /var/www/svn/pub (jeśli są publiczne) i uaktualniać plik .access
+
+5) Restart httpd powinien umożliwić przeglądanie repozytoriów po WWW oraz pull/push - wszystko z uwierzytelnianiem i autoryzacją dla /var/www/svn, bez dla publicznego. Jeśli projekt jest prywatny lub ukryty widać go w /var/www/svn , ale nie można zajrzeć do środka
 
 GIT:
 
@@ -27,24 +29,25 @@ GIT:
 	git config --global user.name "Your Name"
 	git config --global user.email your@email.com
 	
-GITOLITE:
--> zakładamy, że użytkownik obsługujący Apache nazywa się "apache" i należy do grupy "apache"
--> użytkownik "apache" będzie adminem Gitolite
--> użytkownik "git" będzie uwierzytelniał i autoryzował klientów Gitolite
+GITOLITE: 
+	-> zakładamy, że użytkownik obsługujący Apache nazywa się "apache" i należy do grupy "apache"
+	-> użytkownik "apache" będzie adminem Gitolite
+	-> użytkownik "git" będzie uwierzytelniał i autoryzował klientów Gitolite, oraz przechowywał repozytoria Git
 
-1) Stworzyć użytkownika i grupę git bez hasła, dodać użytkownika apache do grupy "git", zmienić uprawnienia dostępu do jego katalogu domowego G+RWX, zalogować się jako git
+1) Stworzyć użytkownika i grupę "git" bez hasła, dodać użytkownika "apache" do grupy "git", zmienić uprawnienia dostępu do katalogu domowego "git" G+RWX, zalogować się jako git
+
 	sudo useradd -d /var/lib/git -g git git
 	sudo usermod apache -a -G git
 	sudo chmod 770 /var/lib/git
 	su - git
 
--> dodanie Apache do grupy git umożliwi udostępnianie repozytorium bez ssh po git://[...]
+	-> jeśli zmienisz ścieżkę do katalogu domowego, zmień również w common_functions.sh zmienną GIT_REPOS_DIR
 
-2) Przenieść klucz publiczny SSH użytkownika Apache (apache.pub) do katalogu domowego git (u mnie /home/git)
+2) Przenieść klucz publiczny SSH użytkownika "apache" (apache.pub) do katalogu domowego git
 		
-3) Ściągnąc gitolite i ustawić Apache jako admina Gitolite
+3) Ściągnąc gitolite i ustawić "apache" jako admina Gitolite
 -> /var/lib/git/.ssh musi zostać usunięte, jesli istnieje!
--> w katalogu /var/lib/git/repositories będą umieszczane tworzone przez Gitolite repozytoria
+
 	cd /var/lib/git
 	git clone git://github.com/sitaramc/gitolite
     mkdir bin
@@ -53,32 +56,114 @@ GITOLITE:
 
 4) Poprawić ustawienia tworzenia nowych repozytoriów w /var/lib/git/.gitolite.rc (poprawić UMASK => 0077 na 0007)
 
-5) Wrócić do użytkownika Apache, ściągnąć repozytorium gitolite-admin
-	git clone git@localhost:gitolite-admin
--> jeśli zostaniesz poproszony o hasło, coś poszło nie tak...
+	-> umożliwi to użytkownikowi "apache" na odczyt oraz przenoszenie repozytoriów
 
-6) Zmiany dokonywane są poprzez edycję repozytorium gitolite-admin i pushowanie zmian. Wszystko to musi być dokonywane przez uzytkownika apache.
--> szablon wstępnej konfiguracji : gitolite.conf.template
--> najlepiej przenieść szablon i nadpisać gitolite-admin/conf/gitolite.conf, potem w katalogu gitolite-admin
+5) Wrócić do użytkownika Apache, ściągnąć repozytorium gitolite-admin
+
+	git clone git@localhost:gitolite-admin
+
+	-> jeśli zostaniesz poproszony o hasło, coś poszło nie tak... sprawdź uprawnienia dostępu do katalogu domowego i do repozytoriów, grupę użytkownika
+	-> po wybraniu katalogu na przechowanie tego repo, ustaw ścieżkę w common_functions.sh zmienną GITOLITE_ADMIN_DIR
+
+6) Zmiany dokonywane są poprzez edycję repozytorium gitolite-admin i pushowanie zmian. Wszystko to musi być dokonywane przez uzytkownika "apache" lub innego admina, dodanego w konfiguracji gitolite
+
+	-> szablon wstępnej konfiguracji, aby system działał: ./templates/git/gitolite.conf.template
+	-> najlepiej przenieść szablon i nadpisać gitolite-admin/conf/gitolite.conf, potem w katalogu gitolite-admin
+
 	git add .
 	git commit -a -m "Początkowe ustawienia"
 	git push origin master
--> ponownie, wszystko powinno dać się wykonać bez hasła
+
+	-> ponownie, wszystko powinno dać się wykonać bez hasła
 
 7) Zainstalować git-daemon (lub git-daemon-run, tak się chyba nazywa na OpenSUSE) i ustawić demona tak, aby do wybranych repozytoriów można było dostać się read-only bez podawania kluczy
--> http://www.kutukupret.com/2010/03/26/hosting-your-own-git-repository-on-fedora-12/
-	sudo yum install git-daemon xinetd
--> /etc/xinetd.d/git -> przykładowy plik w katalogu scripts
--> najlepiej zrestartować usługę udostepniającą daemona git i spradzić klonowanie testowego repozytorium po git:// , każdy powinien móc klonować repozytoria read-only , które mają w gitolite.conf "R = daemon"
+
+	-> http://www.kutukupret.com/2010/03/26/hosting-your-own-git-repository-on-fedora-12/
+		sudo yum install git-daemon xinetd
+	-> przykładowy plik w katalogu ./templates/git/xinetd_git przenieść do /etc/xinetd.d/git
+	-> najlepiej zrestartować usługę udostepniającą daemona git i sprawdzić klonowanie testowego repozytorium po git:// , każdy powinien móc klonować repozytoria read-only , które mają w gitolite.conf "R = daemon"
 
 GITWEB
 
 1) Instalacja przez instalator
 	sudo yum install gitweb
 
+	-> zainstaluje to pliki w /var/www/git
+
 2) Ograniczamy uprawnienia
--> /etc/httpd.d/git.conf -> przykładowy git.conf w folderze scripts
--> /etc/gitweb.conf -> przykładowy gitweb.conf w folderze scripts (pamiętać o ustawieniu "strict"!)
--> od tej pory:
-	*) dostęp do Gitweb tylko po zalogowaniu (htpasswd/AD)
-	*) widać publiczne projekty (czyli te, które mają dopisane "R = daemon" w gitolite.conf) oraz projekty, do których ma się uprawnienia RW (zazwyczaj przynależność do ekipy projektowej)
+	-> podmieniamy /etc/httpd.d/git.conf na naszą konfigurację w ./templates/apache/git.conf
+	-> podmieniamy /etc/gitweb.conf na naszą konfigurację w ./templates/git/gitweb.conf
+	-> od tej pory:
+		*) dostęp do Gitweb tylko po zalogowaniu (htpasswd/AD)
+		*) widać publiczne projekty (czyli te, które mają dopisane "R = daemon" w gitolite.conf) oraz projekty, do których ma się uprawnienia RW (zazwyczaj przynależność do ekipy projektowej), nie widać prywatnych i ukrytych, do których się nie należy
+
+TRAC
+
+1) Instalacja traca
+	sudo yum install trac
+
+	-> podmieniamy /etc/httpd.d/trac.conf na naszą konfigurację w ./apache/trac.conf
+	-> tworzymy katalog /var/www/trac, w którym będą przechowywane instancje Traca
+
+MySQL
+
+1) Stworzyć nową bazę o nazwie inzynierka, uzupełnić danymi ze skryptu ../src/java/pl/gda/pg/eti/kask/projects_manager/sql/createInsert.sql
+
+GLASSFISH
+
+1) LDAP
+	-> najlepiej zainstalować go w paczce razem z NetBeans'em
+	-> uruchomić, odpalić konsolę admina w przeglądarce (http://${HOST_IP}:4848)
+	-> sprawdzić, jaka konfiguracja jest obecnie odpalona (zazwyczaj server-config), wejść w Configurations->server-config->Security->Realms
+	-> tutaj dodajemy połącznenie z LDAPem:
+		Realm name: ldap-realm
+		Class name: com.sun.enterprise.security.auth.realm.ldap.LDAPRealm
+		JAAS Context: ldapRealm
+		Directory: ldap://192.168.56.2:389
+		Base DN: DC=ad,DC=inzynierka,DC=com
+		Additional properties:
+			search-filter -> (&(objectClass=user)(sAMAccountName=%s))
+			search-bind-dn -> CN=linux-user-1,CN=Users,DC=ad,DC=inzynierka,DC=com
+			group-search-filter -> (&(objectClass=group)(member=%d))
+			search-bind-password -> HASLO
+			java.naming.referral -> follow
+
+2) MySQL
+	-> Wchodzimy do Resources -> JDBC -> JDBC Connection Pools
+	-> Tworzymy nowe:
+		Pool name: InzynierkaPool
+		Resource type: javax.sql.DataSource
+		Datasource classname: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
+		Additional Properties:
+			URL: jdbc:mysql://${HOST_IP}:3306/inzynierka
+			User: root
+			Password: HASLO_DO_MYSQLa
+	-> Pingujemy powstały zbiór - powinno być wszystko ok
+	-> Następnie tworzymy nowy zasób JDBC Resource w Resources -> JDBC -> JDBC Resources
+		JNDI Name: jdbc/inzynierka
+		Pool Name: InzynierkaPool
+
+	-> Po wszystkim restart serwera
+
+APLIKACJA:
+
+1) Ustawienia
+	W ../src/java/pl/gda/pg/eti/kask/projects_manager/app.properties zmieniamy ścieżkę do skryptów na pasującą do środowiska
+
+	-> scripts_dir != /home/maryl/NetBeansProjects/wspomagacz-os/scripts
+
+2) Budujemy do Inzynierka.war przez "Clean and Build"
+3) Deployujemy na serwerze:
+
+asadmin deploy --user admin_user [--password admin_password]
+    [--host localhost] [--port 4848] [--passwordfile filename]
+    [--secure|-s] [--virtualservers virtual_servers]
+    [--type application|ejb|web|connector]
+    [--contextroot context_root] [--force=true]
+    [--precompilejsp=false]
+    [--verify=false] [--name component_name] [--upload=true]
+    [--retrieve local_dirpath] [--instance instance_name] filepath
+
+ 	-> na początek wystarczy np. "asadmin deploy --port 5000 --host localhost /home/maryl/NetBeansProjects/wspomagacz-os/dist/Inzynierka.war"
+
+ 	-> Od tej pory aplikacja powinna być dostępna po określonym porcie i działać bez zarzutów :)

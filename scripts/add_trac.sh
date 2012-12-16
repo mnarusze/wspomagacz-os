@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. /home/maryl/NetBeansProjects/wspomagacz-os/scripts/common_functions.sh
+. $SCRIPTS_MASTER_DIR/common_functions.sh
 
 get_input $*
 check_input_add_trac
@@ -27,7 +27,7 @@ if [[ "$SVN_ENABLED" -eq 1 ]] ; then
 	trac-admin "$TRAC_DIR" repository resync '(default)'
 
 	# Kopiujemy hooki do repozytorium SVN i ustawiamy
-	cp "$TEMPLATES_DIR"/trac-post-commit-hook.py "$SVN_REPO_DIR"/hooks
+	cp "$TEMPLATES_DIR"/svn/hooks/trac-post-commit-hook.py "$SVN_REPO_DIR"/hooks
 	echo "#!/bin/sh" > "$SVN_REPO_DIR"/hooks/post-commit
 	echo "REPOS=\$1" >> "$SVN_REPO_DIR"/hooks/post-commit
 	echo "REV=\$2" >> "$SVN_REPO_DIR"/hooks/post-commit

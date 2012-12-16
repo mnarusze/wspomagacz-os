@@ -16,7 +16,7 @@
                                 <h:outputText value="Password : "></h:outputText>
                                 <p:password id="password" value="#{loginBean.password}"></p:password>
                                 
-                                <p:commandButton ajax="false" id="loguj" value="Log in" action="#{loginBean.loginBackdoor()}"
+                                <p:commandButton ajax="false" id="loguj" value="Log in" action="#{loginBean.login()}"
                                                  type="submit"></p:commandButton>
                             </h:panelGrid>
                             <p>
