@@ -56,12 +56,15 @@ public class UserRoles implements Serializable {
         switch (id) {
             case 1:
                 this.roleName = "administrator";
+                this.roleDescription = "Administrator";
                 break;
             case 2:
                 this.roleName = "developer";
+                this.roleDescription = "Developer";
                 break;
             case 3:
                 this.roleName = "guest";
+                this.roleDescription = "Gość";
                 break;
             default:
                 this.roleName = "brak";
